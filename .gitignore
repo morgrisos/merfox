@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+server/runs/
+server.log
+server/data/*.csv
+server/data/*.tsv
+*.csv
+*.tsv
+.DS_Store
+.env
+.gemini/

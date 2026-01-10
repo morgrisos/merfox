@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html class="dark" lang="ja">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>MerFox - Mercari Sync Suite</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Noto+Sans+JP:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#136dec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101822",
+                        "surface-dark": "#1e293b",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "Noto Sans JP", "sans-serif"],
+                        "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"],
+                        "sans": ["Inter", "Noto Sans JP", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+
+    <!-- React & Router -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #161b22; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #30363d; 
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #58a6ff; 
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101822; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3748; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a5568; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Common Components ---
+
+        const Sidebar = () => {
+            const location = useLocation();
+            const isActive = (path) => location.pathname === path;
+
+            return (
+                <aside className="w-72 bg-[#111418] border-r border-[#282f39] flex flex-col justify-between flex-shrink-0 h-full overflow-y-auto">
+                    <div className="p-4">
+                        <div className="flex gap-3 items-center mb-8 px-2">
+                            <div className="bg-center bg-no-repeat bg-cover rounded-full size-10 bg-primary/20 flex items-center justify-center text-primary">
+                                <span className="material-symbols-outlined text-2xl">pets</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <h1 className="text-white text-base font-bold leading-normal">MerFox</h1>
+                                <p className="text-[#9da8b9] text-xs font-normal leading-normal">管理コンソール</p>
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <Link to="/" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive('/') ? 'bg-primary/20 text-primary border border-primary/10' : 'text-[#9da8b9] hover:bg-[#282f39] hover:text-white'}`}>
+                                <span className="material-symbols-outlined fill-1">dashboard</span>
+                                <p className="text-sm font-bold leading-normal">ダッシュボード</p>
+                            </Link>
+                            <Link to="/scraper" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive('/scraper') ? 'bg-primary/20 text-primary border border-primary/10' : 'text-[#9da8b9] hover:bg-[#282f39] hover:text-white'}`}>
+                                <span className="material-symbols-outlined">bolt</span>
+                                <p className="text-sm font-medium leading-normal">スクレイパー</p>
+                            </Link>
+                            <Link to="/settings" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive('/settings') ? 'bg-primary/20 text-primary border border-primary/10' : 'text-[#9da8b9] hover:bg-[#282f39] hover:text-white'}`}>
+                                <span className="material-symbols-outlined">settings</span>
+                                <p className="text-sm font-medium leading-normal">抽出設定</p>
+                            </Link>
+                            <Link to="/converter" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive('/converter') ? 'bg-primary/20 text-primary border border-primary/10' : 'text-[#9da8b9] hover:bg-[#282f39] hover:text-white'}`}>
+                                <span className="material-symbols-outlined">cloud_upload</span>
+                                <p className="text-sm font-medium leading-normal">データ変換</p>
+                            </Link>
+                            <a className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9da8b9] hover:bg-[#282f39] hover:text-white transition-colors" href="#">
+                                <span className="material-symbols-outlined">table_view</span>
+                                <p className="text-sm font-medium leading-normal">CSV管理</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div className="p-4">
+                        <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9da8b9] hover:bg-[#282f39] hover:text-white transition-colors cursor-pointer">
+                            <span className="material-symbols-outlined">logout</span>
+                            <p className="text-sm font-medium leading-normal">ログアウト</p>
+                        </div>
+                    </div>
+                </aside>
+            );
+        };
+
+        // --- Screen 1: Dashboard ---
+        const Dashboard = () => {
+            return (
+                <div className="flex h-screen w-full overflow-hidden">
+                    <Sidebar />
+                    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
+                        <div className="flex-1 overflow-y-auto p-4 md:p-8">
+                            <div className="max-w-[1200px] mx-auto flex flex-col gap-8">
+                                <div className="flex flex-wrap justify-between items-end gap-4">
+                                    <div className="flex flex-col gap-1">
+                                        <h2 className="text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] text-slate-900 dark:text-white">ダッシュボード</h2>
+                                        <div className="flex items-center gap-2">
+                                            <span className="relative flex h-3 w-3">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                                            </span>
+                                            <p className="text-[#64748b] dark:text-[#9da8b9] text-sm font-medium">システム状態: 待機中</p>
+                                        </div>
+                                    </div>
+                                    <button className="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary hover:bg-blue-600 text-white text-sm font-bold shadow-lg shadow-blue-900/20 transition-all">
+                                        <span className="material-symbols-outlined text-[20px]">play_arrow</span>
+                                        <span>抽出実行</span>
+                                    </button>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <div className="flex flex-col gap-3 rounded-xl p-6 bg-white dark:bg-[#1e2329] border border-slate-200 dark:border-[#3b4554] shadow-sm">
+                                        <div className="flex justify-between items-start">
+                                            <p className="text-[#64748b] dark:text-[#9da8b9] text-sm font-medium">取得済み商品数</p>
+                                            <span className="material-symbols-outlined text-primary/80">inventory_2</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-900 dark:text-white text-3xl font-bold">1,240</p>
+                                            <div className="flex items-center gap-1 mt-1">
+                                                <span className="material-symbols-outlined text-green-500 text-sm">trending_up</span>
+                                                <p className="text-green-500 text-sm font-medium">先週比 +12%</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-3 rounded-xl p-6 bg-white dark:bg-[#1e2329] border border-slate-200 dark:border-[#3b4554] shadow-sm">
+                                        <div className="flex justify-between items-start">
+                                            <p className="text-[#64748b] dark:text-[#9da8b9] text-sm font-medium">Amazon出品可能</p>
+                                            <span className="material-symbols-outlined text-orange-400/80">shopping_cart</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-900 dark:text-white text-3xl font-bold">850</p>
+                                            <div className="flex items-center gap-1 mt-1">
+                                                <span className="material-symbols-outlined text-green-500 text-sm">trending_up</span>
+                                                <p className="text-green-500 text-sm font-medium">先週比 +5%</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-3 rounded-xl p-6 bg-white dark:bg-[#1e2329] border border-slate-200 dark:border-[#3b4554] shadow-sm">
+                                        <div className="flex justify-between items-start">
+                                            <p className="text-[#64748b] dark:text-[#9da8b9] text-sm font-medium">最終抽出日時</p>
+                                            <span className="material-symbols-outlined text-purple-400/80">history</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-900 dark:text-white text-3xl font-bold">10/24</p>
+                                            <p className="text-[#64748b] dark:text-[#9da8b9] text-sm font-medium mt-1">10:42</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-3 rounded-xl p-6 bg-white dark:bg-[#1e2329] border border-slate-200 dark:border-[#3b4554] shadow-sm">
+                                        <div className="flex justify-between items-start">
+                                            <p className="text-[#64748b] dark:text-[#9da8b9] text-sm font-medium">成功率</p>
+                                            <span className="material-symbols-outlined text-green-400/80">check_circle</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-slate-900 dark:text-white text-3xl font-bold">98%</p>
+                                            <div className="flex items-center gap-1 mt-1">
+                                                <span className="material-symbols-outlined text-green-500 text-sm">arrow_upward</span>
+                                                <p className="text-green-500 text-sm font-medium">効率 +1%</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col rounded-xl border border-slate-200 dark:border-[#3b4554] bg-white dark:bg-[#1e2329] shadow-sm overflow-hidden">
+                                    <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-[#282f39]">
+                                        <div>
+                                            <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight">データ蓄積推移</h3>
+                                            <p className="text-[#64748b] dark:text-[#9da8b9] text-sm mt-1">raw_items.csv への商品追加数</p>
+                                        </div>
+                                        <div className="flex items-center gap-2 px-3 py-1 rounded bg-green-500/10 border border-green-500/20">
+                                            <span className="material-symbols-outlined text-green-500 text-sm">add</span>
+                                            <span className="text-green-500 text-sm font-bold">+150 件</span>
+                                        </div>
+                                    </div>
+                                    <div className="p-6">
+                                        <div className="w-full h-[240px] relative">
+                                            <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 300">
+                                                <defs>
+                                                    <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                                                        <stop offset="0%" stopColor="#136dec" stopOpacity="0.3"></stop>
+                                                        <stop offset="100%" stopColor="#136dec" stopOpacity="0"></stop>
+                                                    </linearGradient>
+                                                </defs>
+                                                <line opacity="0.3" stroke="#3b4554" strokeDasharray="4 4" strokeWidth="1" x1="0" x2="1000" y1="225" y2="225"></line>
+                                                <line opacity="0.3" stroke="#3b4554" strokeDasharray="4 4" strokeWidth="1" x1="0" x2="1000" y1="150" y2="150"></line>
+                                                <line opacity="0.3" stroke="#3b4554" strokeDasharray="4 4" strokeWidth="1" x1="0" x2="1000" y1="75" y2="75"></line>
+                                                <path d="M0 250 L100 240 L200 210 L300 225 L400 180 L500 190 L600 120 L700 140 L800 80 L900 60 L1000 40 V 300 H 0 Z" fill="url(#chartGradient)"></path>
+                                                <path d="M0 250 L100 240 L200 210 L300 225 L400 180 L500 190 L600 120 L700 140 L800 80 L900 60 L1000 40" fill="none" stroke="#136dec" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3"></path>
+                                                <circle className="dark:stroke-[#1e2329] stroke-white" cx="200" cy="210" fill="#136dec" r="4" strokeWidth="2"></circle>
+                                                <circle className="dark:stroke-[#1e2329] stroke-white" cx="400" cy="180" fill="#136dec" r="4" strokeWidth="2"></circle>
+                                                <circle className="dark:stroke-[#1e2329] stroke-white" cx="600" cy="120" fill="#136dec" r="4" strokeWidth="2"></circle>
+                                                <circle className="dark:stroke-[#1e2329] stroke-white" cx="800" cy="80" fill="#136dec" r="4" strokeWidth="2"></circle>
+                                                <circle className="dark:stroke-[#1e2329] stroke-white" cx="1000" cy="40" fill="#136dec" r="6" strokeWidth="3"></circle>
+                                            </svg>
+                                        </div>
+                                        <div className="flex justify-between mt-4 text-[#64748b] dark:text-[#9da8b9] text-xs font-medium uppercase tracking-wider">
+                                            <span>10/01</span>
+                                            <span>10/06</span>
+                                            <span>10/12</span>
+                                            <span>10/18</span>
+                                            <span>10/24</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex items-center justify-between px-2">
+                                        <h2 className="text-slate-900 dark:text-white text-xl font-bold leading-tight">最終実行ログ</h2>
+                                        <div className="flex gap-3">
+                                            <button className="text-sm font-medium text-primary hover:text-blue-400 transition-colors">ログ保存</button>
+                                            <span className="text-slate-600 dark:text-slate-500">|</span>
+                                            <button className="text-sm font-medium text-[#64748b] dark:text-[#9da8b9] hover:text-white transition-colors">履歴クリア</button>
+                                        </div>
+                                    </div>
+                                    <div className="w-full rounded-xl border border-slate-200 dark:border-[#3b4554] bg-[#0d1117] p-5 font-mono text-sm shadow-inner overflow-hidden">
+                                        <div className="flex flex-col gap-1.5 h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                                            <p className="text-slate-400"><span className="text-blue-400 font-bold">[10:42:01] INFO:</span> MerFox抽出エンジン v2.4.0 を初期化中...</p>
+                                            <p className="text-slate-400"><span className="text-blue-400 font-bold">[10:42:01] INFO:</span> <span className="text-white">settings.json</span> から設定を読み込み完了</p>
+                                            <p className="text-slate-400"><span className="text-blue-400 font-bold">[10:42:03] INFO:</span> ローカルDB検出: <span className="underline decoration-slate-600">./data/raw_items.csv</span> (1240 レコード)</p>
+                                            <p className="text-slate-400"><span className="text-yellow-400 font-bold">[10:42:05] WARN:</span> プロキシ接続遅延 (420ms). 再試行します...</p>
+                                            <p className="text-slate-400"><span class="text-blue-400 font-bold">[10:42:06] INFO:</span> プロキシサーバーへの接続に成功しました。</p>
+                                            <p className="text-slate-400"><span className="text-blue-400 font-bold">[10:42:15] INFO:</span> ページ 1 を取得: 24件の候補アイテムを発見。</p>
+                                            <p className="text-slate-400"><span className="text-yellow-400 font-bold">[10:42:16] WARN:</span> アイテム ID #84920 をスキップ (高解像度画像なし)</p>
+                                            <p className="text-slate-400"><span className="text-blue-400 font-bold">[10:42:18] INFO:</span> 商品詳細データを解析中...</p>
+                                            <p className="text-slate-400"><span className="text-green-400 font-bold">[10:42:20] SUCCESS:</span> +12件の新規データを raw_items.csv に追記しました</p>
+                                            <p className="text-slate-400"><span class="text-blue-400 font-bold">[10:42:21] INFO:</span> Amazon出品適合性チェックを実行中...</p>
+                                            <p className="text-slate-400"><span class="text-green-400 font-bold">[10:42:22] COMPLETED:</span> タスク完了 (21.4秒). システムは待機状態に戻ります。</p>
+                                            <p className="opacity-50 text-slate-600 mt-2">-- ログ終了 --</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="absolute top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+                    </main>
+                </div>
+            );
+        };
+
+        // --- Screen 2: Settings ---
+        const Settings = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="relative flex min-h-screen w-full flex-row overflow-hidden bg-background-light dark:bg-background-dark">
+                    <Sidebar />
+                    <main className="flex flex-1 flex-col h-full min-w-0 overflow-y-auto">
+                        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-background-dark px-6 py-4 sticky top-0 z-10">
+                            <div className="flex items-center gap-4">
+                                <button className="md:hidden text-slate-500 dark:text-slate-400">
+                                    <span className="material-symbols-outlined">menu</span>
+                                </button>
+                                <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">スクレイパー設定</h2>
+                            </div>
+                            <div className="flex items-center justify-end gap-4">
+                                <button className="flex items-center justify-center size-10 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors">
+                                    <span className="material-symbols-outlined">notifications</span>
+                                </button>
+                                <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-slate-200 dark:border-slate-700" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAAnPeGM9XGN-yL64x75QxROZTF0Ntb8VBqxFYGDNOtt5DNBsukBcC3rLrGh2K64ws1DzbdTMZUEXxTMGke_cX7uiI_cmZ84tqFTud8vTi6iMMEpdPCJAjW_m1BkgW09HDS8O4UpxfR5BbVIgbK-PZhrQ_Zyo5qdadHnM2eNsEnXrWcMQwXOKyVz66l88d2YFiMjDn9n8LaWAtWOoAgVs0T0eJBs0Bjs1uU0sMHgaWUwsXOyluXlIpLADVvxH_LJX1kUyKAd4Ejt4CN")'}}>
+                                </div>
+                            </div>
+                        </header>
+                        <div className="flex flex-1 justify-center py-8 px-4 md:px-10">
+                            <div className="flex flex-col max-w-[960px] flex-1 gap-6">
+                                <nav className="flex flex-wrap gap-2 text-sm">
+                                    <Link to="/" className="text-slate-500 dark:text-[#9da8b9] font-medium hover:text-primary transition-colors">ダッシュボード</Link>
+                                    <span className="text-slate-400 dark:text-[#9da8b9] font-medium">/</span>
+                                    <span className="text-slate-500 dark:text-[#9da8b9] font-medium">スクレイパー</span>
+                                    <span className="text-slate-400 dark:text-[#9da8b9] font-medium">/</span>
+                                    <span className="text-slate-900 dark:text-white font-medium">設定</span>
+                                </nav>
+                                <div className="flex flex-col gap-2">
+                                    <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] text-slate-900 dark:text-white">抽出設定</h1>
+                                    <p className="text-slate-600 dark:text-[#9da8b9] text-base font-normal leading-normal max-w-2xl">
+                                        スクレイピングエンジンのターゲットURLと実行パラメータを構成します。メルカリまたはShopeeからの抽出、および定期監視の設定が可能です。
+                                    </p>
+                                </div>
+                                <hr className="border-slate-200 dark:border-slate-800 my-2"/>
+                                <form className="flex flex-col gap-8" onSubmit={(e) => e.preventDefault()}>
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-primary">link</span>
+                                            <h3 className="text-xl font-bold leading-tight text-slate-900 dark:text-white">抽出対象</h3>
+                                        </div>
+                                        <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                                            <div className="flex flex-col gap-6">
+                                                <div className="flex flex-col gap-3">
+                                                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">プラットフォーム選択</label>
+                                                    <div className="grid grid-cols-1 gap-4">
+                                                        <label className="relative flex cursor-pointer rounded-lg border-2 border-primary bg-primary/5 dark:bg-primary/10 p-3 shadow-sm focus:outline-none transition-all items-center justify-center">
+                                                            <input defaultChecked disabled className="sr-only" name="platform" type="radio" value="mercari"/>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-bold text-slate-900 dark:text-white">Mercari</span>
+                                                                <span className="bg-red-500 rounded-full w-2 h-2"></span>
+                                                            </div>
+                                                            <span className="material-symbols-outlined text-primary absolute top-2 right-2 text-sm" fill="1">check_circle</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-col gap-2">
+                                                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-200" htmlFor="url-input">ターゲットURL</label>
+                                                    <div className="relative">
+                                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                            <span className="material-symbols-outlined text-slate-400 text-[20px]">search</span>
+                                                        </div>
+                                                        <input className="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#101822] text-slate-900 dark:text-white pl-10 pr-4 py-3 focus:border-primary focus:ring-primary sm:text-sm" id="url-input" placeholder="https://..." type="url" defaultValue="https://jp.mercari.com/search?keyword=vintage%20camera&status=on_sale"/>
+                                                    </div>
+                                                    <div className="flex justify-between items-start flex-wrap gap-2">
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                            選択したプラットフォームの検索結果ページURLを入力してください。
+                                                        </p>
+                                                        <div className="flex gap-2">
+                                                            <span className="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-400 ring-1 ring-inset ring-green-600/20">カテゴリ: カメラ</span>
+                                                            <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 ring-1 ring-inset ring-blue-600/20">ステータス: 販売中</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-primary">tune</span>
+                                            <h3 className="text-xl font-bold leading-tight text-slate-900 dark:text-white">実行モード</h3>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <label className="relative flex cursor-pointer rounded-xl border-2 border-primary bg-primary/5 dark:bg-primary/10 p-4 shadow-sm focus:outline-none">
+                                                <input defaultChecked className="sr-only" name="execution-mode" type="radio" value="onetime"/>
+                                                <span className="flex flex-1">
+                                                    <span className="flex flex-col">
+                                                        <span className="flex items-center gap-2 block text-sm font-bold text-slate-900 dark:text-white">
+                                                            <span className="material-symbols-outlined text-primary">bolt</span>
+                                                            1回のみ実行
+                                                        </span>
+                                                        <span className="mt-1 flex items-center text-sm text-slate-500 dark:text-slate-400">現在の検索結果から即座にリストを抽出し、終了します。</span>
+                                                        <span className="mt-4 text-xs font-medium text-primary">現在選択中</span>
+                                                    </span>
+                                                </span>
+                                                <span className="material-symbols-outlined text-primary absolute top-4 right-4" fill="1">check_circle</span>
+                                            </label>
+                                            <label className="relative flex cursor-pointer rounded-xl border border-slate-200 dark:border-slate-700 bg-surface-light dark:bg-surface-dark p-4 shadow-sm hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none transition-all">
+                                                <input className="sr-only" name="execution-mode" type="radio" value="periodic"/>
+                                                <span className="flex flex-1">
+                                                    <span className="flex flex-col">
+                                                        <span className="flex items-center gap-2 block text-sm font-bold text-slate-900 dark:text-white">
+                                                            <span className="material-symbols-outlined text-slate-400">update</span>
+                                                            定期監視
+                                                        </span>
+                                                        <span className="mt-1 flex items-center text-sm text-slate-500 dark:text-slate-400">指定間隔（X分ごと）でこのURLを継続的に監視し、新着商品をチェックします。</span>
+                                                    </span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <div className="mt-2 bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+                                            <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-4 uppercase tracking-wider text-xs opacity-70">バッチ設定</h4>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="flex flex-col gap-2">
+                                                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">最大取得件数</label>
+                                                    <input className="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#101822] text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5" type="number" defaultValue="50"/>
+                                                    <p className="text-xs text-slate-500">スクレイピングする商品の最大数。</p>
+                                                </div>
+                                                <div className="flex flex-col gap-2">
+                                                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">取得ページ範囲</label>
+                                                    <select className="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#101822] text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5" defaultValue="最大5ページまで">
+                                                        <option>1ページ目のみ</option>
+                                                        <option>最大5ページまで</option>
+                                                        <option>無制限（最大件数まで）</option>
+                                                    </select>
+                                                    <p className="text-xs text-slate-500">ページネーションをどこまで辿るかを設定します。</p>
+                                                </div>
+                                                <div className="col-span-1 md:col-span-2 flex items-center gap-3 p-3 bg-slate-50 dark:bg-[#101822] rounded-lg border border-slate-200 dark:border-slate-700">
+                                                    <div className="flex items-center h-5">
+                                                        <input className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary bg-transparent" id="comments" name="comments" type="checkbox"/>
+                                                    </div>
+                                                    <div className="text-sm">
+                                                        <label className="font-medium text-slate-900 dark:text-white" htmlFor="comments">画像を保存</label>
+                                                        <p className="text-slate-500 dark:text-slate-400">CSVデータと共に商品画像をローカルに保存します。（ストレージを消費します）</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-primary">save</span>
+                                            <h3 className="text-xl font-bold leading-tight text-slate-900 dark:text-white">出力と保存</h3>
+                                        </div>
+                                        <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+                                            <div className="flex flex-col gap-1 w-full">
+                                                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">出力先ローカルパス</label>
+                                                <div className="flex items-center gap-2 font-mono text-sm bg-slate-100 dark:bg-[#101822] px-3 py-2 rounded border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 w-full md:w-auto overflow-x-auto">
+                                                    <span className="material-symbols-outlined text-base">folder_open</span>
+                                                    ./data/exports/mercari_export_v1.csv
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-4 shrink-0">
+                                                <div className="flex items-center gap-2">
+                                                    <input className="rounded border-slate-300 text-primary focus:ring-primary h-4 w-4 bg-transparent" id="append-mode" type="checkbox"/>
+                                                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300" htmlFor="append-mode">ファイルに追記する</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="sticky bottom-0 -mx-4 md:-mx-10 p-4 md:px-10 bg-surface-light/80 dark:bg-background-dark/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3 mt-4">
+                                        <button className="px-5 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" type="button">
+                                            設定をリセット
+                                        </button>
+                                        <button className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold text-white bg-primary hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all transform active:scale-95" type="button">
+                                            <span className="material-symbols-outlined text-[20px]">play_arrow</span>
+                                            保存してスクレイパーを起動
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        // --- Screen 3: Scraper ---
+        const Scraper = () => {
+            return (
+                <div className="flex h-screen w-full overflow-hidden">
+                    <Sidebar />
+                    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
+                        <div className="flex-1 overflow-y-auto p-4 md:p-8">
+                            <div className="max-w-[1200px] mx-auto flex flex-col gap-8">
+                                <div className="flex flex-col gap-2">
+                                    <h2 className="text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] text-slate-900 dark:text-white">スクレイパー</h2>
+                                    <p className="text-[#64748b] dark:text-[#9da8b9] text-sm font-medium">スクレイピングの実行と管理を行います。</p>
+                                </div>
+                                <div className="rounded-xl p-8 bg-white dark:bg-[#1e2329] border border-slate-200 dark:border-[#3b4554] shadow-sm flex flex-col items-center justify-center h-[400px] gap-4">
+                                    <span className="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600">construction</span>
+                                    <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300">準備中</h3>
+                                    <p className="text-slate-500">この機能は現在開発中です。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        // --- Screen 4: Converter ---
+        const Converter = () => {
+            return (
+                <div className="flex h-screen w-full overflow-hidden">
+                    <Sidebar />
+                    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
+                        <header className="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-slate-200 dark:border-slate-800 bg-surface-light/80 dark:bg-[#111418]/90 backdrop-blur-md px-4 sm:px-10 py-3 flex-shrink-0">
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">
+                                    <span className="material-symbols-outlined text-xl">transform</span>
+                                </div>
+                                <h2 className="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">コンバーター</h2>
+                            </div>
+                            <div className="flex flex-1 justify-end gap-8">
+                                <div className="flex items-center gap-2 sm:hidden">
+                                    <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+                                        <span className="material-symbols-outlined">menu</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </header>
+                        <div className="flex-1 overflow-y-auto">
+                            <div className="flex flex-col items-center py-10 px-4 sm:px-8">
+                            <div className="flex flex-col max-w-[1024px] w-full gap-8">
+                                <div className="flex flex-col gap-2">
+                                    <h1 className="text-3xl sm:text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white">マルチチャネルデータ変換</h1>
+                                    <p className="text-slate-500 dark:text-[#9da8b9] text-base sm:text-lg">メルカリの商品データを元に、AmazonおよびShopeeへの出品用データを作成・変換します。<code className="bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-sm text-primary font-mono">mapping.csv</code> をアップロードしてください。</p>
+                                </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                    <div className="lg:col-span-1 flex flex-col gap-6">
+                                        <div className="bg-surface-light dark:bg-[#1a2430] rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                                            <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">入力ソース</h3>
+                                            <div className="mb-5">
+                                                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">対応プラットフォームID (自動検出)</p>
+                                                <div className="grid grid-cols-1 gap-3">
+                                                    <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-[#202b3a] border border-slate-200 dark:border-slate-700">
+                                                        <div className="size-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400 flex-shrink-0">
+                                                            <span className="font-bold text-xs">M</span>
+                                                        </div>
+                                                        <div className="flex flex-col overflow-hidden">
+                                                            <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Mercari</span>
+                                                            <code className="text-[10px] text-slate-500 truncate">mercari_id</code>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col items-center gap-6 rounded-lg border-2 border-dashed border-slate-300 dark:border-[#3b4554] hover:border-primary dark:hover:border-primary hover:bg-slate-50 dark:hover:bg-[#202b3a] transition-all px-4 py-8 group cursor-pointer">
+                                                <div className="flex flex-col items-center gap-3 text-center">
+                                                    <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                                        <span className="material-symbols-outlined text-3xl">upload_file</span>
+                                                    </div>
+                                                    <div className="flex flex-col gap-1">
+                                                        <p className="font-bold text-slate-800 dark:text-white">mapping.csv をアップロード</p>
+                                                        <p className="text-sm text-slate-500 dark:text-slate-400">ドラッグ＆ドロップ または 選択</p>
+                                                    </div>
+                                                </div>
+                                                <button className="bg-slate-800 dark:bg-[#282f39] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary transition-colors">
+                                                    ファイルを選択
+                                                </button>
+                                            </div>
+                                            <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
+                                                <span className="material-symbols-outlined text-sm">lock</span>
+                                                <span>データはブラウザ内でローカルに処理されます。</span>
+                                            </div>
+                                        </div>
+                                        <div className="bg-surface-light dark:bg-[#1a2430] rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                                            <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white">変換ステータス</h3>
+                                            <div className="hidden flex flex-col items-center justify-center py-6 text-slate-400">
+                                                <span className="material-symbols-outlined text-4xl mb-2 opacity-50">pending</span>
+                                                <span className="text-sm">ファイルのアップロード待ち...</span>
+                                            </div>
+                                            <div className="flex flex-col gap-4">
+                                                <div className="flex justify-between items-end">
+                                                    <div className="flex gap-2 items-center">
+                                                        <span className="material-symbols-outlined text-green-500 text-sm">check_circle</span>
+                                                        <span className="text-sm font-medium text-slate-900 dark:text-white">CSV解析中</span>
+                                                    </div>
+                                                    <span className="text-xs text-slate-500">完了</span>
+                                                </div>
+                                                <div className="flex justify-between items-end">
+                                                    <div className="flex gap-2 items-center">
+                                                        <span className="material-symbols-outlined text-primary animate-pulse text-sm">sync</span>
+                                                        <span className="text-sm font-medium text-primary">データ変換中</span>
+                                                    </div>
+                                                    <span className="text-xs text-primary font-bold">処理中...</span>
+                                                </div>
+                                                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                                                    <div className="bg-primary h-2 rounded-full" style={{width: '65%'}}></div>
+                                                </div>
+                                                <p className="text-xs text-slate-500 text-right">230行中 150行を処理完了</p>
+                                            </div>
+                                        </div>
+                                        <div className="bg-surface-light dark:bg-[#1a2430] rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm opacity-50 pointer-events-none">
+                                            <div className="flex flex-col gap-3">
+                                                <div className="flex items-center justify-between">
+                                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">出力</h3>
+                                                    <span className="text-xs font-mono bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded text-slate-900 dark:text-white">0 件</span>
+                                                </div>
+                                                <button className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                                    <span className="material-symbols-outlined">download</span>
+                                                    変換データをダウンロード
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="lg:col-span-2 flex flex-col h-full">
+                                        <div className="bg-surface-light dark:bg-[#1a2430] rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col h-full min-h-[500px]">
+                                            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                                                <div>
+                                                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">出力プレビュー</h3>
+                                                    <p className="text-sm text-slate-500 dark:text-slate-400">Amazon在庫ファイル / Shopee出品データの確認</p>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button className="p-1.5 text-slate-500 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors" title="プレビューを更新">
+                                                        <span className="material-symbols-outlined text-xl">refresh</span>
+                                                    </button>
+                                                    <button className="p-1.5 text-slate-500 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors" title="最大化">
+                                                        <span className="material-symbols-outlined text-xl">open_in_full</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="flex-1 overflow-auto relative w-full">
+                                                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 z-10 bg-surface-light/50 dark:bg-[#1a2430]/50 backdrop-blur-sm hidden">
+                                                    <div className="size-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
+                                                        <span className="material-symbols-outlined text-4xl text-slate-400">table_view</span>
+                                                    </div>
+                                                    <h4 className="text-lg font-bold text-slate-700 dark:text-slate-200">プレビューするデータがありません</h4>
+                                                    <p className="text-slate-500 dark:text-slate-400 max-w-xs mt-2">マッピングファイルをアップロードしてTSV構造を確認してください。</p>
+                                                </div>
+                                                <table className="w-full text-left text-sm whitespace-nowrap">
+                                                    <thead className="bg-slate-50 dark:bg-[#111418] sticky top-0 z-10 shadow-sm text-slate-900 dark:text-white">
+                                                        <tr>
+                                                            <th className="px-4 py-3 font-mono text-xs font-semibold text-slate-500 uppercase tracking-wider">sku</th>
+                                                            <th className="px-4 py-3 font-mono text-xs font-semibold text-slate-500 uppercase tracking-wider">product-id</th>
+                                                            <th className="px-4 py-3 font-mono text-xs font-semibold text-slate-500 uppercase tracking-wider">product-id-type</th>
+                                                            <th className="px-4 py-3 font-mono text-xs font-semibold text-slate-500 uppercase tracking-wider">price</th>
+                                                            <th className="px-4 py-3 font-mono text-xs font-semibold text-slate-500 uppercase tracking-wider">item-condition</th>
+                                                            <th className="px-4 py-3 font-mono text-xs font-semibold text-slate-500 uppercase tracking-wider">quantity</th>
+                                                            <th className="px-4 py-3 font-mono text-xs font-semibold text-slate-500 uppercase tracking-wider">add-delete</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-mono text-slate-900 dark:text-white">
+                                                        <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                            <td className="px-4 py-3 text-primary">MERC-001-A</td>
+                                                            <td className="px-4 py-3">B08J5F3G1L</td>
+                                                            <td className="px-4 py-3 text-slate-500">1</td>
+                                                            <td className="px-4 py-3">24.99</td>
+                                                            <td className="px-4 py-3 text-green-500">11</td>
+                                                            <td className="px-4 py-3">1</td>
+                                                            <td className="px-4 py-3 text-slate-500">a</td>
+                                                        </tr>
+                                                        <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                            <td className="px-4 py-3 text-primary">MERC-002-B</td>
+                                                            <td className="px-4 py-3">B07H8L9K2M</td>
+                                                            <td className="px-4 py-3 text-slate-500">1</td>
+                                                            <td className="px-4 py-3">12.50</td>
+                                                            <td className="px-4 py-3 text-green-500">11</td>
+                                                            <td className="px-4 py-3">4</td>
+                                                            <td className="px-4 py-3 text-slate-500">a</td>
+                                                        </tr>
+                                                        <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                            <td className="px-4 py-3 text-primary">MERC-045-X</td>
+                                                            <td className="px-4 py-3">B09K4J5H6G</td>
+                                                            <td className="px-4 py-3 text-slate-500">1</td>
+                                                            <td className="px-4 py-3">89.00</td>
+                                                            <td className="px-4 py-3 text-yellow-500">2</td>
+                                                            <td className="px-4 py-3">1</td>
+                                                            <td className="px-4 py-3 text-slate-500">a</td>
+                                                        </tr>
+                                                        <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                            <td className="px-4 py-3 text-primary">MERC-099-Z</td>
+                                                            <td className="px-4 py-3">B01M2N3B4V</td>
+                                                            <td className="px-4 py-3 text-slate-500">1</td>
+                                                            <td className="px-4 py-3">15.00</td>
+                                                            <td className="px-4 py-3 text-green-500">11</td>
+                                                            <td className="px-4 py-3">2</td>
+                                                            <td className="px-4 py-3 text-slate-500">a</td>
+                                                        </tr>
+                                                        <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                            <td className="px-4 py-3 text-primary">MERC-102-Q</td>
+                                                            <td className="px-4 py-3">B08P5O9I8U</td>
+                                                            <td className="px-4 py-3 text-slate-500">1</td>
+                                                            <td className="px-4 py-3">45.99</td>
+                                                            <td className="px-4 py-3 text-green-500">11</td>
+                                                            <td className="px-4 py-3">1</td>
+                                                            <td className="px-4 py-3 text-slate-500">a</td>
+                                                        </tr>
+                                                        <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                            <td className="px-4 py-3 text-primary">MERC-156-W</td>
+                                                            <td className="px-4 py-3">B07V4C3X2Z</td>
+                                                            <td className="px-4 py-3 text-slate-500">1</td>
+                                                            <td className="px-4 py-3">9.99</td>
+                                                            <td className="px-4 py-3 text-green-500">11</td>
+                                                            <td className="px-4 py-3">10</td>
+                                                            <td className="px-4 py-3 text-slate-500">a</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#111418] rounded-b-xl flex justify-between items-center text-xs text-slate-500">
+                                                <span>全42件中 最初の6件を表示</span>
+                                                <div className="flex gap-2">
+                                                    <span className="px-2 py-1 rounded bg-slate-200 dark:bg-slate-800">UTF-8</span>
+                                                    <span className="px-2 py-1 rounded bg-slate-200 dark:bg-slate-800">タブ区切り</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="w-full">
+                                    <details className="group bg-surface-light dark:bg-[#1a2430] border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden" open="">
+                                        <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-900 dark:text-white">
+                                            <div className="flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-slate-400 group-open:rotate-90 transition-transform">chevron_right</span>
+                                                <span>変換ログ</span>
+                                            </div>
+                                            <span className="text-xs text-slate-400">最終更新: たった今</span>
+                                        </summary>
+                                        <div className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0d1218] p-4 font-mono text-xs leading-relaxed max-h-40 overflow-y-auto">
+                                            <div className="flex gap-2">
+                                                <span className="text-slate-400">[10:42:01]</span>
+                                                <span className="text-blue-500">INFO</span>
+                                                <span className="text-slate-600 dark:text-slate-300">ファイル「mapping.csv」が正常にアップロードされました (245KB)。</span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <span className="text-slate-400">[10:42:02]</span>
+                                                <span className="text-blue-500">INFO</span>
+                                                <span className="text-slate-600 dark:text-slate-300">CSVヘッダーを解析中... 検出: mercari_id, shopee_item_id, title...</span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <span className="text-slate-400">[10:42:03]</span>
+                                                <span className="text-yellow-500">WARN</span>
+                                                <span className="text-slate-600 dark:text-slate-300">行 42: 「Condition」が見つかりません。「New」をデフォルトとして使用します。</span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <span className="text-slate-400">[10:42:05]</span>
+                                                <span className="text-green-500">SUCCESS</span>
+                                                <span className="text-slate-600 dark:text-slate-300">変換完了。42件のアイテムが出力可能です。</span>
+                                            </div>
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <MemoryRouter>
+                    <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/scraper" element={<Scraper />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/converter" element={<Converter />} />
+                    </Routes>
+                </MemoryRouter>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
