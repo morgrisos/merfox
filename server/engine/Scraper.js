@@ -3,6 +3,8 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 const { stringify } = require('csv-stringify/sync');
+const { ExportService } = require('./ExportService');
+const { AsinService } = require('./AsinService');
 
 class Scraper extends EventEmitter {
     constructor(runId, mode, targetUrl, config) {
@@ -77,7 +79,11 @@ class Scraper extends EventEmitter {
             const dateStr = new Date().toISOString().split('T')[0];
             // Fix: Use resolve to be absolutely sure where we are
             // __dirname is server/engine, so ../runs is server/runs
-            this.runDir = path.resolve(__dirname, '../runs', `${dateStr}_${this.runId}`);
+            const runsRoot = process.env.MERFOX_RUNS_DIR
+                ? path.resolve(process.env.MERFOX_RUNS_DIR)
+                : path.resolve(__dirname, '../runs');
+
+            this.runDir = path.join(runsRoot, `${dateStr}_${this.runId}`);
 
             console.log(`[Scraper] Creating run dir: ${this.runDir}`);
 
@@ -108,6 +114,22 @@ class Scraper extends EventEmitter {
                 fs.writeFileSync(outputPath, csvData);
                 this.log(`RAW CSVを保存しました: ${outputPath}`, 'success');
 
+                // [P4 Restoration] Call services
+                this.log('Amazon TSVへの変換を開始します...', 'info');
+
+                // P4.2 ASIN
+                const asinResult = await AsinService.run(this.runDir, this.items);
+                this.stats = { ...this.stats, ...asinResult }; // Merge asinStats
+
+                // P4.1 Profit & Export
+                // Pass config options if any
+                const exportResult = await ExportService.run(this.runDir, this.items, this.config);
+                this.stats = { ...this.stats, ...exportResult }; // Merge profitStats, exportStats
+
+                this.log(`変換完了: Success=${this.stats.exportStats.tsv_rows} Failed=${this.stats.exportStats.failed_rows}`, 'success');
+
+                this.logSummary(); // Write detailed summary to log
+
                 // Extract IDs of successfully processed items for history update
                 const successfulItemIds = this.items.map(i => i.item_id);
 
@@ -124,6 +146,14 @@ class Scraper extends EventEmitter {
                     const outputPath = path.join(this.runDir, 'raw.csv');
                     const csvData = stringify([], { header: true, bom: true, columns: CSV_COLUMNS });
                     fs.writeFileSync(outputPath, csvData);
+
+                    // [P4 Restoration] Even if empty, run services to generate empty artifacts
+                    const asinResult = await AsinService.run(this.runDir, []); // Empty
+                    this.stats = { ...this.stats, ...asinResult };
+                    const exportResult = await ExportService.run(this.runDir, [], this.config);
+                    this.stats = { ...this.stats, ...exportResult };
+
+                    this.logSummary();
                 }
                 this.emit('done', {
                     success: true,
@@ -316,6 +346,26 @@ class Scraper extends EventEmitter {
         } catch (e) {
             throw e;
         }
+    }
+
+    logSummary() {
+        const stats = this.stats;
+        this.log(`RUN SUMMARY (runId: ${this.runId})`);
+
+        // Export Stats
+        const exp = stats.exportStats || { tsv_rows: 0, failed_rows: 0, reasons_top: 'none' };
+        this.log(`Export: tsv_rows=${exp.tsv_rows} failed_rows=${exp.failed_rows} reasons_top=${exp.reasons_top}`);
+
+        // Calc Stats
+        const prof = stats.profitStats || { profit_rows: 0, failed_rows: 0, reasons_top: 'none' };
+        this.log(`Calc: profit_rows=${prof.profit_rows} failed_rows=${prof.failed_rows} reasons_top=${prof.reasons_top}`);
+
+        // ASIN Stats
+        const asin = stats.asinStats || { matched_rows: 0, failed_rows: 0, reasons_top: 'none' };
+        this.log(`ASIN: matched_rows=${asin.matched_rows} failed_rows=${asin.failed_rows} reasons_top=${asin.reasons_top}`);
+
+        // CSV Stats
+        // this.log(`CSV: total=${stats.total} success=${stats.success} failed=${stats.failed} excluded=${stats.excluded}`);
     }
 }
 

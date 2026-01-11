@@ -11,7 +11,9 @@ const PORT = 3001;
 
 // Storage setup
 const storageDir = path.resolve(__dirname, 'storage');
-const runsDir = path.resolve(__dirname, 'runs');
+const runsDir = process.env.MERFOX_RUNS_DIR
+    ? path.resolve(process.env.MERFOX_RUNS_DIR)
+    : path.resolve(__dirname, 'runs');
 const dataDir = path.resolve(__dirname, 'data');
 
 const jobManager = new JobManager(dataDir);
