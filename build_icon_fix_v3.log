@@ -1,0 +1,51 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 2.1s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/8) ...
+  Generating static pages using 7 workers (2/8) 
+  Generating static pages using 7 workers (4/8) 
+  Generating static pages using 7 workers (6/8) 
+✓ Generating static pages using 7 workers (8/8) in 110.8ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/runs
+├ ○ /converter
+├ ○ /csv
+├ ○ /scraper
+└ ○ /settings
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+  • electron-builder  version=26.4.0 os=23.5.0
+  • loaded configuration  file=package.json ("build" field)
+  • author is missed in the package.json  appPackageFile=/Users/yuga/VSCode/merfox/package.json
+  • executing @electron/rebuild  electronVersion=39.2.7 arch=arm64 buildFromSource=false workspaceRoot=/Users/yuga/VSCode/merfox projectDir=./ appDir=./
+  • installing native dependencies  arch=arm64
+  • completed installing native dependencies
+  • packaging       platform=darwin arch=arm64 electron=39.2.7 appOutDir=dist/mac-arm64
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • cannot find path for dependency  name=undefined reference=undefined
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • falling back to ad-hoc signature for macOS application code signing
+  • signing         file=dist/mac-arm64/MerFox.app platform=darwin type=distribution identityName=- identityHash=none provisioningProfile=none
+  • skipped macOS notarization  reason=`notarize` options were unable to be generated
+  • building        target=macOS zip arch=arm64 file=dist/MerFox-0.1.0-arm64-mac.zip
+  • building        target=DMG arch=arm64 file=dist/MerFox-0.1.0-arm64.dmg
+  • building block map  blockMapFile=dist/MerFox-0.1.0-arm64.dmg.blockmap
+  • building block map  blockMapFile=dist/MerFox-0.1.0-arm64-mac.zip.blockmap

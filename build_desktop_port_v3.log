@@ -1,0 +1,26 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1676.5ms
+  Running TypeScript ...
+Failed to compile.
+
+./src/components/Steps/StepCollect.tsx:15:59
+Type error: Type '"watch"' is not assignable to type '"url" | "keyword"'.
+
+[0m [90m 13 |[39m             [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-2 gap-4"[39m[33m>[39m
+ [90m 14 |[39m                 [33m<[39m[33mbutton[39m
+[31m[1m>[22m[39m[90m 15 |[39m                     onClick[33m=[39m{() [33m=>[39m setConfig({ [33m...[39mconfig[33m,[39m mode[33m:[39m [32m'watch'[39m })}
+ [90m    |[39m                                                           [31m[1m^[22m[39m
+ [90m 16 |[39m                     className[33m=[39m{[32m`p-6 rounded-xl border-2 text-left transition relative overflow-hidden group ${config.mode === 'watch'[39m
+ [90m 17 |[39m [32m                            ? 'border-red-500 bg-red-500/10'[39m
+ [90m 18 |[39m [32m                            : 'border-gray-700 hover:border-gray-500 bg-gray-800/30'[39m[0m
+Next.js build worker exited with code: 1 and signal: null

@@ -1,0 +1,29 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 2.6s
+  Running TypeScript ...
+Failed to compile.
+
+./src/views/csv/index.tsx:6:11
+Type error: Interface 'ExtendedRunRecord' incorrectly extends interface 'RunRecord'.
+  Types of property 'failureReasons' are incompatible.
+    Type '{ reason: string; count: number; }[] | undefined' is not assignable to type 'FailureDetail[]'.
+      Type 'undefined' is not assignable to type 'FailureDetail[]'.
+
+[0m [90m 4 |[39m
+ [90m 5 |[39m [90m// Extend RunRecord locally if types are missing fields[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36minterface[39m [33mExtendedRunRecord[39m [36mextends[39m [33mRunRecord[39m {
+ [90m   |[39m           [31m[1m^[22m[39m
+ [90m 7 |[39m     failureReasons[33m?[39m[33m:[39m { reason[33m:[39m string[33m;[39m count[33m:[39m number }[][33m;[39m
+ [90m 8 |[39m     failedUrls[33m?[39m[33m:[39m { url[33m:[39m string[33m;[39m reason[33m:[39m string[33m;[39m title[33m:[39m string }[][33m;[39m
+ [90m 9 |[39m     path[33m?[39m[33m:[39m string[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null

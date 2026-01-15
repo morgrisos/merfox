@@ -1,0 +1,5 @@
+npm error code EJSONPARSE
+npm error JSON.parse Invalid package.json: JSONParseError: Expected ':' after property name in JSON at position 1544 (line 53 column 25) while parsing near "...\"dist-electron/**/*\",\n    \"package.json\"..."
+npm error JSON.parse Failed to parse JSON data.
+npm error JSON.parse Note: package.json must be actual JSON, not just JavaScript.
+npm error A complete log of this run can be found in: /Users/yuga/.npm/_logs/2026-01-14T16_01_21_494Z-debug-0.log

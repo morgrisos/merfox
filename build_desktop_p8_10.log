@@ -1,0 +1,45 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 2.4s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/8) ...
+  Generating static pages using 7 workers (2/8) 
+  Generating static pages using 7 workers (4/8) 
+  Generating static pages using 7 workers (6/8) 
+✓ Generating static pages using 7 workers (8/8) in 146.4ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/preview
+├ ƒ /api/start
+├ ƒ /api/status
+└ ƒ /api/stop
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+src/lib/services/scraper-service.ts(1,47): error TS2307: Cannot find module '@/lib/types' or its corresponding type declarations.
+src/lib/services/scraper-service.ts(13,21): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(14,23): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(18,21): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(19,23): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(23,21): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(24,23): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(28,21): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(29,23): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(33,21): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(34,23): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?
+src/lib/services/scraper-service.ts(145,49): error TS2551: Property 'electron' does not exist on type 'Window & typeof globalThis'. Did you mean 'Electron'?

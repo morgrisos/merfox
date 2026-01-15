@@ -1,0 +1,87 @@
+{
+  "name": "merfox",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mercari to Amazon Cross-Listing Tool",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/morgrisos/merfox.git"
+  },
+  "main": "dist-electron/electron/main.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && tsc -p src/electron/tsconfig.json && cross-env NODE_ENV=development electron .\"",
+    "build-desktop": "npm run build && tsc -p src/electron/tsconfig.json && electron-builder"
+  },
+  "dependencies": {
+    "@types/papaparse": "^5.5.2",
+    "axios": "^1.13.2",
+    "clsx": "^2.1.1",
+    "csv-parse": "^6.1.0",
+    "csv-stringify": "^6.6.0",
+    "electron-log": "^5.4.3",
+    "electron-updater": "^6.7.3",
+    "iconv-lite": "^0.7.2",
+    "lucide-react": "^0.562.0",
+    "next": "16.1.1",
+    "papaparse": "^5.5.3",
+    "puppeteer": "^24.34.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.17",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^39.2.7",
+    "electron-builder": "^26.4.0",
+    "electron-squirrel-startup": "^1.0.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5",
+    "wait-on": "^9.0.3"
+  },
+  "build": {
+    "appId": "com.merfox.app",
+    "productName": "MerFox",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist-electron/**/*",
+      "package.json",
+      "node_modules/**/*",
+      ".next/**/*",
+      "public/**/*"
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "morgrisos",
+        "repo": "merfox"
+      }
+    ],
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.business",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "asar": false
+  }
+}

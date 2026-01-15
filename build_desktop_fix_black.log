@@ -1,0 +1,94 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 2.4s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/8) ...
+  Generating static pages using 7 workers (2/8) 
+  Generating static pages using 7 workers (4/8) 
+  Generating static pages using 7 workers (6/8) 
+✓ Generating static pages using 7 workers (8/8) in 150.8ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/preview
+├ ƒ /api/start
+├ ƒ /api/status
+└ ƒ /api/stop
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+  • electron-builder  version=26.4.0 os=23.5.0
+  • loaded configuration  file=package.json ("build" field)
+  • author is missed in the package.json  appPackageFile=/Users/yuga/VSCode/merfox/package.json
+  • executing @electron/rebuild  electronVersion=39.2.7 arch=arm64 buildFromSource=false workspaceRoot=/Users/yuga/VSCode/merfox projectDir=./ appDir=./
+  • installing native dependencies  arch=arm64
+  • completed installing native dependencies
+  • packaging       platform=darwin arch=arm64 electron=39.2.7 appOutDir=dist/mac-arm64
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • cannot find path for dependency  name=undefined reference=undefined
+  • default Electron icon is used  reason=application icon is not set
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • falling back to ad-hoc signature for macOS application code signing
+  • signing         file=dist/mac-arm64/MerFox.app platform=darwin type=distribution identityName=- identityHash=none provisioningProfile=none
+  • skipped macOS notarization  reason=`notarize` options were unable to be generated
+  • building        target=macOS zip arch=arm64 file=dist/MerFox-0.1.0-arm64-mac.zip
+  • building        target=DMG arch=arm64 file=dist/MerFox-0.1.0-arm64.dmg
+  • building block map  blockMapFile=dist/MerFox-0.1.0-arm64.dmg.blockmap
+  ⨯ /Users/yuga/VSCode/merfox/node_modules/7zip-bin/mac/arm64/7za process failed 255
+Exit code:
+255
+Output:
+Exit code: 255. Command failed: /Users/yuga/VSCode/merfox/node_modules/7zip-bin/mac/arm64/7za a -bd -mx=7 -mtc=off -mm=Deflate -mcu /Users/yuga/VSCode/merfox/dist/MerFox-0.1.0-arm64-mac.zip MerFox.app
+
+
+Break signaled
+
+
+7-Zip (a) [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=utf8,Utf16=on,HugeFiles=on,64 bits,8 CPUs LE)
+
+Scanning the drive:
+1542 folders, 15372 files, 706094306 bytes (674 MiB)
+
+Creating archive: /Users/yuga/VSCode/merfox/dist/MerFox-0.1.0-arm64-mac.zip
+
+Items to compress: 16914
+
+
+
+
+Break signaled
+  failedTask=build stackTrace=Error: /Users/yuga/VSCode/merfox/node_modules/7zip-bin/mac/arm64/7za process failed 255
+Exit code:
+255
+Output:
+Exit code: 255. Command failed: /Users/yuga/VSCode/merfox/node_modules/7zip-bin/mac/arm64/7za a -bd -mx=7 -mtc=off -mm=Deflate -mcu /Users/yuga/VSCode/merfox/dist/MerFox-0.1.0-arm64-mac.zip MerFox.app
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Break signaled
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  7-Zip (a) [64] 16.02 : Copyright (c) 1999-2016 Igor Pavlov : 2016-05-21
+p7zip Version 16.02 (locale=utf8,Utf16=on,HugeFiles=on,64 bits,8 CPUs LE)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Scanning the drive:
+1542 folders, 15372 files, 706094306 bytes (674 MiB)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Creating archive: /Users/yuga/VSCode/merfox/dist/MerFox-0.1.0-arm64-mac.zip
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Items to compress: 16914
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Break signaled
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      at /Users/yuga/VSCode/merfox/node_modules/builder-util/src/util.ts:155:18
+    at ChildProcess.exithandler (node:child_process:424:5)
+    at ChildProcess.emit (node:events:508:28)
+    at maybeClose (node:internal/child_process:1085:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:508:28)
+    at Pipe.<anonymous> (node:net:346:12)

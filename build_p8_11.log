@@ -1,0 +1,69 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./src/views/csv/index.tsx:140:88
+Parsing ecmascript source code failed
+[0m [90m 138 |[39m                                                             [33m<[39m[33mdiv[39m className[33m=[39m[32m"flex flex-col"[39m[33m>[39m
+ [90m 139 |[39m                                                                 [33m<[39m[33mspan[39m className[33m=[39m[32m"text-xs text-slate-400"[39m[33m>[39m失敗[33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+[31m[1m>[22m[39m[90m 140 |[39m                                                                 [33m<[39m[33mspan[39m className[33m=[39m{}[33m>[39m{run[33m.[39mstats[33m?[39m[33m.[39mfailed [33m||[39m [35m0[39m}[33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+ [90m     |[39m                                                                                        [31m[1m^[22m[39m
+ [90m 141 |[39m                                                             [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 142 |[39m                                                         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 143 |[39m                                                     [33m<[39m[33m/[39m[33mtd[39m[33m>[39m[0m
+
+Expected a semicolon
+
+Import traces:
+  Client Component Browser:
+    ./src/views/csv/index.tsx [Client Component Browser]
+    ./src/app/csv/page.tsx [Client Component Browser]
+    ./src/app/csv/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/views/csv/index.tsx [Client Component SSR]
+    ./src/app/csv/page.tsx [Client Component SSR]
+    ./src/app/csv/page.tsx [Server Component]
+
+
+./src/views/csv/index.tsx:140:83
+Parsing ecmascript source code failed
+[0m [90m 138 |[39m                                                             [33m<[39m[33mdiv[39m className[33m=[39m[32m"flex flex-col"[39m[33m>[39m
+ [90m 139 |[39m                                                                 [33m<[39m[33mspan[39m className[33m=[39m[32m"text-xs text-slate-400"[39m[33m>[39m失敗[33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+[31m[1m>[22m[39m[90m 140 |[39m                                                                 [33m<[39m[33mspan[39m className[33m=[39m{}[33m>[39m{run[33m.[39mstats[33m?[39m[33m.[39mfailed [33m||[39m [35m0[39m}[33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+ [90m     |[39m                                                                                   [31m[1m^[22m[39m
+ [90m 141 |[39m                                                             [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 142 |[39m                                                         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 143 |[39m                                                     [33m<[39m[33m/[39m[33mtd[39m[33m>[39m[0m
+
+Expression expected
+
+Import traces:
+  Client Component Browser:
+    ./src/views/csv/index.tsx [Client Component Browser]
+    ./src/app/csv/page.tsx [Client Component Browser]
+    ./src/app/csv/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/views/csv/index.tsx [Client Component SSR]
+    ./src/app/csv/page.tsx [Client Component SSR]
+    ./src/app/csv/page.tsx [Server Component]
+
+
+    at <unknown> (./src/views/csv/index.tsx:140:88)
+    at <unknown> (./src/views/csv/index.tsx:140:83)
+npm notice
+npm notice New minor version of npm available! 11.6.2 -> 11.7.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+npm notice To update run: npm install -g npm@11.7.0
+npm notice

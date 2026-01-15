@@ -1,0 +1,26 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.1s
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/api/start/route.ts:3:10
+Type error: Module '"@/lib/types"' has no exported member 'ScraperConfig'.
+
+[0m [90m 1 |[39m [36mimport[39m { [33mNextResponse[39m } [36mfrom[39m [32m'next/server'[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { scraperManager } [36mfrom[39m [32m'@/lib/manager'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mScraperConfig[39m } [36mfrom[39m [32m'@/lib/types'[39m[33m;[39m
+ [90m   |[39m          [31m[1m^[22m[39m
+ [90m 4 |[39m
+ [90m 5 |[39m [36mexport[39m [36masync[39m [36mfunction[39m [33mPOST[39m(req[33m:[39m [33mRequest[39m) {
+ [90m 6 |[39m     [36mtry[39m {[0m
+Next.js build worker exited with code: 1 and signal: null
