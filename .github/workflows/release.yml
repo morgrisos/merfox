@@ -85,37 +85,32 @@ jobs:
         shell: bash
         run: |
           echo "Canonicalizing Auto-Update Metadata..."
-          
-          # Debug
-          echo "Listing all release-dist contents:"
+          echo "TAG=${{ github.ref_name }}"
+          pwd
           ls -R release-dist
           
-          # Mac: Find latest-mac*.yml
-          MAC_YML=$(find release-dist -type f -name "latest-mac*.yml" | head -n 1)
-          if [ -n "$MAC_YML" ]; then
-            echo "Found Mac YML: $MAC_YML"
-            cp "$MAC_YML" release-dist/latest-mac.yml
-          else
-            echo "::error::No latest-mac*.yml found in artifacts!"
-            ls -R release-dist # context
-            exit 1
-          fi
+          echo "Searching for source yml files..."
+          find release-dist -maxdepth 4 -name 'latest*.yml' -print -exec ls -lah {} \;
 
-          # Windows: Find latest*.yml (excluding mac)
-          WIN_YML=$(find release-dist -type f -name "latest*.yml" ! -name "*mac*" | head -n 1)
-          if [ -n "$WIN_YML" ]; then
-            echo "Found Win YML: $WIN_YML"
-            cp "$WIN_YML" release-dist/latest.yml
-          else
-            echo "::error::No latest*.yml (win) found in artifacts!"
-            exit 1
-          fi
+          # Find Source Files
+          MAC_SRC=$(find release-dist -maxdepth 4 \( -name 'latest-mac*.yml' -o -name 'latest-mac*.yaml' \) | head -n 1)
+          # Win source is latest*.yml excluding mac
+          WIN_SRC=$(find release-dist -maxdepth 4 \( -name 'latest*.yml' -o -name 'latest*.yaml' \) | grep -v 'latest-mac' | head -n 1)
           
-          # Verify Canonical
-          if [ ! -f "release-dist/latest-mac.yml" ]; then echo "::error::Failed to create latest-mac.yml"; exit 1; fi
-          if [ ! -f "release-dist/latest.yml" ]; then echo "::error::Failed to create latest.yml"; exit 1; fi
+          echo "MAC_SRC detected: $MAC_SRC"
+          echo "WIN_SRC detected: $WIN_SRC"
+
+          # Strict Existence Check
+          if [ -z "$MAC_SRC" ]; then echo "::error::no mac yml found"; exit 1; fi
+          if [ -z "$WIN_SRC" ]; then echo "::error::no win yml found"; exit 1; fi
+
+          # Copy to Canonical
+          cp "$MAC_SRC" release-dist/latest-mac.yml
+          cp "$WIN_SRC" release-dist/latest.yml
           
-          echo "Canonical files prepared."
+          # Verify Creation on Disk
+          echo "--- Canonical Files Created ---"
+          ls -lah release-dist/latest-mac.yml release-dist/latest.yml
 
       - name: Create Release & Upload Assets
         uses: softprops/action-gh-release@v2
@@ -134,7 +129,30 @@ jobs:
           fail_on_unmatched_files: true
           make_latest: true
 
-      - name: Verify Release Assets (Strict)
+      - name: Verify Uploaded Assets (API Name Check)
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Verifying API Asset Names for $TAG..."
+          sleep 10
+          
+          # Fetch Release JSON
+          curl -sfL -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG" > release.json
+          
+          # Debug: List all names
+          echo "--- Assets on GitHub ---"
+          jq -r '.assets[].name' release.json
+          
+          # Strict Canonical Name Existence Check
+          jq -e '(.assets | map(.name) | any(.=="latest-mac.yml"))' release.json >/dev/null || (echo "::error::latest-mac.yml MISSING in GitHub Assets"; exit 1)
+          jq -e '(.assets | map(.name) | any(.=="latest.yml"))' release.json >/dev/null || (echo "::error::latest.yml MISSING in GitHub Assets"; exit 1)
+          
+          echo "API Verification Passed: Canonical names exist."
+
+      - name: Verify Release Assets (Strict URL)
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         env:
@@ -142,26 +160,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          echo "=== VERIFICATION START ==="
-          echo "TAG=$TAG"
-          echo "REPO=${{ github.repository }}"
-          echo "=========================="
+          echo "=== URL VERIFICATION START ==="
           
-          sleep 5 # Initial delay for API propagation
-          
-          # 1. Fetch JSON
-          curl -sfL -H "Authorization: Bearer $GH_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG" > release.json
-          
-          # 2. List Assets
-          echo "--- Assets Found ---"
-          jq -r '.assets[] | "\(.name) | \(.size) bytes | \(.browser_download_url)"' release.json
-          
-          # 3. Canonical Availability Check with Retry
-          echo "--- HTTP Availability Check (Canonical with Retry) ---"
-          REPO="${{ github.repository }}"
-          BASE="https://github.com/$REPO/releases/download/$TAG"
-          
+          # Retry Logic for Propagation
           check_url_retry() {
             local url=$1
             echo "Checking: $url"
@@ -180,6 +181,9 @@ jobs:
             return 1
           }
 
+          REPO="${{ github.repository }}"
+          BASE="https://github.com/$REPO/releases/download/$TAG"
+          
           echo "Verifying Mac Canonical..."
           CODE_MAC=$(check_url_retry "$BASE/latest-mac.yml")
           
@@ -188,16 +192,15 @@ jobs:
           
           echo "SUCCESS: Canonical assets verified."
 
-          # 5. Write to Job Summary
+          # Job Summary
           {
             echo "## Gate G Evidence ($TAG)"
+            echo "### Assets List"
+            jq -r '.assets[].name' release.json | sed 's/^/- /'
             echo ""
-            echo "### canonical verify"
+            echo "### URL Check"
             echo "- [$CODE_MAC] $BASE/latest-mac.yml"
             echo "- [$CODE_WIN] $BASE/latest.yml"
-            echo ""
-            echo "### assets list"
-            jq -r '.assets[].name' release.json | sed 's/^/- /'
             echo ""
             echo "**SUCCESS: All assets verified and downloadable.**"
           } >> "$GITHUB_STEP_SUMMARY"
