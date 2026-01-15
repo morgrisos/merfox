@@ -68,12 +68,20 @@ jobs:
           # Ensure dist exists
           mkdir -p dist
           
-          # Find and copy all latest*.yml (Bash 3.2 compatible)
-          find . -type f -name "latest*.yml" -exec cp -v {} dist/ \;
+          # Find files first to debug
+          find . -type f -name "latest*.yml" -print
           
-          # Check if we found anything
+          # Capture found files (Bash 3.2 safe: find + while read)
+          FOUND=0
+          find . -type f -name "latest*.yml" -print0 | while IFS= read -r -d '' file; do
+             echo "Copying $file..."
+             cp -f "$file" dist/
+             FOUND=1
+          done || true
+          
+          # Check via ls because loop runs in subshell
           if ! ls dist/latest*.yml >/dev/null 2>&1; then
-             echo "::error::latest*.yml not found anywhere"
+             echo "::error::No latest*.yml found in workspace to copy!"
              exit 1
           fi
           
@@ -91,13 +99,19 @@ jobs:
              fi
           else
              # Mac
-             MAC_SRC=$(find dist -name 'latest*.yml' | head -n 1)
-             cp -f "$MAC_SRC" dist/latest-mac.yml
-             # Remove non-canonical to avoid confusion/overwrites if merged (though we now split)
-             rm -f dist/latest.yml || true
-             echo "Renamed $MAC_SRC -> dist/latest-mac.yml"
+             # Look for latest-mac.yml first (preferred)
+             if [ -f "dist/latest-mac.yml" ]; then
+                echo "OK: latest-mac.yml exists"
+             else
+                 # If not, use whatever we found
+                 MAC_SRC=$(find dist -name 'latest*.yml' | head -n 1)
+                 cp -f "$MAC_SRC" dist/latest-mac.yml
+                 echo "Renamed $MAC_SRC -> dist/latest-mac.yml"
+             fi
+             # Do NOT remove latest.yml here, let Upload Artifacts handle everything in dist
           fi
           
+          echo "=== Final Dist Content ==="
           ls -lah dist
 
       - name: Upload Artifacts
