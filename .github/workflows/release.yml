@@ -154,10 +154,17 @@ jobs:
 
           echo "=== [DEBUG] Final Dist Content ==="
           ls -lah dist
+          
+          # VALIDATE ARTIFACTS
+          if [ "${{ runner.os }}" == "Windows" ]; then
+             if [ -z "$(find dist -name '*.exe')" ]; then echo "::error::No .exe found in dist!"; exit 1; fi
+          else
+             if [ -z "$(find dist -name '*.zip')" ] && [ -z "$(find dist -name '*.dmg')" ]; then echo "::error::No .zip or .dmg found in dist!"; exit 1; fi
+          fi
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
-        if: always() # Ensure we try to upload even if something weird happens, though we expect success
+        if: always()
         with:
           name: dist-${{ matrix.os }}
           path: dist/
@@ -206,22 +213,36 @@ jobs:
           if [ ! -f release-dist/windows/latest.yml ]; then echo "::error::Missing latest.yml"; exit 1; fi
           echo "SUCCESS: Key assets found."
 
-      - name: Create Release & Upload Assets
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            release-dist/macos/**/*.dmg
-            release-dist/macos/**/*.zip
-            release-dist/macos/**/latest-mac.yml
-            release-dist/windows/**/*.exe
-            release-dist/windows/**/*.yml
-            release-dist/windows/**/latest.yml
-            release-dist/**/*.blockmap
-          fail_on_unmatched_files: false
-          token: ${{ secrets.GITHUB_TOKEN }}
-          draft: false
-          prerelease: false
+      - name: Create Release & Upload Assets (gh cli)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -e
+          echo "Creating Release $TAG via gh cli..."
+          
+          # Collect Assets
+          ASSETS=()
+          for f in release-dist/macos/*.dmg release-dist/macos/*.zip release-dist/macos/latest-mac.yml release-dist/windows/*.exe release-dist/windows/*.yml release-dist/windows/latest.yml release-dist/*.blockmap; do
+            if [ -f "$f" ]; then
+               ASSETS+=("$f")
+            fi
+          done
+          
+          echo "Assets to upload:"
+          printf '%s\n' "${ASSETS[@]}"
+          
+          # Retry creation (tag propagation delay)
+          for i in {1..5}; do
+             if gh release create "$TAG" "${ASSETS[@]}" --title "Release $TAG" --notes "Auto-generated release for $TAG" --repo "${{ github.repository }}"; then
+                echo "Release created successfully."
+                exit 0
+             fi
+             echo "Release creation failed, retrying in 5s... ($i/5)"
+             sleep 5
+          done
+          echo "::error::Failed to create release after retries."
+          exit 1
 
       - name: Verify Uploaded Assets (API)
         env:
