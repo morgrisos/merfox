@@ -1,0 +1,27 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1657.0ms
+  Running TypeScript ...
+Failed to compile.
+
+./src/lib/scraper/scrapers.ts:73:9
+Type error: Type '"completed" | "failed"' is not assignable to type '"idle" | "running" | "paused" | "completed" | "error" | "stopping"'.
+  Type '"failed"' is not assignable to type '"idle" | "running" | "paused" | "completed" | "error" | "stopping"'.
+
+[0m [90m 71 |[39m             [36mthis[39m[33m.[39mbrowser [33m=[39m [36mnull[39m[33m;[39m
+ [90m 72 |[39m         }
+[31m[1m>[22m[39m[90m 73 |[39m         [36mthis[39m[33m.[39mstats[33m.[39mstatus [33m=[39m [36mthis[39m[33m.[39mstats[33m.[39merrors [33m>[39m [35m10[39m [33m?[39m [32m'failed'[39m [33m:[39m [32m'completed'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 74 |[39m     }
+ [90m 75 |[39m
+ [90m 76 |[39m     [36mprivate[39m [36masync[39m runBulkMode(url[33m:[39m string) {[0m
+Next.js build worker exited with code: 1 and signal: null

@@ -1,0 +1,26 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1670.4ms
+  Running TypeScript ...
+Failed to compile.
+
+./src/lib/scraper/parser.ts:57:13
+Type error: Type '"normal"' is not assignable to type 'ShopType'.
+
+[0m [90m 55 |[39m         [36mif[39m ([33m![39mitemId [33m||[39m [33m![39mdata[33m.[39mtitle) [36mreturn[39m [36mnull[39m[33m;[39m
+ [90m 56 |[39m
+[31m[1m>[22m[39m[90m 57 |[39m         [36mlet[39m sellerType[33m:[39m [33mShopType[39m [33m=[39m [32m'normal'[39m[33m;[39m
+ [90m    |[39m             [31m[1m^[22m[39m
+ [90m 58 |[39m         [36mif[39m (data[33m.[39misShops) sellerType [33m=[39m [32m'shops'[39m[33m;[39m
+ [90m 59 |[39m         [90m// Unknown logic: if we can't determine, maybe unknown. But for now default normal unless shops detected.[39m
+ [90m 60 |[39m[0m
+Next.js build worker exited with code: 1 and signal: null

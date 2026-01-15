@@ -1,0 +1,26 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1663.4ms
+  Running TypeScript ...
+Failed to compile.
+
+./src/types/index.ts:42:9
+Type error: All declarations of 'electron' must have identical modifiers.
+
+[0m [90m 40 |[39m declare global {
+ [90m 41 |[39m     [36minterface[39m [33mWindow[39m {
+[31m[1m>[22m[39m[90m 42 |[39m         electron[33m?[39m[33m:[39m {
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 43 |[39m             openRunsDir[33m:[39m () [33m=>[39m [33mPromise[39m[33m<[39m[33mstring[39m[33m>[39m[33m;[39m
+ [90m 44 |[39m         }[33m;[39m
+ [90m 45 |[39m     }[0m
+Next.js build worker exited with code: 1 and signal: null

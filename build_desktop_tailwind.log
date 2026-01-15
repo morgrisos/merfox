@@ -1,0 +1,33 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./src/app/globals.css:1112:8
+Parsing CSS source code failed
+[0m [90m 1110 |[39m }
+ [90m 1111 |[39m
+[31m[1m>[22m[39m[90m 1112 |[39m [33m@[39m[36mimport[39m url([32m'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap'[39m)[33m;[39m
+ [90m      |[39m        [31m[1m^[22m[39m
+ [90m 1113 |[39m
+ [90m 1114 |[39m [33m:[39mroot {
+ [90m 1115 |[39m   [90m/* Dynamic Design - Premium Palette */[39m[0m
+
+@import rules must precede all rules aside from @charset and @layer statements
+
+Import trace:
+  Client Component Browser:
+    ./src/app/globals.css [Client Component Browser]
+    ./src/app/layout.tsx [Server Component]
+
+
+    at <unknown> (./src/app/globals.css:1112:8)

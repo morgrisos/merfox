@@ -1,0 +1,86 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder --mac --win
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1929.2ms
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/8) ...
+  Generating static pages using 7 workers (2/8) 
+  Generating static pages using 7 workers (4/8) 
+  Generating static pages using 7 workers (6/8) 
+✓ Generating static pages using 7 workers (8/8) in 98.6ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/runs
+├ ○ /converter
+├ ○ /csv
+├ ○ /scraper
+└ ○ /settings
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+  • electron-builder  version=26.4.0 os=23.5.0
+  • loaded configuration  file=package.json ("build" field)
+  • author is missed in the package.json  appPackageFile=/Users/yuga/VSCode/merfox/package.json
+  • executing @electron/rebuild  electronVersion=39.2.7 arch=arm64 buildFromSource=false workspaceRoot=/Users/yuga/VSCode/merfox projectDir=./ appDir=./
+  • installing native dependencies  arch=arm64
+  • completed installing native dependencies
+  • packaging       platform=darwin arch=arm64 electron=39.2.7 appOutDir=dist/mac-arm64
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • cannot find path for dependency  name=undefined reference=undefined
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • falling back to ad-hoc signature for macOS application code signing
+  • signing         file=dist/mac-arm64/MerFox.app platform=darwin type=distribution identityName=- identityHash=none provisioningProfile=none
+  • skipped macOS notarization  reason=`notarize` options were unable to be generated
+  • building        target=macOS zip arch=arm64 file=dist/MerFox-0.1.0-mac-arm64.zip
+  • building        target=DMG arch=arm64 file=dist/MerFox-0.1.0-mac-arm64.dmg
+  • executing @electron/rebuild  electronVersion=39.2.7 arch=arm64 buildFromSource=false workspaceRoot=/Users/yuga/VSCode/merfox projectDir=./ appDir=./
+  • installing native dependencies  arch=arm64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=arm64 electron=39.2.7 appOutDir=dist/win-arm64-unpacked
+  ⨯ Get "https://release-assets.githubusercontent.com/github-production-release-asset/9384267/4dca5b1e-6821-4295-bf60-07318438f243?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-01-14T17%3A33%3A05Z&rscd=attachment%3B+filename%3Delectron-v39.2.7-win32-arm64.zip&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-01-14T16%3A32%3A54Z&ske=2026-01-14T17%3A33%3A05Z&sks=b&skv=2018-11-09&sig=KfKVcQ9sle83bjp6hnssfVNRmv9uEtr4qkmHEuV2%2FgA%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc2ODQxMjE4MCwibmJmIjoxNzY4NDA4NTgwLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.cfp7vvDeg7mTeCSfNeE9NnAjJGE5p44eNPWTbfgM-xY&response-content-disposition=attachment%3B%20filename%3Delectron-v39.2.7-win32-arm64.zip&response-content-type=application%2Foctet-stream": http: server gave HTTP response to HTTPS client
+github.com/develar/app-builder/pkg/download.(*Downloader).follow.func1
+	/Users/runner/work/app-builder/app-builder/pkg/download/downloader.go:206
+github.com/develar/app-builder/pkg/download.(*Downloader).follow
+	/Users/runner/work/app-builder/app-builder/pkg/download/downloader.go:234
+github.com/develar/app-builder/pkg/download.(*Downloader).DownloadNoRetry
+	/Users/runner/work/app-builder/app-builder/pkg/download/downloader.go:128
+github.com/develar/app-builder/pkg/download.(*Downloader).Download
+	/Users/runner/work/app-builder/app-builder/pkg/download/downloader.go:112
+github.com/develar/app-builder/pkg/electron.(*ElectronDownloader).doDownload
+	/Users/runner/work/app-builder/app-builder/pkg/electron/electronDownloader.go:203
+github.com/develar/app-builder/pkg/electron.(*ElectronDownloader).Download
+	/Users/runner/work/app-builder/app-builder/pkg/electron/electronDownloader.go:188
+github.com/develar/app-builder/pkg/electron.downloadElectron.func1.1
+	/Users/runner/work/app-builder/app-builder/pkg/electron/electronDownloader.go:73
+github.com/develar/app-builder/pkg/util.MapAsyncConcurrency.func2
+	/Users/runner/work/app-builder/app-builder/pkg/util/async.go:68
+runtime.goexit
+	/Users/runner/hostedtoolcache/go/1.21.13/arm64/src/runtime/asm_arm64.s:1197  
+  ⨯ /Users/yuga/VSCode/merfox/node_modules/app-builder-bin/mac/app-builder_arm64 process failed ERR_ELECTRON_BUILDER_CANNOT_EXECUTE
+Exit code:
+1  failedTask=build stackTrace=Error: /Users/yuga/VSCode/merfox/node_modules/app-builder-bin/mac/app-builder_arm64 process failed ERR_ELECTRON_BUILDER_CANNOT_EXECUTE
+Exit code:
+1
+    at ChildProcess.<anonymous> (/Users/yuga/VSCode/merfox/node_modules/builder-util/src/util.ts:272:14)
+    at Object.onceWrapper (node:events:623:26)
+    at ChildProcess.emit (node:events:508:28)
+    at maybeClose (node:internal/child_process:1085:16)
+    at Socket.<anonymous> (node:internal/child_process:456:11)
+    at Socket.emit (node:events:508:28)
+    at Pipe.<anonymous> (node:net:346:12)
+  • building block map  blockMapFile=dist/MerFox-0.1.0-mac-arm64.dmg.blockmap
+  • building block map  blockMapFile=dist/MerFox-0.1.0-mac-arm64.zip.blockmap

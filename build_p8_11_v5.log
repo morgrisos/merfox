@@ -1,0 +1,39 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./src/views/scraper/index.tsx:407:156
+Parsing ecmascript source code failed
+[0m [90m 405 |[39m                                             [33m<[39m[33mspan[39m className[33m=[39m[32m"text-red-500 font-mono"[39m[33m>[39m失敗[33m:[39m {stats[33m.[39mfailed}[33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+ [90m 406 |[39m                                             [33m<[39m[33mspan[39m className[33m=[39m[32m"text-slate-500 font-mono"[39m[33m>[39m除外[33m:[39m {stats[33m.[39mexcluded}[33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+[31m[1m>[22m[39m[90m 407 |[39m                                             [33m<[39m[33mspan[39m className[33m=[39m[32m"font-bold text-slate-900 dark:text-white font-mono"[39m[33m>[39m合計[33m:[39m {stats[33m.[39mtotalScanned [33m/[39m {stopLimit}[33m<[39m[33m/[39m[33mspan[39m[33m>[39m
+ [90m     |[39m                                                                                                                                                            [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 408 |[39m                                         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 409 |[39m                                     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 410 |[39m                                     [33m<[39m[33mdiv[39m className[33m=[39m[32m"flex items-center gap-2"[39m[33m>[39m[0m
+
+Unterminated regexp literal
+
+Import traces:
+  Client Component Browser:
+    ./src/views/scraper/index.tsx [Client Component Browser]
+    ./src/app/scraper/page.tsx [Client Component Browser]
+    ./src/app/scraper/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/views/scraper/index.tsx [Client Component SSR]
+    ./src/app/scraper/page.tsx [Client Component SSR]
+    ./src/app/scraper/page.tsx [Server Component]
+
+
+    at <unknown> (./src/views/scraper/index.tsx:407:156)

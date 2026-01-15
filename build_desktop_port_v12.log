@@ -1,0 +1,26 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1773.7ms
+  Running TypeScript ...
+Failed to compile.
+
+./src/lib/scraper/scrapers.ts:52:17
+Type error: This comparison appears to be unintentional because the types '"url" | "keyword"' and '"bulk"' have no overlap.
+
+[0m [90m 50 |[39m             console[33m.[39mlog([32m`Starting scrape on ${startUrl} in ${this.config.mode} mode`[39m)[33m;[39m
+ [90m 51 |[39m
+[31m[1m>[22m[39m[90m 52 |[39m             [36mif[39m ([36mthis[39m[33m.[39mconfig[33m.[39mmode [33m===[39m [32m'bulk'[39m) { [90m// Only 'bulk' triggers explicit logic, else fallback to watch? 'url' mode?[39m
+ [90m    |[39m                 [31m[1m^[22m[39m
+ [90m 53 |[39m                 [90m// The Type says 'url' | 'keyword'. Legacy used 'bulk'.[39m
+ [90m 54 |[39m                 [90m// If mode is 'url', it behaves like bulk or watch depending on collectionMode?[39m
+ [90m 55 |[39m                 [90m// V4 logic maps 'watch' vs 'bulk' to collectionMode.[39m[0m
+Next.js build worker exited with code: 1 and signal: null

@@ -1,0 +1,26 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1747.8ms
+  Running TypeScript ...
+Failed to compile.
+
+./src/lib/converter/index.ts:5:10
+Type error: Module '"../types"' has no exported member 'MerItem'.
+
+[0m [90m 3 |[39m [36mimport[39m { parse } [36mfrom[39m [32m'csv-parse/sync'[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { stringify } [36mfrom[39m [32m'csv-stringify/sync'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 5 |[39m [36mimport[39m { [33mMerItem[39m } [36mfrom[39m [32m'../types'[39m[33m;[39m
+ [90m   |[39m          [31m[1m^[22m[39m
+ [90m 6 |[39m
+ [90m 7 |[39m [36mconst[39m [33mAMAZON_HEADER[39m [33m=[39m [
+ [90m 8 |[39m     [32m'sku'[39m[33m,[39m [32m'product_id'[39m[33m,[39m [32m'product_id_type'[39m[33m,[39m [32m'price'[39m[33m,[39m[0m
+Next.js build worker exited with code: 1 and signal: null

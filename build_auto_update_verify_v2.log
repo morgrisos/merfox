@@ -1,0 +1,41 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder --mac --publish never
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1725.5ms
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/8) ...
+  Generating static pages using 7 workers (2/8) 
+  Generating static pages using 7 workers (4/8) 
+  Generating static pages using 7 workers (6/8) 
+✓ Generating static pages using 7 workers (8/8) in 113.5ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/runs
+├ ○ /converter
+├ ○ /csv
+├ ○ /scraper
+└ ○ /settings
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+src/electron/updater.ts(1,29): error TS2307: Cannot find module 'electron-updater' or its corresponding type declarations.
+src/electron/updater.ts(2,17): error TS2307: Cannot find module 'electron-log' or its corresponding type declarations.
+src/electron/updater.ts(19,41): error TS7006: Parameter 'info' implicitly has an 'any' type.
+src/electron/updater.ts(24,45): error TS7006: Parameter 'info' implicitly has an 'any' type.
+src/electron/updater.ts(28,30): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/electron/updater.ts(32,42): error TS7006: Parameter 'info' implicitly has an 'any' type.
+src/electron/updater.ts(50,45): error TS7006: Parameter 'err' implicitly has an 'any' type.

@@ -1,0 +1,27 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1661.8ms
+  Running TypeScript ...
+Failed to compile.
+
+./src/lib/filter/index.ts:32:35
+Type error: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+
+[0m [90m 30 |[39m         [90m// 3. Price Filter[39m
+ [90m 31 |[39m         [90m// Max price is 100,000 fixed safety, plus user config[39m
+[31m[1m>[22m[39m[90m 32 |[39m         [36mconst[39m maxPrice [33m=[39m [33mMath[39m[33m.[39mmin([36mthis[39m[33m.[39mconfig[33m.[39mmaxPrice[33m,[39m [35m100000[39m)[33m;[39m
+ [90m    |[39m                                   [31m[1m^[22m[39m
+ [90m 33 |[39m         [36mif[39m (item[33m.[39mprice_yen [33m>[39m maxPrice) {
+ [90m 34 |[39m             [36mthis[39m[33m.[39mstats[33m.[39mexcluded[33m.[39mprice[33m++[39m[33m;[39m
+ [90m 35 |[39m             [36mreturn[39m [36mtrue[39m[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null

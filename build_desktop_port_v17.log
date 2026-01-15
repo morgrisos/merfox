@@ -1,0 +1,25 @@
+
+> merfox@0.1.0 build-desktop
+> npm run build && tsc -p src/electron/tsconfig.json && electron-builder
+
+
+> merfox@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1692.5ms
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/8) ...
+(node:33779) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+Error occurred prerendering page "/converter". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: localStorage.getItem is not a function
+    at <unknown> (.next/server/chunks/ssr/_1c8a0757._.js:4:6888)
+    at f (.next/server/chunks/ssr/_1c8a0757._.js:4:6863) {
+  digest: '1584711455'
+}
+Export encountered an error on /converter/page: /converter, exiting the build.
+⨯ Next.js build worker exited with code: 1 and signal: null
