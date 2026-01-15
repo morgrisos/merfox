@@ -245,11 +245,10 @@ jobs:
           
           # Collect Assets
           # Collect Assets
-          ASSETS=()
           # Use find for robust recursive search
           while IFS= read -r -d '' file; do
              ASSETS+=("$file")
-          done < <(find release-dist -type f \( -name "*.dmg" -o -name "*.zip" -o -name "*.exe" -o -name "*.yml" -o -name "*.blockmap" \) -print0)
+          done < <(find release-dist -type d \( -name "win-unpacked" -o -name "*.app" \) -prune -o -type f \( -name "*.dmg" -o -name "*.zip" -o -name "*.exe" -o -name "latest*.yml" -o -name "*.blockmap" \) -print0)
           
           echo "=== Found Assets (${#ASSETS[@]}) ==="
           if [ ${#ASSETS[@]} -gt 0 ]; then
