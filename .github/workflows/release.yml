@@ -51,7 +51,8 @@ jobs:
         shell: bash
         run: |
           echo "== dist tree (pre-norm) =="
-          find dist -maxdepth 3 -type f | sed 's|^|dist/|'
+          pwd
+          ls -R dist || echo "dist not found"
           
           # Determine Target Name
           if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
@@ -60,17 +61,19 @@ jobs:
             TARGET="latest.yml"
           fi
           
-          # Find any generated YML
-          YML=$(find dist -name 'latest*.yml' | head -n 1)
+          # Find any generated YML (Filesystem insensitive search precaution)
+          # Search entire workspace if dist failed
+          YML=$(find . -name 'latest*.yml' | head -n 1)
+          
           if [ -z "$YML" ]; then
             echo "::error::No latest*.yml found! Auto-update will fail."
-            exit 1
+            exit 1 # Fail strict
           fi
           
           echo "Found generated YML: $YML"
           
-          # Ensure it exists as TARGET at dist root
-          # Note: If $YML is already dist/latest-mac.yml, cp matches src/dst, just ignore or force
+          # Copy to dist root as target
+          # dirname to handle if it is deep
           cp "$YML" dist/"$TARGET"
           
           echo "Normalized to: dist/$TARGET"
