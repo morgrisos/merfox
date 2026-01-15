@@ -38,12 +38,22 @@ jobs:
       - name: Compile Main Process (TS)
         run: npx tsc -p src/electron/tsconfig.json
 
+      - name: Configure Builder Args
+        id: build-config
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            echo "ARGS=--publish=always" >> $GITHUB_OUTPUT
+          else
+            echo "ARGS=--publish=never" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build Electron App
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release: false
-          args: "--publish=always"
+          args: ${{ steps.build-config.outputs.ARGS }}
           mac_certs: ''
           mac_certs_password: ''
 
