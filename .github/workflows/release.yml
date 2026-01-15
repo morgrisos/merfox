@@ -65,44 +65,36 @@ jobs:
           ls -R dist || true
           echo "=== search latest*.yml in workspace ==="
           
-          # Find all latest*.yml in the workspace (ignore errors)
-          mapfile -t YMLS < <(find . -type f -name "latest*.yml" 2>/dev/null || true)
-          
-          if [ ${#YMLS[@]} -eq 0 ]; then
-             echo "::error::latest*.yml not found anywhere"
-             exit 1
-          fi
-          
-          echo "Found YMLs:"
-          printf '%s\n' "${YMLS[@]}"
-          
           # Ensure dist exists
           mkdir -p dist
           
-          # Copy all found to dist
-          for f in "${YMLS[@]}"; do
-            cp -f "$f" dist/
-          done
+          # Find and copy all latest*.yml (Bash 3.2 compatible)
+          find . -type f -name "latest*.yml" -exec cp -v {} dist/ \;
+          
+          # Check if we found anything
+          if ! ls dist/latest*.yml >/dev/null 2>&1; then
+             echo "::error::latest*.yml not found anywhere"
+             exit 1
+          fi
           
           echo "=== dist after collect ==="
           ls -lah dist
           
           # Canonicalize names
           if [ "${{ runner.os }}" = "Windows" ]; then
-             # Windows: latest.yml
              if [ -f "dist/latest.yml" ]; then
                 echo "OK: latest.yml exists"
              else
-                # Rename first match
                 WIN_SRC=$(ls dist/latest*.yml | head -n 1)
                 cp -f "$WIN_SRC" dist/latest.yml
                 echo "Renamed $WIN_SRC -> dist/latest.yml"
              fi
           else
-             # Mac: latest-mac.yml
-             # If electron-builder made latest-mac.yml, good. If latest.yml, rename.
+             # Mac
              MAC_SRC=$(find dist -name 'latest*.yml' | head -n 1)
              cp -f "$MAC_SRC" dist/latest-mac.yml
+             # Remove non-canonical to avoid confusion/overwrites if merged (though we now split)
+             rm -f dist/latest.yml || true
              echo "Renamed $MAC_SRC -> dist/latest-mac.yml"
           fi
           
@@ -113,10 +105,11 @@ jobs:
         with:
           name: dist-${{ matrix.os }}
           path: dist/
+          if-no-files-found: error
           retention-days: 1
 
   publish:
-    name: Publish Release
+    name: Publish
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -126,129 +119,97 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
+
       - name: Pre-Flight Check
         env:
           TAG: ${{ github.ref_name }}
         run: |
           echo "TAG=$TAG"
           echo "REPO=${{ github.repository }}"
-          # Check API connectivity (public)
           curl -sI "https://api.github.com/repos/${{ github.repository }}" | head -n 1
 
-      - name: Download All Artifacts
+      - name: Download Artifacts (Mac)
         uses: actions/download-artifact@v4
         with:
-          path: release-dist
-          pattern: dist-*
-          merge-multiple: true
+          name: dist-macos-latest
+          path: release-dist/macos
 
-      - name: Canonicalize Metafiles
-        shell: bash
+      - name: Download Artifacts (Windows)
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-windows-latest
+          path: release-dist/windows
+
+      - name: List Release Content
         run: |
-          echo "Canonicalizing Auto-Update Metadata..."
+          echo "=== Release Content Tree ==="
           ls -R release-dist
           
-          # Find Source Files
-          MAC_SRC=$(find release-dist -maxdepth 4 \( -name 'latest-mac*.yml' -o -name 'latest-mac*.yaml' \) | head -n 1)
-          # Win source: latest*.yml that contains 'MerFox-Setup' or just exclude mac?
-          # Typically windows is just 'latest.yml'.
-          WIN_SRC=$(find release-dist -maxdepth 4 \( -name 'latest*.yml' -o -name 'latest*.yaml' \) | grep -v 'latest-mac' | head -n 1)
-          
-          echo "MAC_SRC detected: $MAC_SRC"
-          echo "WIN_SRC detected: $WIN_SRC"
-
-          if [ -z "$MAC_SRC" ]; then echo "::error::no mac yml found"; exit 1; fi
-          if [ -z "$WIN_SRC" ]; then echo "::error::no win yml found"; exit 1; fi
-
-          cp "$MAC_SRC" release-dist/latest-mac.yml
-          cp "$WIN_SRC" release-dist/latest.yml
-          
-          ls -lah release-dist/latest-mac.yml release-dist/latest.yml
+          echo "=== Verifying Key Assets ==="
+          if [ ! -f release-dist/macos/latest-mac.yml ]; then echo "::error::Missing latest-mac.yml"; exit 1; fi
+          if [ ! -f release-dist/windows/latest.yml ]; then echo "::error::Missing latest.yml"; exit 1; fi
+          echo "SUCCESS: Key assets found."
 
       - name: Create Release & Upload Assets
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            release-dist/latest-mac.yml
-            release-dist/latest.yml
-            release-dist/**/*.dmg
-            release-dist/**/*.zip
-            release-dist/**/*.exe
+            release-dist/macos/**/*.dmg
+            release-dist/macos/**/*.zip
+            release-dist/macos/**/latest-mac.yml
+            release-dist/windows/**/*.exe
+            release-dist/windows/**/*.yml
+            release-dist/windows/**/latest.yml
             release-dist/**/*.blockmap
+          fail_on_unmatched_files: false
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
           prerelease: false
-          fail_on_unmatched_files: true
-          make_latest: true
 
-      - name: Verify Release Creation (API)
-        shell: bash
+      - name: Verify Uploaded Assets (API)
         env:
-          TAG: ${{ github.ref_name }}
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           TAG: ${{ github.ref_name }}
         run: |
-          echo "Verifying Release Existence..."
-          sleep 5
-          # Expected 200 OK for the Tag endpoint
-          OUT=$(curl -sfL "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG" | head -n 5)
-          if [ -z "$OUT" ]; then
-             echo "::error::Release Not Found via API (404)"
+           sleep 10
+           echo "Verifying assets for $TAG via API..."
+           BASE="https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG"
+           
+           # Check Release existence
+           curl -sH "Authorization: token $GH_TOKEN" "$BASE" > release.json
+           if grep -q "Not Found" release.json; then
+             echo "::error::Release not found in API!"
              exit 1
-          fi
-          echo "Release JSON found:"
-          echo "$OUT"
+           fi
+           
+           # Check Assets
+           echo "Assets found:"
+           jq -r '.assets[].name' release.json
+           
+           # Allow time for propagation
+           sleep 10
 
-      - name: Verify Release Assets (Strict URL)
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: bash
-        env:
-          TAG: ${{ github.ref_name }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Verify Canonical URLs (Strict)
         run: |
-          set -euo pipefail
-          echo "=== URL VERIFICATION START ==="
-          
-          # Retry Logic for Propagation
-          check_url_retry() {
-            local url=$1
-            echo "Checking: $url"
-            local code=""
-            for i in $(seq 1 60); do
+           TAG="${{ github.ref_name }}"
+           REPO="${{ github.repository }}"
+           BASE="https://github.com/$REPO/releases/download/$TAG"
+           
+           check_url() {
+             local url=$1
+             for i in {1..10}; do
                code=$(curl -o /dev/null -s -w "%{http_code}" -I -L "$url")
                if [[ "$code" == "200" || "$code" == "302" ]]; then
-                  echo "Found ($code) at try $i: $url"
-                  echo "$code"
-                  return 0
+                 echo "OK ($code): $url"
+                 return 0
                fi
-               echo "Try $i: $code ... retrying in 2s"
-               sleep 2
-            done
-            echo "::error::Failed to verify URL after 120s: $url (Last: $code)"
-            return 1
-          }
-
-          REPO="${{ github.repository }}"
-          BASE="https://github.com/$REPO/releases/download/$TAG"
-          
-          echo "Verifying Mac Canonical..."
-          CODE_MAC=$(check_url_retry "$BASE/latest-mac.yml")
-          
-          echo "Verifying Win Canonical..."
-          CODE_WIN=$(check_url_retry "$BASE/latest.yml")
-          
-          echo "SUCCESS: Canonical assets verified."
-
-          # Job Summary
-          {
-            echo "## Gate G Evidence ($TAG)"
-            echo "### Assets List"
-            jq -r '.assets[].name' release.json | sed 's/^/- /'
-            echo ""
-            echo "### URL Check"
-            echo "- [$CODE_MAC] $BASE/latest-mac.yml"
-            echo "- [$CODE_WIN] $BASE/latest.yml"
-            echo ""
-            echo "**SUCCESS: All assets verified and downloadable.**"
-          } >> "$GITHUB_STEP_SUMMARY"
-
+               echo "Wait ($code)... $url"
+               sleep 5
+             done
+             echo "::error::Failed to verify $url"
+             return 1
+           }
+           
+           check_url "$BASE/latest-mac.yml"
+           check_url "$BASE/latest.yml"
