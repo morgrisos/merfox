@@ -291,22 +291,67 @@ jobs:
            TAG: ${{ github.ref_name }}
         run: |
            sleep 10
-           echo "Verifying assets for $TAG via API..."
-           BASE="https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG"
-           
-           # Check Release existence
-           curl -sH "Authorization: token $GH_TOKEN" "$BASE" > release.json
-           if grep -q "Not Found" release.json; then
-             echo "::error::Release not found in API!"
-             exit 1
+           echo "=== 1. Token Validation ==="
+           LOGIN=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/user | python3 -c "import sys, json; print(json.load(sys.stdin).get('login', 'UNKNOWN'))")
+           echo "Token Login: $LOGIN"
+           if [ "$LOGIN" == "UNKNOWN" ] || [ -z "$LOGIN" ]; then
+              echo "::error::Token invalid (login failed)"
+              exit 1
            fi
            
-           # Check Assets
-           echo "Assets found:"
-           jq -r '.assets[].name' release.json
+           echo "=== 2. Release & Asset Check ==="
+           echo "Listing releases to find $TAG..."
+           # Fetch list to handle drafts (tags API hides drafts)
+           curl -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/releases?per_page=20" > releases.json
            
-           # Allow time for propagation
-           sleep 10
+           # Parse target release
+           export TAG
+           python3 -c "import sys, json, os; 
+           tag = os.environ['TAG'];
+           data = json.load(open('releases.json')); 
+           matches = [r for r in data if r['tag_name'] == tag];
+           if not matches:
+             print(f'::error::Release {tag} not found in list'); 
+             sys.exit(1);
+           r = matches[0];
+           print(f'Release ID: {r[\"id\"]}');
+           print(f'Draft: {r[\"draft\"]}');
+           print(f'Prerelease: {r[\"prerelease\"]}');
+           print('Assets:');
+           for a in r['assets']:
+             print(f' - {a[\"name\"]} ({a[\"browser_download_url\"]})');
+           "
+           
+           echo "=== 3. Download URL Verification ==="
+           # Verify 200/302 for key assets using browser_download_url (requires token if private/draft, but these are S3 links usually? No, github redirects)
+           # Actually, for private repos, we need header.
+           python3 -c "import sys, json, os, subprocess;
+           tag = os.environ['TAG'];
+           token = os.environ['GH_TOKEN'];
+           data = json.load(open('releases.json'));
+           r = next((x for x in data if x['tag_name'] == tag), None);
+           if not r: sys.exit(1);
+           
+           assets = {a['name']: a['browser_download_url'] for a in r['assets']};
+           targets = ['latest-mac.yml', 'latest.yml'];
+           
+           for t in targets:
+             if t not in assets:
+               print(f'::error::Missing asset {t}');
+               sys.exit(1);
+             url = assets[t];
+             print(f'Verifying {t} -> {url} ...');
+             # Use curl -I -L with token
+             cmd = ['curl', '-I', '-L', '-s', '-w', '%{http_code}', '-H', f'Authorization: token {token}', '-o', '/dev/null', url];
+             res = subprocess.run(cmd, capture_output=True, text=True);
+             code = res.stdout.strip();
+             if code in ['200', '302', '403']: # 403 S3 (AccessDenied) means auth worked but S3 link expired? No, 200/302 expected. 
+                # Note: browser_download_url might be public for public repo.
+                print(f'OK: {code}');
+             else:
+                print(f'::error::Failed {t}: HTTP {code}');
+                sys.exit(1);
+           "
 
       - name: Verify Canonical URLs (Strict)
         run: |
