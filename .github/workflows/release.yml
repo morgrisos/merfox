@@ -10,7 +10,8 @@ permissions:
   actions: read
 
 jobs:
-  release:
+  build:
+    name: Build ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
@@ -40,7 +41,7 @@ jobs:
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          release: false # We use softprops/action-gh-release for uploading
+          release: false
           args: "--config.publish.provider=github --publish never"
           mac_certs: ''
           mac_certs_password: ''
@@ -50,63 +51,100 @@ jobs:
         run: |
           ls -lah dist
           if [ -z "$(ls -A dist)" ]; then
-             echo "::error::Dist directory is empty! Build failed to produce artifacts."
+             echo "::error::Dist directory is empty!"
              exit 1
           fi
 
-      - name: Upload Release Assets
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.os }}
+          path: dist/
+          retention-days: 1
+
+  publish:
+    name: Publish Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-dist
+          pattern: dist-*
+          merge-multiple: true
+
+      - name: List All Artifacts
+        run: ls -R release-dist
+
+      - name: Create Release & Upload Assets
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            dist/*.dmg
-            dist/*.zip
-            dist/*.exe
-            dist/*.yml
-            dist/*.blockmap
+            release-dist/**/*.dmg
+            release-dist/**/*.zip
+            release-dist/**/*.exe
+            release-dist/**/latest*.yml
+            release-dist/**/*.blockmap
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
           prerelease: false
-          fail_on_unmatched_files: false # Avoid failure on cross-platform globs
+          fail_on_unmatched_files: true
           make_latest: true
 
-      - name: Verify Release Assets (API)
+      - name: Verify Release Assets (Strict)
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         env:
           TAG: ${{ github.ref_name }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Verifying assets for $TAG via GitHub API..."
-          sleep 10 # Allow API propagation
+          echo "Verifying assets for $TAG..."
+          sleep 15 # Wait for consistency
           
-          # Fetch Release JSON
+          # 1. Fetch JSON
           curl -sfL -H "Authorization: Bearer $GH_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG" > release.json
           
-          echo "--- Release JSON Assets ---"
-          cat release.json | jq '.assets[] | .name + " (" + .browser_download_url + ")"' || cat release.json
+          # 2. List Assets
+          echo "--- Assets Found ---"
+          jq -r '.assets[] | "\(.name) | \(.size) bytes | \(.browser_download_url)"' release.json
           
-          # Verification Logic
-          ASSET_COUNT=$(jq '.assets | length' release.json)
-          echo "Total Assets Found: $ASSET_COUNT"
+          # 3. Validation Logic
+          MISSING=0
           
-          if [ "$ASSET_COUNT" -eq "0" ]; then
-            echo "::error::Release created but NO assets attached!"
+          # Check Mac
+          if ! grep -q "\.dmg" release.json; then echo "::error::Missing .dmg"; MISSING=1; fi
+          if ! grep -q "\.zip" release.json; then echo "::error::Missing .zip"; MISSING=1; fi
+          if ! grep -q "latest-mac.yml" release.json; then echo "::error::Missing latest-mac.yml"; MISSING=1; fi
+          
+          # Check Win
+          if ! grep -q "\.exe" release.json; then echo "::error::Missing .exe"; MISSING=1; fi
+          if ! grep -q "latest.yml" release.json; then echo "::error::Missing latest.yml (win)"; MISSING=1; fi
+          
+          if [ "$MISSING" -eq "1" ]; then
+            echo "::error::Critical assets missing!"
             exit 1
           fi
-
-          # OS Specific Checks
-          OS="${{ matrix.os }}"
-          if [[ "$OS" == "macos-latest" ]]; then
-            echo "Verifying Mac Assets..."
-            if ! grep -q "\.dmg" release.json; then echo "::error::Missing .dmg"; exit 1; fi
-            if ! grep -q "latest-mac.yml" release.json; then echo "::error::Missing latest-mac.yml"; exit 1; fi
-          elif [[ "$OS" == "windows-latest" ]]; then
-            echo "Verifying Windows Assets..."
-            if ! grep -q "\.exe" release.json; then echo "::error::Missing .exe"; exit 1; fi
-            if ! grep -q "latest.yml" release.json; then echo "::error::Missing latest.yml"; exit 1; fi
-          fi
           
-          echo "Verification Passed: Assets exist."
+          # 4. HTTP Check (Curl)
+          echo "--- HTTP Availability Check ---"
+          jq -r '.assets[].browser_download_url' release.json | while read url; do
+            code=$(curl -o /dev/null -s -w "%{http_code}" -I -L "$url")
+            echo "[$code] $url"
+            if [[ "$code" != "200" && "$code" != "302" ]]; then
+              echo "::error::Asset unavailable (HTTP $code): $url"
+              exit 1
+            fi
+          done
+          
+          echo "SUCCESS: All assets verified and downloadable."
 
