@@ -62,28 +62,50 @@ jobs:
         run: |
           set -euo pipefail
           echo "=== dist tree ==="
-          ls -lah dist || true
           ls -R dist || true
-
-          # Find metadata (allow failure finding to debug)
-          YML_PATH="$(find dist -maxdepth 3 -type f -name 'latest*.yml' -print -quit || true)"
+          echo "=== search latest*.yml in workspace ==="
           
-          if [ -z "$YML_PATH" ]; then
-            echo "::error::No latest*.yml found under dist/"
-            exit 1
+          # Find all latest*.yml in the workspace (ignore errors)
+          mapfile -t YMLS < <(find . -type f -name "latest*.yml" 2>/dev/null || true)
+          
+          if [ ${#YMLS[@]} -eq 0 ]; then
+             echo "::error::latest*.yml not found anywhere"
+             exit 1
           fi
-          echo "FOUND: $YML_PATH"
-
-          # Canonicalize based on OS
+          
+          echo "Found YMLs:"
+          printf '%s\n' "${YMLS[@]}"
+          
+          # Ensure dist exists
+          mkdir -p dist
+          
+          # Copy all found to dist
+          for f in "${YMLS[@]}"; do
+            cp -f "$f" dist/
+          done
+          
+          echo "=== dist after collect ==="
+          ls -lah dist
+          
+          # Canonicalize names
           if [ "${{ runner.os }}" = "Windows" ]; then
-            cp -f "$YML_PATH" "dist/latest.yml"
-            echo "CANONICALIZED -> dist/latest.yml"
+             # Windows: latest.yml
+             if [ -f "dist/latest.yml" ]; then
+                echo "OK: latest.yml exists"
+             else
+                # Rename first match
+                WIN_SRC=$(ls dist/latest*.yml | head -n 1)
+                cp -f "$WIN_SRC" dist/latest.yml
+                echo "Renamed $WIN_SRC -> dist/latest.yml"
+             fi
           else
-            cp -f "$YML_PATH" "dist/latest-mac.yml"
-            echo "CANONICALIZED -> dist/latest-mac.yml"
+             # Mac: latest-mac.yml
+             # If electron-builder made latest-mac.yml, good. If latest.yml, rename.
+             MAC_SRC=$(find dist -name 'latest*.yml' | head -n 1)
+             cp -f "$MAC_SRC" dist/latest-mac.yml
+             echo "Renamed $MAC_SRC -> dist/latest-mac.yml"
           fi
-
-          echo "=== dist after canonicalize ==="
+          
           ls -lah dist
 
       - name: Upload Artifacts
