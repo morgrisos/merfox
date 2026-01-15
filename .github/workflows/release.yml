@@ -65,50 +65,79 @@ jobs:
           ls -R dist || true
           echo "=== search latest*.yml in workspace ==="
           
-          # Ensure dist exists
           mkdir -p dist
           
-          # Find files first to debug
-          find . -type f -name "latest*.yml" -print
-          
-          # Capture found files (Bash 3.2 safe: find + while read)
-          FOUND=0
+          # Try to copy existing ymls
           find . -type f -name "latest*.yml" -print0 | while IFS= read -r -d '' file; do
              echo "Copying $file..."
              cp -f "$file" dist/
-             FOUND=1
           done || true
           
-          # Check via ls because loop runs in subshell
-          if ! ls dist/latest*.yml >/dev/null 2>&1; then
-             echo "::error::No latest*.yml found in workspace to copy!"
-             exit 1
+          # FALLBACK GENERATOR FUNCTION
+          generate_yml() {
+            local os=$1
+            local version="${{ github.ref_name }}"
+            version=${version#v} # strip v prefix
+            local date=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+            
+            if [ "$os" == "mac" ]; then
+               local file=$(find dist -name "*.dmg" | head -n 1)
+               if [ -z "$file" ]; then echo "::error::No .dmg found for fallback gen"; exit 1; fi
+               local name=$(basename "$file")
+               local size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file") # mac/linux stat
+               local sha=$(shasum -a 512 "$file" | awk '{print $1}')
+               local out="dist/latest-mac.yml"
+               
+               echo "Generating fallback $out for $name..."
+               # Use printf to avoid here-doc indentation issues in YAML
+               printf "version: %s\nfiles:\n  - url: %s\n    sha512: %s\n    size: %s\npath: %s\nsha512: %s\nreleaseDate: %s\n" \
+                 "$version" "$name" "$sha" "$size" "$name" "$sha" "$date" > "$out"
+            else
+               # Windows
+               local file=$(find dist -name "*.exe" | head -n 1)
+               if [ -z "$file" ]; then echo "::error::No .exe found for fallback gen"; exit 1; fi
+               local name=$(basename "$file")
+               local size=$(stat -c%s "$file" 2>/dev/null || ls -l "$file" | awk '{print $5}')
+               local sha=$(shasum -a 512 "$file" | awk '{print $1}')
+               local out="dist/latest.yml"
+               
+               echo "Generating fallback $out for $name..."
+               printf "version: %s\nfiles:\n  - url: %s\n    sha512: %s\n    size: %s\npath: %s\nsha512: %s\nreleaseDate: %s\n" \
+                 "$version" "$name" "$sha" "$size" "$name" "$sha" "$date" > "$out"
+            fi
+            cat "$out"
+          }
+          
+          # ENSURE MAC METADATA
+          if [ "${{ runner.os }}" != "Windows" ]; then
+             # Check for latest-mac.yml
+             if [ ! -f "dist/latest-mac.yml" ]; then
+                # Check for misnamed
+                FOUND=$(find dist -name "latest*.yml" | head -n 1)
+                if [ -n "$FOUND" ]; then
+                   cp -f "$FOUND" dist/latest-mac.yml
+                   echo "Renamed $FOUND -> dist/latest-mac.yml"
+                else
+                   # Generate
+                   echo "WARNING: latest-mac.yml missing (Unsigned build?). Generating fallback."
+                   generate_yml "mac"
+                fi
+             fi
           fi
           
-          echo "=== dist after collect ==="
-          ls -lah dist
-          
-          # Canonicalize names
-          if [ "${{ runner.os }}" = "Windows" ]; then
-             if [ -f "dist/latest.yml" ]; then
-                echo "OK: latest.yml exists"
-             else
-                WIN_SRC=$(ls dist/latest*.yml | head -n 1)
-                cp -f "$WIN_SRC" dist/latest.yml
-                echo "Renamed $WIN_SRC -> dist/latest.yml"
+          # ENSURE WIN METADATA
+          if [ "${{ runner.os }}" == "Windows" ]; then
+             if [ ! -f "dist/latest.yml" ]; then
+                FOUND=$(find dist -name "latest*.yml" | head -n 1)
+                if [ -n "$FOUND" ]; then
+                   cp -f "$FOUND" dist/latest.yml
+                   echo "Renamed $FOUND -> dist/latest.yml"
+                else
+                   # Generate
+                   echo "WARNING: latest.yml missing. Generating fallback."
+                   generate_yml "win"
+                fi
              fi
-          else
-             # Mac
-             # Look for latest-mac.yml first (preferred)
-             if [ -f "dist/latest-mac.yml" ]; then
-                echo "OK: latest-mac.yml exists"
-             else
-                 # If not, use whatever we found
-                 MAC_SRC=$(find dist -name 'latest*.yml' | head -n 1)
-                 cp -f "$MAC_SRC" dist/latest-mac.yml
-                 echo "Renamed $MAC_SRC -> dist/latest-mac.yml"
-             fi
-             # Do NOT remove latest.yml here, let Upload Artifacts handle everything in dist
           fi
           
           echo "=== Final Dist Content ==="
