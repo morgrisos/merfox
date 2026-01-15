@@ -213,17 +213,37 @@ jobs:
           if [ ! -f release-dist/windows/latest.yml ]; then echo "::error::Missing latest.yml"; exit 1; fi
           echo "SUCCESS: Key assets found."
 
-      - name: Create Release & Upload Assets (gh cli)
+      - name: Create Release (gh cli)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -x
+          echo "Checking release $TAG..."
+          
+          # Check if release exists
+          if gh release view "$TAG" >/dev/null 2>&1; then
+             echo "Release $TAG already exists. Skipping creation."
+          else
+             echo "Creating release $TAG..."
+             # Create release WITHOUT assets first
+             if ! gh release create "$TAG" --title "Release $TAG" --generate-notes --repo "${{ github.repository }}" > create.log 2>&1; then
+                echo "::error::Release creation failed!"
+                cat create.log
+                exit 1
+             fi
+          fi
+
+      - name: Upload Assets (gh cli)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
         run: |
           set -e
-          echo "Creating Release $TAG via gh cli..."
+          echo "Uploading assets to $TAG..."
           
           # Collect Assets
           ASSETS=()
-          # Explicit look for expected files
           for f in release-dist/macos/*.dmg release-dist/macos/*.zip release-dist/macos/latest-mac.yml release-dist/windows/*.exe release-dist/windows/*.yml release-dist/windows/latest.yml release-dist/*.blockmap; do
              if [ -f "$f" ]; then
                 ASSETS+=("$f")
@@ -236,25 +256,24 @@ jobs:
              exit 1
           fi
           
-          echo "Assets to upload:"
-          printf '%s\n' "${ASSETS[@]}"
+          echo "Assets: ${ASSETS[*]}"
           
-          # Retry creation
-          for i in {1..5}; do
-             # Check if release exists first? NO, create handles it or fails.
-             # If tag exists but release doesn't, create works.
-             # If release exists, we might need 'edit' or fail. Assuming it doesn't exist yet as we are creating.
-             
-             if gh release create "$TAG" "${ASSETS[@]}" --title "Release $TAG" --generate-notes --repo "${{ github.repository }}"; then
-                echo "Release created successfully."
-                exit 0
-             fi
-             echo "Release creation failed, retrying in 5s... ($i/5)"
-             sleep 5
-          done
-          
-          echo "::error::Failed to create release after retries."
-          exit 1
+          # Upload with clobber to overwrite if needed
+          if ! gh release upload "$TAG" "${ASSETS[@]}" --clobber --repo "${{ github.repository }}" > upload.log 2>&1; then
+             echo "::error::Asset upload failed!"
+             cat upload.log
+             exit 1
+          fi
+
+      - name: Debug Failure (Log Upload)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-logs
+          path: |
+            create.log
+            upload.log
+            release-dist/
 
       - name: Verify Uploaded Assets (API)
         env:
