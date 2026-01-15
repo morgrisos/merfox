@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   release:
     strategy:
@@ -32,23 +36,30 @@ jobs:
       - name: Compile Main Process (TS)
         run: npx tsc -p src/electron/tsconfig.json
 
-      - name: Build & Release Electron App
+      - name: Build Electron App
         uses: samuelmeuli/action-electron-builder@v1
         with:
-          # GitHub release is created automatically by electron-builder via valid GITHUB_TOKEN
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          release: true
-          # Mac specific args
-          mac_certs: '' # Add base64 cert if signing
-          mac_certs_password: '' # Add pw if signing
-          # Args passed to electron-builder
-          args: "--config.publish.provider=github" 
-          # On Windows, build target is configured in package.json (nsis)
-          # On Mac, target is configured in package.json (dmg, zip)
+          release: false # We use softprops/action-gh-release for uploading
+          args: "--config.publish.provider=github --publish never"
+          mac_certs: ''
+          mac_certs_password: ''
+
+      - name: List Dist Content (Debug)
+        run: ls -R dist || echo "Dist not found"
+        shell: bash
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            dist/*.dmg
+            dist/*.zip
+            dist/*.exe
+            dist/*.yml
+            dist/*.blockmap
+          token: ${{ secrets.GITHUB_TOKEN }}
         env:
-          # If we had signing secrets:
-          # CSC_LINK: ${{ secrets.CSC_LINK }}
-          # CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          # WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
-          # WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
-          description: "MerFox automated release."
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
