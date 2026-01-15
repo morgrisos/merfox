@@ -43,7 +43,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release: false
-          args: "--publish=never"
+          args: "--publish=always"
           mac_certs: ''
           mac_certs_password: ''
 
