@@ -264,6 +264,10 @@ jobs:
           if gh release upload "$TAG" "${ASSETS[@]}" --clobber --repo "${{ github.repository }}" > upload.log 2>&1; then
              echo "Upload SUCCESS."
              cat upload.log
+             
+             # Force publish (ensure not draft) to fix 404 on API
+             echo "Ensuring release is published..."
+             gh release edit "$TAG" --draft=false --latest --repo "${{ github.repository }}" || echo "Warning: Failed to publish"
           else
              EC=$?
              echo "::error::Asset upload failed! Exit Code: $EC"
