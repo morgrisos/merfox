@@ -232,6 +232,7 @@ jobs:
                 cat create.log
                 exit 1
              fi
+             cat create.log
           fi
 
       - name: Upload Assets (gh cli)
@@ -243,26 +244,30 @@ jobs:
           echo "Uploading assets to $TAG..."
           
           # Collect Assets
+          # Collect Assets
           ASSETS=()
-          # Use find for robust recursive search (works on all bash versions)
+          # Use find for robust recursive search
           while IFS= read -r -d '' file; do
              ASSETS+=("$file")
-             echo "Found asset: $file"
           done < <(find release-dist -type f \( -name "*.dmg" -o -name "*.zip" -o -name "*.exe" -o -name "*.yml" -o -name "*.blockmap" \) -print0)
           
-          if [ ${#ASSETS[@]} -eq 0 ]; then
-             echo "::error::No assets found to upload!"
-             find release-dist
-             exit 1
+          echo "=== Found Assets (${#ASSETS[@]}) ==="
+          if [ ${#ASSETS[@]} -gt 0 ]; then
+              printf '%s\n' "${ASSETS[@]}"
+          else
+              echo "::error::No assets found to upload!"
+              find release-dist
+              exit 1
           fi
           
-
-          
-          echo "Assets: ${ASSETS[*]}"
-          
-          # Upload with clobber to overwrite if needed
-          if ! gh release upload "$TAG" "${ASSETS[@]}" --clobber --repo "${{ github.repository }}" > upload.log 2>&1; then
-             echo "::error::Asset upload failed!"
+          # Upload with clobber
+          echo "Executing gh release upload..."
+          if gh release upload "$TAG" "${ASSETS[@]}" --clobber --repo "${{ github.repository }}" > upload.log 2>&1; then
+             echo "Upload SUCCESS."
+             cat upload.log
+          else
+             EC=$?
+             echo "::error::Asset upload failed! Exit Code: $EC"
              cat upload.log
              exit 1
           fi
