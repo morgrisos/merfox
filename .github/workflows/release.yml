@@ -107,6 +107,7 @@ jobs:
           TAG: ${{ github.ref_name }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           echo "Verifying assets for $TAG..."
           sleep 15 # Wait for consistency
           
@@ -118,33 +119,42 @@ jobs:
           echo "--- Assets Found ---"
           jq -r '.assets[] | "\(.name) | \(.size) bytes | \(.browser_download_url)"' release.json
           
-          # 3. Validation Logic
-          MISSING=0
+          # 3. Validation Logic (Strict Existence)
+          echo "Checking essential assets..."
           
-          # Check Mac
-          if ! grep -q "\.dmg" release.json; then echo "::error::Missing .dmg"; MISSING=1; fi
-          if ! grep -q "\.zip" release.json; then echo "::error::Missing .zip"; MISSING=1; fi
-          if ! grep -q "latest-mac.yml" release.json; then echo "::error::Missing latest-mac.yml"; MISSING=1; fi
-          
-          # Check Win
-          if ! grep -q "\.exe" release.json; then echo "::error::Missing .exe"; MISSING=1; fi
-          if ! grep -q "latest.yml" release.json; then echo "::error::Missing latest.yml (win)"; MISSING=1; fi
-          
-          if [ "$MISSING" -eq "1" ]; then
-            echo "::error::Critical assets missing!"
-            exit 1
-          fi
-          
-          # 4. HTTP Check (Curl)
+          # Function to check asset existence by exact name or extension presence
+          check_asset() {
+            local query=$1
+            local desc=$2
+            if jq -e ".assets | map(.name) | $query" release.json >/dev/null; then
+              echo "OK: $desc found."
+            else
+              echo "::error::Missing $desc"
+              exit 1
+            fi
+          }
+
+          # Mac Assets
+          check_asset 'any(test("\\.dmg$"))' "Mac DMG"
+          check_asset 'any(test("\\.zip$"))' "Mac ZIP"
+          check_asset 'any(. == "latest-mac.yml")' "latest-mac.yml"
+
+          # Windows Assets
+          check_asset 'any(test("\\.exe$"))' "Windows EXE"
+          check_asset 'any(. == "latest.yml")' "latest.yml"
+
+          # 4. HTTP Check (Curl) with Process Substitution
           echo "--- HTTP Availability Check ---"
-          jq -r '.assets[].browser_download_url' release.json | while read url; do
+          while IFS= read -r url; do
+            echo "Checking: $url"
             code=$(curl -o /dev/null -s -w "%{http_code}" -I -L "$url")
             echo "[$code] $url"
+            
             if [[ "$code" != "200" && "$code" != "302" ]]; then
               echo "::error::Asset unavailable (HTTP $code): $url"
               exit 1
             fi
-          done
+          done < <(jq -r '.assets[].browser_download_url' release.json)
           
           echo "SUCCESS: All assets verified and downloadable."
 
