@@ -1,6 +1,6 @@
 {
   "name": "merfox",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "private": true,
   "description": "Mercari to Amazon Cross-Listing Tool",
   "repository": {
