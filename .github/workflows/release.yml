@@ -61,90 +61,103 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          echo "=== dist tree ==="
-          ls -R dist || true
-          echo "=== search latest*.yml in workspace ==="
-          
+          echo "=== [DEBUG] Start Normalize Metadata ==="
+          echo "Current Dir: $(pwd)"
+          echo "Dist Content (Recursive):"
+          ls -R dist || echo "dist dir missing or empty"
+
           mkdir -p dist
-          
-          # Try to copy existing ymls
+
+          # 1. Try to Collect Existing Metadata
+          echo "1. Searching for existing latest*.yml..."
+          # Safe find loop
           find . -type f -name "latest*.yml" -print0 | while IFS= read -r -d '' file; do
-             echo "Copying $file..."
+             echo "Found existing metadata: $file"
              cp -f "$file" dist/
           done || true
-          
-          # FALLBACK GENERATOR FUNCTION
+
+          # 2. Fallback Generator Function
           generate_yml() {
             local os=$1
             local version="${{ github.ref_name }}"
-            version=${version#v} # strip v prefix
+            version=${version#v} 
             local date=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
-            
+            local target_ext=""
+            local out_name=""
+
             if [ "$os" == "mac" ]; then
-               local file=$(find dist -name "*.dmg" | head -n 1)
-               if [ -z "$file" ]; then echo "::error::No .dmg found for fallback gen"; exit 1; fi
-               local name=$(basename "$file")
-               local size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file") # mac/linux stat
-               local sha=$(shasum -a 512 "$file" | awk '{print $1}')
-               local out="dist/latest-mac.yml"
-               
-               echo "Generating fallback $out for $name..."
-               # Use printf to avoid here-doc indentation issues in YAML
-               printf "version: %s\nfiles:\n  - url: %s\n    sha512: %s\n    size: %s\npath: %s\nsha512: %s\nreleaseDate: %s\n" \
-                 "$version" "$name" "$sha" "$size" "$name" "$sha" "$date" > "$out"
+               target_ext=".zip" # User requested .zip for updates
+               out_name="latest-mac.yml"
             else
-               # Windows
-               local file=$(find dist -name "*.exe" | head -n 1)
-               if [ -z "$file" ]; then echo "::error::No .exe found for fallback gen"; exit 1; fi
-               local name=$(basename "$file")
-               local size=$(stat -c%s "$file" 2>/dev/null || ls -l "$file" | awk '{print $5}')
-               local sha=$(shasum -a 512 "$file" | awk '{print $1}')
-               local out="dist/latest.yml"
-               
-               echo "Generating fallback $out for $name..."
-               printf "version: %s\nfiles:\n  - url: %s\n    sha512: %s\n    size: %s\npath: %s\nsha512: %s\nreleaseDate: %s\n" \
-                 "$version" "$name" "$sha" "$size" "$name" "$sha" "$date" > "$out"
+               target_ext=".exe"
+               out_name="latest.yml"
             fi
+
+            # Find artifact
+            local file=$(find dist -name "*$target_ext" | head -n 1)
+            
+            # If zip not found for Mac, try dmg (just in case, though zip is better for update)
+            if [ "$os" == "mac" ] && [ -z "$file" ]; then
+               echo "WARNING: .zip not found for Mac, trying .dmg..."
+               file=$(find dist -name "*.dmg" | head -n 1)
+            fi
+
+            if [ -z "$file" ]; then
+               echo "::error::No artifact ($target_ext) found to generate metadata for $os"
+               exit 1
+            fi
+
+            local name=$(basename "$file")
+            # Stat size compatible with Mac (BSD) and Linux (GNU)
+            local size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file")
+            local sha=$(shasum -a 512 "$file" | awk '{print $1}')
+            local out="dist/$out_name"
+
+            echo "Generating fallback metadata ($out) for artifact: $name"
+            
+            # printf for safe YAML generation
+            printf "version: %s\nfiles:\n  - url: %s\n    sha512: %s\n    size: %s\npath: %s\nsha512: %s\nreleaseDate: %s\n" \
+              "$version" "$name" "$sha" "$size" "$name" "$sha" "$date" > "$out"
+              
             cat "$out"
           }
-          
-          # ENSURE MAC METADATA
+
+          # 3. Ensure Mac Metadata
           if [ "${{ runner.os }}" != "Windows" ]; then
-             # Check for latest-mac.yml
              if [ ! -f "dist/latest-mac.yml" ]; then
-                # Check for misnamed
-                FOUND=$(find dist -name "latest*.yml" | head -n 1)
-                if [ -n "$FOUND" ]; then
+                # Check for just 'latest.yml' produced by mac build?
+                # Usually electron-builder makes latest-mac.yml for mac.
+                FOUND=$(find dist -name "latest-mac.yml" | head -n 1)
+                
+                if [ -n "$FOUND" ] && [ "$FOUND" != "dist/latest-mac.yml" ]; then
                    cp -f "$FOUND" dist/latest-mac.yml
-                   echo "Renamed $FOUND -> dist/latest-mac.yml"
-                else
-                   # Generate
-                   echo "WARNING: latest-mac.yml missing (Unsigned build?). Generating fallback."
+                elif [ -z "$FOUND" ]; then
+                   echo "Missing latest-mac.yml. Running Fallback Generator..."
                    generate_yml "mac"
                 fi
              fi
           fi
-          
-          # ENSURE WIN METADATA
+
+          # 4. Ensure Windows Metadata
           if [ "${{ runner.os }}" == "Windows" ]; then
              if [ ! -f "dist/latest.yml" ]; then
-                FOUND=$(find dist -name "latest*.yml" | head -n 1)
-                if [ -n "$FOUND" ]; then
+                FOUND=$(find dist -name "latest.yml" | head -n 1)
+                
+                if [ -n "$FOUND" ] && [ "$FOUND" != "dist/latest.yml" ]; then
                    cp -f "$FOUND" dist/latest.yml
-                   echo "Renamed $FOUND -> dist/latest.yml"
-                else
-                   # Generate
-                   echo "WARNING: latest.yml missing. Generating fallback."
+                elif [ -z "$FOUND" ]; then
+                   echo "Missing latest.yml. Running Fallback Generator..."
                    generate_yml "win"
                 fi
              fi
           fi
-          
-          echo "=== Final Dist Content ==="
+
+          echo "=== [DEBUG] Final Dist Content ==="
           ls -lah dist
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
+        if: always() # Ensure we try to upload even if something weird happens, though we expect success
         with:
           name: dist-${{ matrix.os }}
           path: dist/
