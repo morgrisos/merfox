@@ -47,20 +47,34 @@ jobs:
           mac_certs: ''
           mac_certs_password: ''
 
-      - name: Verify Build Artifacts (Pre-Upload)
+      - name: Normalize Metadata (Pre-Upload)
         shell: bash
         run: |
-          echo "== dist tree =="
+          echo "== dist tree (pre-norm) =="
           find dist -maxdepth 3 -type f | sed 's|^|dist/|'
           
-          echo "== yml check =="
-          YML_COUNT=$(find dist -maxdepth 3 -name 'latest*.yml' | wc -l)
-          echo "latest*.yml count: $YML_COUNT"
+          # Determine Target Name
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            TARGET="latest-mac.yml"
+          else
+            TARGET="latest.yml"
+          fi
           
-          if [ "$YML_COUNT" -eq "0" ]; then
-            echo "::error::latest*.yml not generated! Auto-update will fail."
+          # Find any generated YML
+          YML=$(find dist -name 'latest*.yml' | head -n 1)
+          if [ -z "$YML" ]; then
+            echo "::error::No latest*.yml found! Auto-update will fail."
             exit 1
           fi
+          
+          echo "Found generated YML: $YML"
+          
+          # Ensure it exists as TARGET at dist root
+          # Note: If $YML is already dist/latest-mac.yml, cp matches src/dst, just ignore or force
+          cp "$YML" dist/"$TARGET"
+          
+          echo "Normalized to: dist/$TARGET"
+          ls -lah dist/"$TARGET"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
