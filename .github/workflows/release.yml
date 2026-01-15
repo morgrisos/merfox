@@ -60,34 +60,31 @@ jobs:
       - name: Normalize Metadata (Pre-Upload)
         shell: bash
         run: |
-          echo "== dist tree (pre-norm) =="
-          pwd
-          ls -R dist || echo "dist not found"
+          set -euo pipefail
+          echo "=== dist tree ==="
+          ls -lah dist || true
+          ls -R dist || true
+
+          # Find metadata (allow failure finding to debug)
+          YML_PATH="$(find dist -maxdepth 3 -type f -name 'latest*.yml' -print -quit || true)"
           
-          # Determine Target Name
-          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-            TARGET="latest-mac.yml"
+          if [ -z "$YML_PATH" ]; then
+            echo "::error::No latest*.yml found under dist/"
+            exit 1
+          fi
+          echo "FOUND: $YML_PATH"
+
+          # Canonicalize based on OS
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp -f "$YML_PATH" "dist/latest.yml"
+            echo "CANONICALIZED -> dist/latest.yml"
           else
-            TARGET="latest.yml"
+            cp -f "$YML_PATH" "dist/latest-mac.yml"
+            echo "CANONICALIZED -> dist/latest-mac.yml"
           fi
-          
-          # Find any generated YML (Filesystem insensitive search precaution)
-          # Search entire workspace if dist failed
-          YML=$(find . -name 'latest*.yml' | head -n 1)
-          
-          if [ -z "$YML" ]; then
-            echo "::error::No latest*.yml found! Auto-update will fail."
-            exit 1 # Fail strict
-          fi
-          
-          echo "Found generated YML: $YML"
-          
-          # Copy to dist root as target
-          # dirname to handle if it is deep
-          cp "$YML" dist/"$TARGET"
-          
-          echo "Normalized to: dist/$TARGET"
-          ls -lah dist/"$TARGET"
+
+          echo "=== dist after canonicalize ==="
+          ls -lah dist
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
