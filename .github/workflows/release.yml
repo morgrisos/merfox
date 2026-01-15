@@ -223,24 +223,36 @@ jobs:
           
           # Collect Assets
           ASSETS=()
+          # Explicit look for expected files
           for f in release-dist/macos/*.dmg release-dist/macos/*.zip release-dist/macos/latest-mac.yml release-dist/windows/*.exe release-dist/windows/*.yml release-dist/windows/latest.yml release-dist/*.blockmap; do
-            if [ -f "$f" ]; then
-               ASSETS+=("$f")
-            fi
+             if [ -f "$f" ]; then
+                ASSETS+=("$f")
+             fi
           done
+          
+          if [ ${#ASSETS[@]} -eq 0 ]; then
+             echo "::error::No assets found to upload!"
+             find release-dist
+             exit 1
+          fi
           
           echo "Assets to upload:"
           printf '%s\n' "${ASSETS[@]}"
           
-          # Retry creation (tag propagation delay)
+          # Retry creation
           for i in {1..5}; do
-             if gh release create "$TAG" "${ASSETS[@]}" --title "Release $TAG" --notes "Auto-generated release for $TAG" --repo "${{ github.repository }}"; then
+             # Check if release exists first? NO, create handles it or fails.
+             # If tag exists but release doesn't, create works.
+             # If release exists, we might need 'edit' or fail. Assuming it doesn't exist yet as we are creating.
+             
+             if gh release create "$TAG" "${ASSETS[@]}" --title "Release $TAG" --generate-notes --repo "${{ github.repository }}"; then
                 echo "Release created successfully."
                 exit 0
              fi
              echo "Release creation failed, retrying in 5s... ($i/5)"
              sleep 5
           done
+          
           echo "::error::Failed to create release after retries."
           exit 1
 
