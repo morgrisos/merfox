@@ -244,7 +244,11 @@ jobs:
           
           # Collect Assets
           ASSETS=()
-          for f in release-dist/macos/*.dmg release-dist/macos/*.zip release-dist/macos/latest-mac.yml release-dist/windows/*.exe release-dist/windows/*.yml release-dist/windows/latest.yml release-dist/*.blockmap; do
+          # Recursive look for expected files (builder might nest them)
+          # enable globstar for **
+          shopt -s globstar nullglob
+          
+          for f in release-dist/macos/**/*.dmg release-dist/macos/**/*.zip release-dist/macos/**/latest-mac.yml release-dist/windows/**/*.exe release-dist/windows/**/*.yml release-dist/windows/**/latest.yml release-dist/**/*.blockmap; do
              if [ -f "$f" ]; then
                 ASSETS+=("$f")
              fi
