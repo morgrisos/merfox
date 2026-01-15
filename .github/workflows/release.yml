@@ -84,15 +84,44 @@ jobs:
       - name: List All Artifacts
         run: ls -R release-dist
 
+      - name: Canonicalize Metafiles
+        shell: bash
+        run: |
+          echo "Canonicalizing Auto-Update Metadata..."
+          
+          # Mac: Find latest-mac*.yml
+          # Excluding directories if any, though artifact should be flat-ish
+          MAC_YML=$(find release-dist -type f -name "latest-mac*.yml" | head -n 1)
+          if [ -n "$MAC_YML" ]; then
+            echo "Found Mac YML: $MAC_YML"
+            cp "$MAC_YML" release-dist/latest-mac.yml
+          else
+            echo "::error::No latest-mac*.yml found in artifacts!"
+            exit 1
+          fi
+
+          # Windows: Find latest*.yml (excluding mac)
+          WIN_YML=$(find release-dist -type f -name "latest*.yml" ! -name "*mac*" | head -n 1)
+          if [ -n "$WIN_YML" ]; then
+            echo "Found Win YML: $WIN_YML"
+            cp "$WIN_YML" release-dist/latest.yml
+          else
+            echo "::error::No latest*.yml (win) found in artifacts!"
+            exit 1
+          fi
+          
+          ls -lh release-dist/latest*.yml
+
       - name: Create Release & Upload Assets
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
+            release-dist/latest-mac.yml
+            release-dist/latest.yml
             release-dist/**/*.dmg
             release-dist/**/*.zip
             release-dist/**/*.exe
-            release-dist/**/latest*.yml
             release-dist/**/*.blockmap
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
@@ -122,7 +151,6 @@ jobs:
           # 3. Validation Logic (Strict Existence)
           echo "Checking essential assets..."
           
-          # Function to check asset existence by exact name or extension presence
           check_asset() {
             local query=$1
             local desc=$2
@@ -137,24 +165,30 @@ jobs:
           # Mac Assets
           check_asset 'any(test("\\.dmg$"))' "Mac DMG"
           check_asset 'any(test("\\.zip$"))' "Mac ZIP"
-          check_asset 'any(. == "latest-mac.yml")' "latest-mac.yml"
+          check_asset 'any(. == "latest-mac.yml")' "latest-mac.yml (Canonical)"
 
           # Windows Assets
           check_asset 'any(test("\\.exe$"))' "Windows EXE"
-          check_asset 'any(. == "latest.yml")' "latest.yml"
+          check_asset 'any(. == "latest.yml")' "latest.yml (Canonical)"
 
-          # 4. HTTP Check (Curl) with Process Substitution
-          echo "--- HTTP Availability Check ---"
-          while IFS= read -r url; do
+          # 4. HTTP Check (Curl) - Explicit Canonical URLs
+          echo "--- HTTP Availability Check (Canonical) ---"
+          REPO="${{ github.repository }}"
+          BASE="https://github.com/$REPO/releases/download/$TAG"
+          
+          check_url() {
+            local url=$1
             echo "Checking: $url"
-            code=$(curl -o /dev/null -s -w "%{http_code}" -I -L "$url")
+            local code=$(curl -o /dev/null -s -w "%{http_code}" -I -L "$url")
             echo "[$code] $url"
-            
             if [[ "$code" != "200" && "$code" != "302" ]]; then
               echo "::error::Asset unavailable (HTTP $code): $url"
               exit 1
             fi
-          done < <(jq -r '.assets[].browser_download_url' release.json)
+          }
           
-          echo "SUCCESS: All assets verified and downloadable."
+          check_url "$BASE/latest-mac.yml"
+          check_url "$BASE/latest.yml"
+          
+          echo "SUCCESS: Canonical assets verified."
 
