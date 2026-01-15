@@ -45,9 +45,14 @@ jobs:
           mac_certs: ''
           mac_certs_password: ''
 
-      - name: List Dist Content (Debug)
-        run: ls -R dist || echo "Dist not found"
+      - name: Verify Dist Content
         shell: bash
+        run: |
+          ls -lah dist
+          if [ -z "$(ls -A dist)" ]; then
+             echo "::error::Dist directory is empty! Build failed to produce artifacts."
+             exit 1
+          fi
 
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
@@ -60,6 +65,48 @@ jobs:
             dist/*.yml
             dist/*.blockmap
           token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: false # Avoid failure on cross-platform globs
+          make_latest: true
+
+      - name: Verify Release Assets (API)
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Verifying assets for $TAG via GitHub API..."
+          sleep 10 # Allow API propagation
+          
+          # Fetch Release JSON
+          curl -sfL -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG" > release.json
+          
+          echo "--- Release JSON Assets ---"
+          cat release.json | jq '.assets[] | .name + " (" + .browser_download_url + ")"' || cat release.json
+          
+          # Verification Logic
+          ASSET_COUNT=$(jq '.assets | length' release.json)
+          echo "Total Assets Found: $ASSET_COUNT"
+          
+          if [ "$ASSET_COUNT" -eq "0" ]; then
+            echo "::error::Release created but NO assets attached!"
+            exit 1
+          fi
+
+          # OS Specific Checks
+          OS="${{ matrix.os }}"
+          if [[ "$OS" == "macos-latest" ]]; then
+            echo "Verifying Mac Assets..."
+            if ! grep -q "\.dmg" release.json; then echo "::error::Missing .dmg"; exit 1; fi
+            if ! grep -q "latest-mac.yml" release.json; then echo "::error::Missing latest-mac.yml"; exit 1; fi
+          elif [[ "$OS" == "windows-latest" ]]; then
+            echo "Verifying Windows Assets..."
+            if ! grep -q "\.exe" release.json; then echo "::error::Missing .exe"; exit 1; fi
+            if ! grep -q "latest.yml" release.json; then echo "::error::Missing latest.yml"; exit 1; fi
+          fi
+          
+          echo "Verification Passed: Assets exist."
 
