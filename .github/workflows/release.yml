@@ -185,10 +185,31 @@ jobs:
               echo "::error::Asset unavailable (HTTP $code): $url"
               exit 1
             fi
+            echo "$code"
           }
           
-          check_url "$BASE/latest-mac.yml"
-          check_url "$BASE/latest.yml"
+          # Capture codes for summary (running check again or capturing output)
+          # We'll run explicitly to capture variables for summary
+          CODE_MAC=$(curl -o /dev/null -s -w "%{http_code}" -I -L "$BASE/latest-mac.yml")
+          CODE_WIN=$(curl -o /dev/null -s -w "%{http_code}" -I -L "$BASE/latest.yml")
+          
+          # Verify codes are valid (fail if not)
+          if [[ "$CODE_MAC" != "200" && "$CODE_MAC" != "302" ]]; then exit 1; fi
+          if [[ "$CODE_WIN" != "200" && "$CODE_WIN" != "302" ]]; then exit 1; fi
           
           echo "SUCCESS: Canonical assets verified."
+
+          # 5. Write to Job Summary
+          {
+            echo "## Gate G Evidence ($TAG)"
+            echo ""
+            echo "### Canonical URLs Check"
+            echo "- [$CODE_MAC] $BASE/latest-mac.yml"
+            echo "- [$CODE_WIN] $BASE/latest.yml"
+            echo ""
+            echo "### Verified Assets"
+            jq -r '.assets[].name' release.json | sed 's/^/- /'
+            echo ""
+            echo "**SUCCESS: All assets verified and downloadable.**"
+          } >> "$GITHUB_STEP_SUMMARY"
 
