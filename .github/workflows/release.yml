@@ -244,21 +244,19 @@ jobs:
           
           # Collect Assets
           ASSETS=()
-          # Recursive look for expected files (builder might nest them)
-          # enable globstar for **
-          shopt -s globstar nullglob
-          
-          for f in release-dist/macos/**/*.dmg release-dist/macos/**/*.zip release-dist/macos/**/latest-mac.yml release-dist/windows/**/*.exe release-dist/windows/**/*.yml release-dist/windows/**/latest.yml release-dist/**/*.blockmap; do
-             if [ -f "$f" ]; then
-                ASSETS+=("$f")
-             fi
-          done
+          # Use find for robust recursive search (works on all bash versions)
+          while IFS= read -r -d '' file; do
+             ASSETS+=("$file")
+             echo "Found asset: $file"
+          done < <(find release-dist -type f \( -name "*.dmg" -o -name "*.zip" -o -name "*.exe" -o -name "*.yml" -o -name "*.blockmap" \) -print0)
           
           if [ ${#ASSETS[@]} -eq 0 ]; then
              echo "::error::No assets found to upload!"
              find release-dist
              exit 1
           fi
+          
+
           
           echo "Assets: ${ASSETS[*]}"
           
