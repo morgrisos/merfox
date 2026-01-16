@@ -290,7 +290,12 @@ jobs:
            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
            TAG: ${{ github.ref_name }}
         run: |
-           sleep 10
+           set -euo pipefail
+           
+           # 0. Wait for consistency
+           echo "Waiting 30s for API consistency..."
+           sleep 30
+           
            echo "=== 1. Token Validation ==="
            LOGIN=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/user | python3 -c "import sys, json; print(json.load(sys.stdin).get('login', 'UNKNOWN'))")
            echo "Token Login: $LOGIN"
@@ -301,83 +306,63 @@ jobs:
            
            echo "=== 2. Release & Asset Check ==="
            echo "Listing releases to find $TAG..."
-           # Fetch list to handle drafts (tags API hides drafts)
-           curl -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/releases?per_page=20" > releases.json
+           # Fetch list with retry (handle API consistency)
+           for i in {1..5}; do
+              curl -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/releases?per_page=50" > releases.json
+              if grep -q "$TAG" releases.json; then
+                 echo "Tag $TAG found in list."
+                 break
+              fi
+              echo "Tag $TAG not found. Retrying in 10s... ($i/5)"
+              sleep 10
+           done
            
-           # Parse target release
+           # Verify via Python (Strict)
            export TAG
-           python3 -c "import sys, json, os; 
-           tag = os.environ['TAG'];
-           data = json.load(open('releases.json')); 
-           matches = [r for r in data if r['tag_name'] == tag];
-           if not matches:
-             print(f'::error::Release {tag} not found in list'); 
-             sys.exit(1);
-           r = matches[0];
-           print(f'Release ID: {r[\"id\"]}');
-           print(f'Draft: {r[\"draft\"]}');
-           print(f'Prerelease: {r[\"prerelease\"]}');
-           print('Assets:');
-           for a in r['assets']:
-             print(f' - {a[\"name\"]} ({a[\"browser_download_url\"]})');
-           "
+           python3 -c "
+           import sys, json, os
            
-           echo "=== 3. Asset Existence Verification (API Only) ==="
-           # Verify presence of required assets by name (avoiding curl -L download triggers TLS issues on some runners)
-           python3 -c "import sys, json, os;
-           tag = os.environ['TAG'];
-           data = json.load(open('releases.json'));
-           r = next((x for x in data if x['tag_name'] == tag), None);
+           tag = os.environ['TAG']
+           ver = tag.lstrip('v')
            
-           # Get asset list
-           assets = [a['name'] for a in r['assets']];
-           print(f'Assets detected: {assets}');
+           try:
+               data = json.load(open('releases.json'))
+           except Exception as e:
+               print(f'::error::Failed to load releases.json: {e}')
+               sys.exit(1)
+               
+           # Find Release
+           r = next((x for x in data if x['tag_name'] == tag), None)
+           if not r:
+               print(f'::error::Release {tag} not found (after retries)')
+               sys.exit(1)
+               
+           print(f'Release ID: {r[\"id\"]}')
+           print(f'Draft: {r[\"draft\"]}')
+           print(f'Prerelease: {r[\"prerelease\"]}')
            
-           # Define requirements
-           required_meta = ['latest-mac.yml', 'latest.yml'];
-           missing_meta = [m for m in required_meta if m not in assets];
-           
-           if missing_meta:
-             print(f'::error::Missing metadata assets: {missing_meta}');
-             sys.exit(1);
-             
-           # Check for binaries
-           has_mac_bin = any('.dmg' in a or '.zip' in a for a in assets);
-           has_win_bin = any('.exe' in a for a in assets);
-           has_blockmap = any('.blockmap' in a for a in assets);
-           
-           if not has_mac_bin:
-              print('::error::Missing macOS binary (.dmg/.zip)');
-              sys.exit(1);
-           if not has_win_bin:
-              print('::error::Missing Windows binary (.exe)');
-              sys.exit(1);
-           if not has_blockmap:
-              print('::warning::Missing blockmap files (delta updates may fail)');
-              
-           print('SUCCESS: All required assets are present in Release API.');
-           "
+           # Check Draft Status (For Verify purposes we just warn or fail if crucial)
+           if r['draft']:
+               print(f'::error::Release is still in Draft state!')
+               sys.exit(1)
 
-      - name: Verify Canonical URLs (Strict)
-        run: |
-           TAG="${{ github.ref_name }}"
-           REPO="${{ github.repository }}"
-           BASE="https://github.com/$REPO/releases/download/$TAG"
+           # Asset Verification
+           assets = [a['name'] for a in r.get('assets', [])]
+           print(f'Assets detected ({len(assets)}): {assets}')
            
-           check_url() {
-             local url=$1
-             for i in {1..10}; do
-               code=$(curl -o /dev/null -s -w "%{http_code}" -I -L "$url")
-               if [[ "$code" == "200" || "$code" == "302" ]]; then
-                 echo "OK ($code): $url"
-                 return 0
-               fi
-               echo "Wait ($code)... $url"
-               sleep 5
-             done
-             echo "::error::Failed to verify $url"
-             return 1
-           }
+           required = [
+               f'MerFox-{ver}-mac-arm64.dmg',
+               f'MerFox-{ver}-mac-arm64.zip',
+               f'MerFox-{ver}-win-x64.exe',
+               'latest-mac.yml',
+               'latest.yml'
+           ]
            
-           check_url "$BASE/latest-mac.yml"
-           check_url "$BASE/latest.yml"
+           missing = [m for m in required if m not in assets]
+           
+           if missing:
+               print(f'::error::Missing required assets: {missing}')
+               sys.exit(1)
+               
+           print('SUCCESS: All required assets are present.')
+           "
