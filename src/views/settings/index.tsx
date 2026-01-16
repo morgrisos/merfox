@@ -89,23 +89,34 @@ const AppInfoCard = () => {
                     </div>
                 </div>
 
-                {/* 3. Log Access */}
+                {/* 3. Log Access & Support */}
                 <div className="space-y-2 pt-2">
-                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">トラブルシューティング</h3>
-                    <div className="flex items-center gap-3">
+                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">トラブルシューティング・サポート</h3>
+                    <div className="flex flex-wrap items-center gap-3">
                         <button
                             onClick={handleOpenLogFolder}
                             className="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                         >
                             <span className="material-symbols-outlined text-[18px]">folder_open</span>
-                            ログフォルダを開く
+                            logs
                         </button>
                         <button
                             onClick={handleCopyLogPath}
                             className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                         >
                             <span className="material-symbols-outlined text-[18px]">content_copy</span>
-                            ログパスをコピー
+                            path
+                        </button>
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem('merfox.onboarding.v1.seen');
+                                window.dispatchEvent(new Event('merfox:show-onboarding'));
+                            }}
+                            className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ml-auto sm:ml-0"
+                            title="初回ガイドを再表示します"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">help</span>
+                            チュートリアルを再表示
                         </button>
                     </div>
                     <p className="text-xs text-slate-400 mt-1">
