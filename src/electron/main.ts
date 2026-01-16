@@ -33,6 +33,14 @@ ipcMain.handle('app:open-external', async (_, url: string) => {
     }
 });
 
+ipcMain.handle('app:open-log-folder', async () => {
+    const logPath = process.platform === 'darwin'
+        ? path.join(app.getPath('home'), 'Library/Logs/merfox')
+        : path.join(app.getPath('userData'), 'logs');
+
+    await shell.openPath(logPath);
+});
+
 // Initialize Auto Updater (Manual Mode: Logging only)
 initUpdater();
 
@@ -153,6 +161,19 @@ app.on('ready', async () => {
 
     ipcMain.handle('app:open-file', async (_, filePath: string) => {
         await shell.openPath(filePath);
+    });
+
+    ipcMain.handle('app:open-log-folder', async () => {
+        const logPath = process.platform === 'darwin'
+            ? path.join(app.getPath('home'), 'Library/Logs/merfox')
+            : path.join(app.getPath('userData'), 'logs');
+        await shell.openPath(logPath);
+    });
+
+    ipcMain.handle('app:get-log-path', () => {
+        return process.platform === 'darwin'
+            ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
+            : path.join(app.getPath('userData'), 'logs', 'main.log');
     });
 
     // Initialize Auto Updater

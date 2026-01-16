@@ -2,45 +2,114 @@ import { useEffect, useState } from 'react';
 
 const AppInfoCard = () => {
     const [appVersion, setAppVersion] = useState<string>('');
+    const [logPath, setLogPath] = useState<string>('');
 
     useEffect(() => {
         // Fetch App Version via IPC
-        if (typeof window !== 'undefined' && (window as any).merfox) {
-            (window as any).merfox.getAppVersion().then(setAppVersion).catch(console.error);
+        if (typeof window !== 'undefined') {
+            if ((window as any).merfox) {
+                (window as any).merfox.getAppVersion().then(setAppVersion).catch(console.error);
+            }
+            if ((window as any).electron) {
+                (window as any).electron.getLogPath().then(setLogPath).catch(console.error);
+            }
         }
     }, []);
 
     const handleOpenReleases = () => {
         if ((window as any).merfox) {
             (window as any).merfox.openExternal('https://github.com/morgrisos/merfox/releases');
-        } else {
-            // Fallback for web mode
-            window.open('https://github.com/morgrisos/merfox/releases', '_blank');
         }
     };
+
+    const handleCopyVersion = () => {
+        navigator.clipboard.writeText(appVersion);
+        alert('バージョン番号をコピーしました: ' + appVersion);
+    };
+
+    const handleOpenLogFolder = () => {
+        if ((window as any).electron) {
+            (window as any).electron.openLogFolder();
+        }
+    };
+
+    const handleCopyLogPath = () => {
+        if (logPath) {
+            navigator.clipboard.writeText(logPath);
+            alert('ログパスをコピーしました:\n' + logPath);
+        }
+    };
+
+    const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
     return (
         <div className="bg-surface-light dark:bg-[#1a2430] p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">アプリケーション情報</h2>
-            <div className="space-y-4">
-                <div className="flex items-center justify-between flex-wrap gap-4">
+
+            <div className="space-y-6">
+                {/* 1. Version Info */}
+                <div className="flex items-center justify-between flex-wrap gap-4 border-b border-slate-200 dark:border-slate-700 pb-4">
                     <div>
                         <p className="text-slate-500 dark:text-slate-400 text-sm">現在のバージョン</p>
-                        <p className="text-slate-900 dark:text-white font-mono text-lg font-bold">v{appVersion || '---'}</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-slate-900 dark:text-white font-mono text-2xl font-bold">v{appVersion || '---'}</p>
+                            <button onClick={handleCopyVersion} className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-slate-500" title="バージョンをコピー">
+                                <span className="material-symbols-outlined text-sm">content_copy</span>
+                            </button>
+                        </div>
                     </div>
                     <button
                         onClick={handleOpenReleases}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-colors flex items-center gap-2 shadow-sm"
+                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-colors flex items-center gap-2 shadow-sm"
                     >
-                        <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                        <span className="material-symbols-outlined text-[20px]">open_in_new</span>
                         最新版を開く (GitHub Releases)
                     </button>
                 </div>
-                <div className="bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg p-3">
-                    <p className="text-yellow-700 dark:text-yellow-500 text-xs leading-relaxed">
-                        <span className="font-bold">自動アップデートは無効です:</span><br />
-                        お使いのネットワーク環境では自動更新が利用できません。
-                        新しいバージョンがある場合は、上のボタンから手動でダウンロードしてください。
+
+                {/* 2. Manual Update Guide */}
+                <div className="space-y-2">
+                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">更新手順 ({isMac ? 'macOS' : 'Windows'})</h3>
+                    <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-mono">
+                        {isMac ? (
+                            <ol className="list-decimal list-inside space-y-1">
+                                <li>「最新版を開く」ボタンをクリック</li>
+                                <li>最新の <strong>.dmg</strong> ファイルをダウンロード</li>
+                                <li>ファイルをダブルクリックし、Applicationsフォルダへ上書きドラッグ</li>
+                                <li>MerFoxを再起動 (警告が出た場合は設定で許可)</li>
+                            </ol>
+                        ) : (
+                            <ol className="list-decimal list-inside space-y-1">
+                                <li>「最新版を開く」ボタンをクリック</li>
+                                <li>最新の <strong>.exe</strong> ファイルをダウンロード</li>
+                                <li>インストーラーを実行して上書きインストール</li>
+                                <li>MerFoxを再起動</li>
+                            </ol>
+                        )}
+                    </div>
+                </div>
+
+                {/* 3. Log Access */}
+                <div className="space-y-2 pt-2">
+                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">トラブルシューティング</h3>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleOpenLogFolder}
+                            className="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">folder_open</span>
+                            ログフォルダを開く
+                        </button>
+                        <button
+                            onClick={handleCopyLogPath}
+                            className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                            ログパスをコピー
+                        </button>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">
+                        不具合報告の際は、上記フォルダ内の <code>main.log</code> を添付してください。
                     </p>
                 </div>
             </div>
