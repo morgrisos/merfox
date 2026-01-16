@@ -60,115 +60,129 @@ const AppInfoCard = () => {
                             </button>
                         </div>
                     </div>
+                </div>
+                <div className="flex flex-col gap-2">
                     <button
                         onClick={handleOpenReleases}
-                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-colors flex items-center gap-2 shadow-sm"
+                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-colors flex items-center gap-2 shadow-sm justify-center"
                     >
                         <span className="material-symbols-outlined text-[20px]">open_in_new</span>
                         最新版を開く (GitHub Releases)
                     </button>
+                    <button
+                        onClick={() => {
+                            const mirrorUrl = process.env.NEXT_PUBLIC_MIRROR_URL || 'https://github.com/morgrisos/merfox#download-mirrors';
+                            (window as any).merfox?.openExternal(mirrorUrl);
+                        }}
+                        className="px-6 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 justify-center"
+                        title="GitHubからダウンロードできない場合に使用してください"
+                    >
+                        <span className="material-symbols-outlined text-[16px]">cloud_download</span>
+                        ミラーからダウンロード (予備)
+                    </button>
                 </div>
+            </div>
 
-                {/* 2. Manual Update Guide */}
-                <div className="space-y-2">
-                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">更新手順 ({isMac ? 'macOS' : 'Windows'})</h3>
-                    <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-mono">
-                        {isMac ? (
-                            <ol className="list-decimal list-inside space-y-1">
-                                <li>「最新版を開く」ボタンをクリック</li>
-                                <li>最新の <strong>.dmg</strong> ファイルをダウンロード</li>
-                                <li>ファイルをダブルクリックし、Applicationsフォルダへ上書きドラッグ</li>
-                                <li>MerFoxを再起動 (警告が出た場合は設定で許可)</li>
-                            </ol>
-                        ) : (
-                            <ol className="list-decimal list-inside space-y-1">
-                                <li>「最新版を開く」ボタンをクリック</li>
-                                <li>最新の <strong>.exe</strong> ファイルをダウンロード</li>
-                                <li>インストーラーを実行して上書きインストール</li>
-                                <li>MerFoxを再起動</li>
-                            </ol>
-                        )}
-                    </div>
-                </div>
-
-                {/* 3. Log Access & Support */}
-                <div className="space-y-2 pt-2">
-                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">トラブルシューティング・サポート</h3>
-
-                    {/* Log Controls */}
-                    <div className="flex flex-wrap items-center gap-3">
-                        <button
-                            onClick={handleOpenLogFolder}
-                            className="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                            title="ログ保存先を開く"
-                        >
-                            <span className="material-symbols-outlined text-[18px]">folder_open</span>
-                            Logs
-                        </button>
-                        <button
-                            onClick={handleCopyLogPath}
-                            className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                            title="ログのパスをコピー"
-                        >
-                            <span className="material-symbols-outlined text-[18px]">content_copy</span>
-                            Path
-                        </button>
-                        <button
-                            onClick={() => {
-                                if (confirm('ログを削除しますか？\n（現在記録されているログが消去されます）')) {
-                                    if ((window as any).electron) {
-                                        (window as any).electron.clearLogs?.().then(() => alert('ログを削除しました')).catch((e: any) => alert('削除失敗: ' + e));
-                                    }
-                                }
-                            }}
-                            className="px-4 py-2 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                            title="ログファイルを空にします"
-                        >
-                            <span className="material-symbols-outlined text-[18px]">delete</span>
-                            Clear
-                        </button>
-                    </div>
-
-                    {/* Help & Tutorials */}
-                    <div className="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4">
-                        <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">ヘルプ</h3>
-                        <div className="flex items-center gap-3">
-                            <button
-                                onClick={() => {
-                                    localStorage.removeItem('merfox.onboarding.v1.seen');
-                                    window.dispatchEvent(new Event('merfox:show-onboarding'));
-                                }}
-                                className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                                title="初回ガイドを再表示します"
-                            >
-                                <span className="material-symbols-outlined text-[18px]">help</span>
-                                チュートリアルを再表示
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Developer Tools (Hidden in Production) */}
-                    {process.env.NODE_ENV !== 'production' && (
-                        <div className="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 opacity-50 hover:opacity-100 transition-opacity">
-                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Developer</h3>
-                            <button
-                                onClick={() => showError({
-                                    message: 'This is a test error generated from Settings.',
-                                    screen: 'Settings',
-                                    action: 'TestErrorButton',
-                                    name: 'TestError',
-                                    stack: new Error().stack
-                                })}
-                                className="text-xs text-slate-400 hover:text-red-400 transition-colors flex items-center gap-1"
-                            >
-                                <span className="material-symbols-outlined text-[14px]">bug_report</span>
-                                Force Error (Debug)
-                            </button>
-                        </div>
+            {/* 2. Manual Update Guide */}
+            <div className="space-y-2">
+                <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">更新手順 ({isMac ? 'macOS' : 'Windows'})</h3>
+                <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-mono">
+                    {isMac ? (
+                        <ol className="list-decimal list-inside space-y-1">
+                            <li>「最新版を開く」ボタンをクリック</li>
+                            <li>最新の <strong>.dmg</strong> ファイルをダウンロード</li>
+                            <li>ファイルをダブルクリックし、Applicationsフォルダへ上書きドラッグ</li>
+                            <li>MerFoxを再起動 (警告が出た場合は設定で許可)</li>
+                        </ol>
+                    ) : (
+                        <ol className="list-decimal list-inside space-y-1">
+                            <li>「最新版を開く」ボタンをクリック</li>
+                            <li>最新の <strong>.exe</strong> ファイルをダウンロード</li>
+                            <li>インストーラーを実行して上書きインストール</li>
+                            <li>MerFoxを再起動</li>
+                        </ol>
                     )}
                 </div>
             </div>
+
+            {/* 3. Log Access & Support */}
+            <div className="space-y-2 pt-2">
+                <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">トラブルシューティング・サポート</h3>
+
+                {/* Log Controls */}
+                <div className="flex flex-wrap items-center gap-3">
+                    <button
+                        onClick={handleOpenLogFolder}
+                        className="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                        title="ログ保存先を開く"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">folder_open</span>
+                        Logs
+                    </button>
+                    <button
+                        onClick={handleCopyLogPath}
+                        className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                        title="ログのパスをコピー"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                        Path
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (confirm('ログを削除しますか？\n（現在記録されているログが消去されます）')) {
+                                if ((window as any).electron) {
+                                    (window as any).electron.clearLogs?.().then(() => alert('ログを削除しました')).catch((e: any) => alert('削除失敗: ' + e));
+                                }
+                            }
+                        }}
+                        className="px-4 py-2 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                        title="ログファイルを空にします"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                        Clear
+                    </button>
+                </div>
+
+                {/* Help & Tutorials */}
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4">
+                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">ヘルプ</h3>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem('merfox.onboarding.v1.seen');
+                                window.dispatchEvent(new Event('merfox:show-onboarding'));
+                            }}
+                            className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                            title="初回ガイドを再表示します"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">help</span>
+                            チュートリアルを再表示
+                        </button>
+                    </div>
+                </div>
+
+                {/* Developer Tools (Hidden in Production) */}
+                {process.env.NODE_ENV !== 'production' && (
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 opacity-50 hover:opacity-100 transition-opacity">
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Developer</h3>
+                        <button
+                            onClick={() => showError({
+                                message: 'This is a test error generated from Settings.',
+                                screen: 'Settings',
+                                action: 'TestErrorButton',
+                                name: 'TestError',
+                                stack: new Error().stack
+                            })}
+                            className="text-xs text-slate-400 hover:text-red-400 transition-colors flex items-center gap-1"
+                        >
+                            <span className="material-symbols-outlined text-[14px]">bug_report</span>
+                            Force Error (Debug)
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
+        </div >
     );
 };
 
