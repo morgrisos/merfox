@@ -109,6 +109,20 @@ const AppInfoCard = () => {
                         </button>
                         <button
                             onClick={() => {
+                                if (confirm('ログを削除しますか？\n（現在記録されているログが消去されます）')) {
+                                    if ((window as any).electron) {
+                                        (window as any).electron.clearLogs?.().then(() => alert('ログを削除しました')).catch((e: any) => alert('削除失敗: ' + e));
+                                    }
+                                }
+                            }}
+                            className="px-4 py-2 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                            title="ログファイルを空にします"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">delete</span>
+                            clear
+                        </button>
+                        <button
+                            onClick={() => {
                                 localStorage.removeItem('merfox.onboarding.v1.seen');
                                 window.dispatchEvent(new Event('merfox:show-onboarding'));
                             }}

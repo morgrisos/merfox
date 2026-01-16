@@ -2,9 +2,20 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
 import { fork, ChildProcess } from 'child_process';
 import net from 'net';
+import log from 'electron-log';
+import fs from 'fs';
 import { scraperManager } from '../lib/manager';
 import { ScraperConfig } from '../lib/types';
 import { initUpdater } from './updater';
+
+// [LOGGING] Configure Electron Log (P9.21)
+log.transports.file.level = 'info';
+log.transports.file.maxSize = 5 * 1024 * 1024; // 5MB
+log.transports.file.resolvePathFn = () => {
+    return process.platform === 'darwin'
+        ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
+        : path.join(app.getPath('userData'), 'logs/main.log');
+};
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (process.platform === 'win32') {
@@ -39,6 +50,25 @@ ipcMain.handle('app:open-log-folder', async () => {
         : path.join(app.getPath('userData'), 'logs');
 
     await shell.openPath(logPath);
+});
+
+ipcMain.handle('app:clear-logs', async () => {
+    try {
+        const logPath = process.platform === 'darwin'
+            ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
+            : path.join(app.getPath('userData'), 'logs/main.log');
+
+        // Truncate file
+        if (fs.existsSync(logPath)) {
+            fs.writeFileSync(logPath, '');
+            log.info('[SYSTEM] Logs cleared by user.');
+            return { success: true };
+        }
+        return { success: false, reason: 'not_found' };
+    } catch (e) {
+        log.error('Failed to clear logs:', e);
+        return { success: false, error: String(e) };
+    }
 });
 
 // Initialize Auto Updater (Manual Mode: Logging only)

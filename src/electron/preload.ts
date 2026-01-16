@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('electron', {
     openFile: (path: string) => ipcRenderer.invoke('app:open-file', path),
     openLogFolder: () => ipcRenderer.invoke('app:open-log-folder'),
     getLogPath: () => ipcRenderer.invoke('app:get-log-path'),
+    clearLogs: () => ipcRenderer.invoke('app:clear-logs'),
 });
 
 contextBridge.exposeInMainWorld('merfox', {
