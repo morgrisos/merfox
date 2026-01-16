@@ -367,3 +367,11 @@ jobs:
             cat release.json || true
             exit 1
           fi
+
+      - name: Upload verify evidence (release.json)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-evidence
+          path: |
+            release.json
