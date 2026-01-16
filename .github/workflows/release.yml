@@ -295,50 +295,75 @@ jobs:
           echo "Waiting 30s for GitHub API consistency..."
           sleep 30
 
-          ver="${TAG#v}"
-          required=("MerFox-${ver}-mac-arm64.dmg" "MerFox-${ver}-mac-arm64.zip" "MerFox-${ver}-win-x64.exe" "latest-mac.yml" "latest.yml")
-
-          echo "Fetching release by tag with retry..."
           ok=0
-          for i in $(seq 1 8); do
-            code=$(curl -sS -H "Authorization: token ${GH_TOKEN}" -H "Accept: application/vnd.github+json" \
+          for i in $(seq 1 9); do
+            echo "=== Attempt ${i}/9: Checking Release & Assets ==="
+
+            code=$(curl -sS -H "Authorization: token ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
               -o release.json -w "%{http_code}" \
               "https://api.github.com/repos/${REPO}/releases/tags/${TAG}" || true)
 
-            if [ "$code" = "200" ]; then
+            if [ "$code" != "200" ]; then
+              echo "Release not ready (HTTP $code). Waiting 20s..."
+              sleep 20
+              continue
+            fi
+
+            # Exit Codes: 0=Success, 1=Retry(Missing), 2=Fail(Draft/Fatal)
+            set +e
+            python3 - << 'PY'
+            import json, sys, os
+
+            try:
+                with open("release.json","r",encoding="utf-8") as f:
+                    r=json.load(f)
+            except Exception as e:
+                print(f"::warning::JSON parse failed: {e}")
+                sys.exit(1)
+
+            if r.get("draft") is True:
+                print("::error::Release is draft=True")
+                sys.exit(2)
+
+            tag=os.environ["TAG"]
+            ver=tag.lstrip("v")
+            required={
+                f"MerFox-{ver}-mac-arm64.dmg",
+                f"MerFox-{ver}-mac-arm64.zip",
+                f"MerFox-{ver}-win-x64.exe",
+                "latest-mac.yml",
+                "latest.yml",
+            }
+            assets=set(a.get("name") for a in r.get("assets",[]) if a.get("name"))
+            missing=sorted(required - assets)
+
+            if missing:
+                print(f"Missing assets (still propagating): {missing}")
+                print(f"Found assets count: {len(assets)}")
+                sys.exit(1)
+
+            print("SUCCESS: All required assets present.")
+            sys.exit(0)
+            PY
+            rc=$?
+            set -e
+
+            if [ $rc -eq 0 ]; then
               ok=1
               break
+            elif [ $rc -eq 2 ]; then
+              echo "::error::Draft release detected. Failing."
+              exit 1
+            else
+              echo "Assets incomplete. Waiting 20s..."
+              sleep 20
             fi
-            echo "Not ready (HTTP $code). Retry in 10s... (${i}/8)"
-            sleep 10
           done
 
           if [ "$ok" != "1" ]; then
-            echo "::error::Release tag ${TAG} not visible after retries"
+            echo "::error::Verification timed out (Release visible but assets not fully propagated)."
             echo "Last response:"
             cat release.json || true
             exit 1
           fi
-
-          python3 - << 'PY'
-          import json, sys, os
-          tag=os.environ["TAG"]
-          ver=tag[1:] if tag.startswith("v") else tag
-          required=[f"MerFox-{ver}-mac-arm64.dmg", f"MerFox-{ver}-mac-arm64.zip", f"MerFox-{ver}-win-x64.exe", "latest-mac.yml", "latest.yml"]
-
-          with open("release.json","r",encoding="utf-8") as f:
-            r=json.load(f)
-
-          if r.get("draft") is True:
-            print("::error::Release is draft=True")
-            sys.exit(1)
-
-          assets=[a.get("name") for a in r.get("assets",[])]
-          missing=[x for x in required if x not in assets]
-          if missing:
-            print(f"::error::Missing assets: {missing}")
-            print("Assets:", assets)
-            sys.exit(1)
-
-          print("SUCCESS: All required assets present.")
-          PY
