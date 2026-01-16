@@ -94,20 +94,24 @@ const AppInfoCard = () => {
                 {/* 3. Log Access & Support */}
                 <div className="space-y-2 pt-2">
                     <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">トラブルシューティング・サポート</h3>
+
+                    {/* Log Controls */}
                     <div className="flex flex-wrap items-center gap-3">
                         <button
                             onClick={handleOpenLogFolder}
                             className="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                            title="ログ保存先を開く"
                         >
                             <span className="material-symbols-outlined text-[18px]">folder_open</span>
-                            logs
+                            Logs
                         </button>
                         <button
                             onClick={handleCopyLogPath}
                             className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                            title="ログのパスをコピー"
                         >
                             <span className="material-symbols-outlined text-[18px]">content_copy</span>
-                            path
+                            Path
                         </button>
                         <button
                             onClick={() => {
@@ -121,37 +125,47 @@ const AppInfoCard = () => {
                             title="ログファイルを空にします"
                         >
                             <span className="material-symbols-outlined text-[18px]">delete</span>
-                            clear
-                        </button>
-                        <button
-                            onClick={() => {
-                                localStorage.removeItem('merfox.onboarding.v1.seen');
-                                window.dispatchEvent(new Event('merfox:show-onboarding'));
-                            }}
-                            className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ml-auto sm:ml-0"
-                            title="初回ガイドを再表示します"
-                        >
-                            <span className="material-symbols-outlined text-[18px]">help</span>
-                            チュートリアルを再表示
+                            Clear
                         </button>
                     </div>
-                    <div className="flex justify-end mt-2">
-                        <button
-                            onClick={() => showError({
-                                message: 'This is a test error generated from Settings.',
-                                screen: 'Settings',
-                                action: 'TestErrorButton',
-                                name: 'TestError',
-                                stack: new Error().stack
-                            })}
-                            className="text-[10px] text-slate-300 hover:text-red-400 transition-colors"
-                        >
-                            DEBUG: Err
-                        </button>
+
+                    {/* Help & Tutorials */}
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4">
+                        <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">ヘルプ</h3>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => {
+                                    localStorage.removeItem('merfox.onboarding.v1.seen');
+                                    window.dispatchEvent(new Event('merfox:show-onboarding'));
+                                }}
+                                className="px-4 py-2 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                                title="初回ガイドを再表示します"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">help</span>
+                                チュートリアルを再表示
+                            </button>
+                        </div>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">
-                        不具合報告の際は、上記フォルダ内の <code>main.log</code> を添付してください。
-                    </p>
+
+                    {/* Developer Tools (Hidden in Production) */}
+                    {process.env.NODE_ENV !== 'production' && (
+                        <div className="pt-4 border-t border-slate-200 dark:border-slate-700 mt-4 opacity-50 hover:opacity-100 transition-opacity">
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Developer</h3>
+                            <button
+                                onClick={() => showError({
+                                    message: 'This is a test error generated from Settings.',
+                                    screen: 'Settings',
+                                    action: 'TestErrorButton',
+                                    name: 'TestError',
+                                    stack: new Error().stack
+                                })}
+                                className="text-xs text-slate-400 hover:text-red-400 transition-colors flex items-center gap-1"
+                            >
+                                <span className="material-symbols-outlined text-[14px]">bug_report</span>
+                                Force Error (Debug)
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
