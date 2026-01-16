@@ -1,30 +1,39 @@
 # Build & Maintenance Notes
 
-**This document describes critical configurations that must NOT be changed without deep verification.**
+## Critical: Version Control Exclusions
 
-## 1. Zombie Prevention
-- **Where**: `src/electron/main.ts` -> `before-quit`
-- **What**: The Next.js server spawned as a child process is explicitly killed (`serverProcess.kill()`).
-- **Why**: Electron creates zombie processes if the child isn't killed, causing port conflicts (EADDRINUSE: 3000/13337) on next launch.
-- **Danger**: Do not remove the `before-quit` handler.
+> [!CAUTION]
+> **NEVER COMMIT `dist/` or `node_modules/`**
+> GitHub rejects files > 100MB (`GH001`).
+> Artifacts (`.dmg`, `.exe`, `.zip`) often exceed this limit.
 
-## 2. Windows Fonts (Sidebar Failure)
-- **Where**: `src/app/globals.css`, `public/fonts/`, `package.json`
-- **What**: Material Symbols are bundled LOCALLY (`public/fonts/*.woff2`) with `@font-face`.
-- **Config**: `package.json` -> `files` MUST include `public/**/*`.
-- **Why**: Windows packaged builds cannot load Google Fonts efficiently or reliably. If `public` is missing, fonts 404 and icons become text ("dashboard").
-- **Danger**: Do not revert to `@import url(...)` for fonts. Do not remove `public/**/*` from `files`.
+### Correct `.gitignore` Setup
+Ensure your `.gitignore` contains:
+```
+/dist
+/dist-electron
+/out
+/build
+/node_modules
+*.dmg
+*.zip
+*.exe
+```
 
-## 3. Storage Compatibility (UserData)
-- **Where**: `src/electron/main.ts`
-- **What**: `process.env.MERFOX_RUNS_DIR` is set to `path.join(app.getPath('userData'), 'runs')`.
-- **Why**: MacOS App Sandbox and Windows security (Program Files) forbid writing to the app directory. We must write to `Application Support/merfox` or `%APPDATA%/merfox`.
-- **Danger**: Do not change storage to `__dirname` or relative paths.
+## Packaging
+- **Mac**: `npm run build-desktop -- --mac` -> `dist/MerFox-x.x.x-mac-arm64.dmg`
+- **Win**: `npm run build-desktop -- --win` -> `dist/MerFox-x.x.x-win-x64.exe`
+- **Artifacts**: These are uploaded to GitHub Releases by CI. **DO NOT PUSH TO REPO.**
 
-## 4. Distribution Config
-- **File**: `package.json`
-- **Artifact Name**: `MerFox-${version}-${os}-${arch}.${ext}`
-- **Targets**:
-  - Mac: `dmg` (Distribution), `zip` (Update/Generic)
-  - Win: `nsis` (Installer `.exe`)
-- **ASAR**: `false` (Currently disabled to avoid complexity with static file serving, though technically possible to enable if `public` is unpacked). Keep false unless optimizing size drastically.
+## Auto-Update Config
+- **Repository**: set in `package.json` (morgrisos/merfox).
+- **Token**: CI uses `secrets.GITHUB_TOKEN`.
+- **Flow**:
+  1. Commit changes.
+  2. Tag `v0.1.x`.
+  3. Push Tag.
+  4. Actions builds & uploads assets.
+  5. App launches -> Checks Release -> Updates.
+
+## Zombie Processes
+`serverProcess.kill()` in `main.ts` is critical to prevent orphaned Next.js servers.

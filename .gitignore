@@ -62,3 +62,12 @@ latest*.yml
 # Next.js
 /.next/
 
+
+# Auto-generated verification logs
+build_verify_*.log
+test_glob.sh
+
+# Temporary debug files
+jobs_*.json
+
+

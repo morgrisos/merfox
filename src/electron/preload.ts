@@ -12,3 +12,8 @@ contextBridge.exposeInMainWorld('electron', {
     openFolder: (path?: string) => ipcRenderer.invoke('app:open-folder', path),
     openFile: (path: string) => ipcRenderer.invoke('app:open-file', path),
 });
+
+contextBridge.exposeInMainWorld('merfox', {
+    openExternal: (url: string) => ipcRenderer.invoke('app:open-external', url),
+    getAppVersion: () => ipcRenderer.invoke('app:get-version'),
+});
