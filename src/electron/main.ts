@@ -18,6 +18,40 @@ if (process.platform === 'win32') {
     }
 }
 
+// [MANUAL UPDATE] IPC Handlers for External Link & Version Check
+ipcMain.handle('app:get-version', () => {
+    return app.getVersion();
+});
+
+ipcMain.handle('app:open-external', async (_, url: string) => {
+    // Strict Whitelist for GitHub Releases
+    const ALLOWED_URL = 'https://github.com/morgrisos/merfox/releases';
+    if (url === ALLOWED_URL) {
+        await shell.openExternal(url);
+    } else {
+        console.warn(`[SECURITY] Blocked unauthorized openExternal request: ${url}`);
+    }
+});
+
+// Initialize Auto Updater (Manual Mode: Logging only)
+initUpdater();
+
+// [DIAGNOSTIC] Log Certificate Errors & Allow Insecure bypass if requested
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+    console.error(`[CERT-ERROR] URL: ${url}`);
+    console.error(`[CERT-ERROR] Error: ${error}`);
+    console.error(`[CERT-ERROR] Issuer: ${certificate.issuerName}`);
+    console.error(`[CERT-ERROR] Subject: ${certificate.subjectName}`);
+
+    if (process.env.MERFOX_INSECURE_SSL === '1') {
+        console.warn('[CERT-ERROR] Bypassing certificate error due to MERFOX_INSECURE_SSL=1');
+        event.preventDefault();
+        callback(true);
+    } else {
+        callback(false);
+    }
+});
+
 let mainWindow: BrowserWindow | null = null;
 let serverProcess: ChildProcess | null = null;
 const SERVER_PORT = 13337;

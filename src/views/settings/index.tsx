@@ -1,4 +1,52 @@
-// Link removed as breadcrumbs are gone
+import { useEffect, useState } from 'react';
+
+const AppInfoCard = () => {
+    const [appVersion, setAppVersion] = useState<string>('');
+
+    useEffect(() => {
+        // Fetch App Version via IPC
+        if (typeof window !== 'undefined' && (window as any).merfox) {
+            (window as any).merfox.getAppVersion().then(setAppVersion).catch(console.error);
+        }
+    }, []);
+
+    const handleOpenReleases = () => {
+        if ((window as any).merfox) {
+            (window as any).merfox.openExternal('https://github.com/morgrisos/merfox/releases');
+        } else {
+            // Fallback for web mode
+            window.open('https://github.com/morgrisos/merfox/releases', '_blank');
+        }
+    };
+
+    return (
+        <div className="bg-surface-light dark:bg-[#1a2430] p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">アプリケーション情報</h2>
+            <div className="space-y-4">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">現在のバージョン</p>
+                        <p className="text-slate-900 dark:text-white font-mono text-lg font-bold">v{appVersion || '---'}</p>
+                    </div>
+                    <button
+                        onClick={handleOpenReleases}
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-colors flex items-center gap-2 shadow-sm"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">open_in_new</span>
+                        最新版を開く (GitHub Releases)
+                    </button>
+                </div>
+                <div className="bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-500/20 rounded-lg p-3">
+                    <p className="text-yellow-700 dark:text-yellow-500 text-xs leading-relaxed">
+                        <span className="font-bold">自動アップデートは無効です:</span><br />
+                        お使いのネットワーク環境では自動更新が利用できません。
+                        新しいバージョンがある場合は、上のボタンから手動でダウンロードしてください。
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export const Settings = () => {
     return (
@@ -29,6 +77,9 @@ export const Settings = () => {
                             </p>
                         </div>
                     </div>
+
+                    {/* [P8.23] Application Information (Manual Update) */}
+                    <AppInfoCard />
 
                     <div className="opacity-50 pointer-events-none grayscale-[0.5]">
                         <form className="flex flex-col gap-8" onSubmit={(e) => e.preventDefault()}>
