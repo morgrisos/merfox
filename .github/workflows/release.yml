@@ -287,82 +287,58 @@ jobs:
 
       - name: Verify Uploaded Assets (API)
         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           TAG: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
         run: |
-           set -euo pipefail
-           
-           # 0. Wait for consistency
-           echo "Waiting 30s for API consistency..."
-           sleep 30
-           
-           echo "=== 1. Token Validation ==="
-           LOGIN=$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/user | python3 -c "import sys, json; print(json.load(sys.stdin).get('login', 'UNKNOWN'))")
-           echo "Token Login: $LOGIN"
-           if [ "$LOGIN" == "UNKNOWN" ] || [ -z "$LOGIN" ]; then
-              echo "::error::Token invalid (login failed)"
-              exit 1
-           fi
-           
-           echo "=== 2. Release & Asset Check ==="
-           echo "Listing releases to find $TAG..."
-           # Fetch list with retry (handle API consistency)
-           for i in {1..5}; do
-              curl -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/releases?per_page=50" > releases.json
-              if grep -q "$TAG" releases.json; then
-                 echo "Tag $TAG found in list."
-                 break
-              fi
-              echo "Tag $TAG not found. Retrying in 10s... ($i/5)"
-              sleep 10
-           done
-           
-           # Verify via Python (Strict)
-           export TAG
-           python3 -c "
-           import sys, json, os
-           
-           tag = os.environ['TAG']
-           ver = tag.lstrip('v')
-           
-           try:
-               data = json.load(open('releases.json'))
-           except Exception as e:
-               print(f'::error::Failed to load releases.json: {e}')
-               sys.exit(1)
-               
-           # Find Release
-           r = next((x for x in data if x['tag_name'] == tag), None)
-           if not r:
-               print(f'::error::Release {tag} not found (after retries)')
-               sys.exit(1)
-               
-           print(f'Release ID: {r[\"id\"]}')
-           print(f'Draft: {r[\"draft\"]}')
-           print(f'Prerelease: {r[\"prerelease\"]}')
-           
-           # Check Draft Status (For Verify purposes we just warn or fail if crucial)
-           if r['draft']:
-               print(f'::error::Release is still in Draft state!')
-               sys.exit(1)
+          set -euo pipefail
+          echo "Waiting 30s for GitHub API consistency..."
+          sleep 30
 
-           # Asset Verification
-           assets = [a['name'] for a in r.get('assets', [])]
-           print(f'Assets detected ({len(assets)}): {assets}')
-           
-           required = [
-               f'MerFox-{ver}-mac-arm64.dmg',
-               f'MerFox-{ver}-mac-arm64.zip',
-               f'MerFox-{ver}-win-x64.exe',
-               'latest-mac.yml',
-               'latest.yml'
-           ]
-           
-           missing = [m for m in required if m not in assets]
-           
-           if missing:
-               print(f'::error::Missing required assets: {missing}')
-               sys.exit(1)
-               
-           print('SUCCESS: All required assets are present.')
-           "
+          ver="${TAG#v}"
+          required=("MerFox-${ver}-mac-arm64.dmg" "MerFox-${ver}-mac-arm64.zip" "MerFox-${ver}-win-x64.exe" "latest-mac.yml" "latest.yml")
+
+          echo "Fetching release by tag with retry..."
+          ok=0
+          for i in $(seq 1 8); do
+            code=$(curl -sS -H "Authorization: token ${GH_TOKEN}" -H "Accept: application/vnd.github+json" \
+              -o release.json -w "%{http_code}" \
+              "https://api.github.com/repos/${REPO}/releases/tags/${TAG}" || true)
+
+            if [ "$code" = "200" ]; then
+              ok=1
+              break
+            fi
+            echo "Not ready (HTTP $code). Retry in 10s... (${i}/8)"
+            sleep 10
+          done
+
+          if [ "$ok" != "1" ]; then
+            echo "::error::Release tag ${TAG} not visible after retries"
+            echo "Last response:"
+            cat release.json || true
+            exit 1
+          fi
+
+          python3 - << 'PY'
+          import json, sys, os
+          tag=os.environ["TAG"]
+          ver=tag[1:] if tag.startswith("v") else tag
+          required=[f"MerFox-{ver}-mac-arm64.dmg", f"MerFox-{ver}-mac-arm64.zip", f"MerFox-{ver}-win-x64.exe", "latest-mac.yml", "latest.yml"]
+
+          with open("release.json","r",encoding="utf-8") as f:
+            r=json.load(f)
+
+          if r.get("draft") is True:
+            print("::error::Release is draft=True")
+            sys.exit(1)
+
+          assets=[a.get("name") for a in r.get("assets",[])]
+          missing=[x for x in required if x not in assets]
+          if missing:
+            print(f"::error::Missing assets: {missing}")
+            print("Assets:", assets)
+            sys.exit(1)
+
+          print("SUCCESS: All required assets present.")
+          PY
