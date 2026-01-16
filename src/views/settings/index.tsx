@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useAppError } from '@/contexts/AppErrorContext';
 
 const AppInfoCard = () => {
     const [appVersion, setAppVersion] = useState<string>('');
     const [logPath, setLogPath] = useState<string>('');
+    const { showError } = useAppError();
 
     useEffect(() => {
         // Fetch App Version via IPC
@@ -131,6 +133,20 @@ const AppInfoCard = () => {
                         >
                             <span className="material-symbols-outlined text-[18px]">help</span>
                             チュートリアルを再表示
+                        </button>
+                    </div>
+                    <div className="flex justify-end mt-2">
+                        <button
+                            onClick={() => showError({
+                                message: 'This is a test error generated from Settings.',
+                                screen: 'Settings',
+                                action: 'TestErrorButton',
+                                name: 'TestError',
+                                stack: new Error().stack
+                            })}
+                            className="text-[10px] text-slate-300 hover:text-red-400 transition-colors"
+                        >
+                            DEBUG: Err
                         </button>
                     </div>
                     <p className="text-xs text-slate-400 mt-1">
