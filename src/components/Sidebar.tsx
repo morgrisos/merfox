@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import logo from '@/assets/merfox-mark.png';
 
 const NAV_ITEMS = [
     { label: 'ダッシュボード', path: '/', icon: 'dashboard', iconFill: true, weight: 'font-bold' },
@@ -18,7 +19,7 @@ export const Sidebar = () => {
             <div className="p-4 flex-1 overflow-y-auto">
                 <div className="flex gap-3 items-center mb-8 px-2">
                     <div className="bg-center bg-no-repeat bg-cover rounded-lg size-10 bg-primary/10 flex items-center justify-center">
-                        <img src="/merfox-mark.png" alt="MerFox Logo" className="w-6 h-6 object-contain" />
+                        <img src={logo.src} alt="MerFox Logo" className="w-6 h-6 object-contain" />
                     </div>
                     <div className="flex flex-col">
                         <h1 className="text-white text-base font-bold leading-normal">MerFox</h1>
