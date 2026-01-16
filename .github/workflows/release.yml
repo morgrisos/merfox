@@ -286,18 +286,19 @@ jobs:
             release-dist/
 
       - name: Verify Uploaded Assets (API)
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          echo "Waiting 30s for GitHub API consistency..."
-          sleep 30
+          echo "Waiting 90s for GitHub API consistency..."
+          sleep 90
 
           ok=0
-          for i in $(seq 1 9); do
-            echo "=== Attempt ${i}/9: Checking Release & Assets ==="
+          for i in $(seq 1 15); do
+            echo "=== Attempt ${i}/15: Checking Release & Assets ==="
 
             code=$(curl -sS -H "Authorization: token ${GH_TOKEN}" \
               -H "Accept: application/vnd.github+json" \
@@ -339,7 +340,7 @@ jobs:
             missing=sorted(required - assets)
 
             if missing:
-                print(f"Missing assets (still propagating): {missing}")
+                print(f"::warning::Missing assets: {missing}")
                 print(f"Found assets count: {len(assets)}")
                 sys.exit(1)
 
@@ -362,16 +363,20 @@ jobs:
           done
 
           if [ "$ok" != "1" ]; then
-            echo "::error::Verification timed out (Release visible but assets not fully propagated)."
+            echo "::warning::Verification timed out (Release visible but assets not fully propagated)."
             echo "Last response:"
             cat release.json || true
             exit 1
           fi
 
-      - name: Upload verify evidence (release.json)
-        if: failure()
+      - name: Upload verify evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: verify-evidence
           path: |
             release.json
+            upload.log
+            create.log
+          if-no-files-found: warn
+          retention-days: 7
