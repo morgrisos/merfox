@@ -182,7 +182,7 @@ const AppInfoCard = () => {
                 )}
             </div>
         </div>
-        </div >
+
     );
 };
 
