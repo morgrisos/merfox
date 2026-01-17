@@ -71,8 +71,7 @@ const AppInfoCard = () => {
                     </button>
                     <button
                         onClick={() => {
-                            const mirrorUrl = process.env.NEXT_PUBLIC_MIRROR_URL || 'https://github.com/morgrisos/merfox#download-mirrors';
-                            (window as any).merfox?.openExternal(mirrorUrl);
+                            (window as any).merfox?.openExternal('https://drive.google.com/drive/folders/1uRY49dqN6NPydRJ1BvO0M2mtkY8_gBga?usp=sharing');
                         }}
                         className="px-6 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 justify-center"
                         title="GitHubからダウンロードできない場合に使用してください"
