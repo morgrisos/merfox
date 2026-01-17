@@ -2,6 +2,7 @@
 // --- IPC / Backend Types ---
 export interface ScraperConfig {
     mode: 'url' | 'keyword'; // target.mode
+    runId?: string;
     url?: string;
     keyword?: string;
     excludeKeyword?: string;

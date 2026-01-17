@@ -1,0 +1,10 @@
+[DEBUG] --- Checking Dashboard ---
+[DEBUG] ✅ Dashboard - Test Run Click: Clicked
+[DEBUG] ✅ Dashboard - Open Runs Folder: Clicked
+[DEBUG] --- Checking Scraper ---
+[CONSOLE] [error] Failed to fetch runs JSHandle@error
+[DEBUG] ✅ Scraper - Validate URL: Clicked
+[DEBUG] ✅ Scraper - Test Run Start: Clicked, no crash observed
+[DEBUG] --- Checking Settings ---
+[CONSOLE] [error] SSE Error JSHandle@object
+[DEBUG] ✅ Settings - Open Latest Release: Clicked

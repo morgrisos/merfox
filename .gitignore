@@ -44,6 +44,7 @@ next-env.d.ts
 # Electron builder output
 /dist
 /dist-electron
+/dist_electron
 /out
 /build
 

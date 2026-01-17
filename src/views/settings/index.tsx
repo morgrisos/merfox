@@ -63,7 +63,11 @@ const AppInfoCard = () => {
                 </div>
                 <div className="flex flex-col gap-2">
                     <button
-                        onClick={handleOpenReleases}
+                        onClick={() => {
+                            if ((window as any).merfox) {
+                                (window as any).merfox.openExternal('https://github.com/morgrisos/merfox/releases/latest');
+                            }
+                        }}
                         className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-colors flex items-center gap-2 shadow-sm justify-center"
                     >
                         <span className="material-symbols-outlined text-[20px]">open_in_new</span>
@@ -71,7 +75,9 @@ const AppInfoCard = () => {
                     </button>
                     <button
                         onClick={() => {
-                            (window as any).merfox?.openExternal('https://drive.google.com/drive/folders/1uRY49dqN6NPydRJ1BvO0M2mtkY8_gBga?usp=sharing');
+                            const url = 'https://drive.google.com/drive/folders/1uRY49dqN6NPydRJ1BvO0M2mtkY8_gBga?usp=sharing';
+                            console.info("[settings] mirror clicked", url);
+                            (window as any).merfox?.openExternal(url);
                         }}
                         className="px-6 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold transition-colors flex items-center gap-2 justify-center"
                         title="GitHubからダウンロードできない場合に使用してください"
