@@ -29,66 +29,94 @@ if (process.platform === 'win32') {
     }
 }
 
-// [MANUAL UPDATE] IPC Handlers for External Link & Version Check
-ipcMain.handle('app:get-version', () => {
-    return app.getVersion();
-});
+const registerIpcHandlers = () => {
+    // [MANUAL UPDATE] IPC Handlers for External Link & Version Check
+    ipcMain.handle('app:get-version', () => {
+        return app.getVersion();
+    });
 
-ipcMain.handle('app:open-external', async (_, url: string) => {
-    // Strict Whitelist for GitHub Releases
-    const ALLOWED_URL = 'https://github.com/morgrisos/merfox/releases';
-    if (url === ALLOWED_URL) {
-        await shell.openExternal(url);
-    } else {
-        console.warn(`[SECURITY] Blocked unauthorized openExternal request: ${url}`);
-    }
-});
+    ipcMain.handle('app:open-external', async (_, url: string) => {
+        log.info('[IPC] app:open-external invoked with:', url);
+        // Whitelist for GitHub Releases and Google Drive Mirror
+        const ALLOWED_URLS = [
+            'https://github.com/morgrisos/merfox/releases',
+            'https://github.com/morgrisos/merfox/releases/latest',
+            'https://drive.google.com/drive/folders/1uRY49dqN6NPydRJ1BvO0M2mtkY8_gBga?usp=sharing'
+        ];
 
-ipcMain.handle('app:open-log-folder', async () => {
-    const logPath = process.platform === 'darwin'
-        ? path.join(app.getPath('home'), 'Library/Logs/merfox')
-        : path.join(app.getPath('userData'), 'logs');
-
-    await shell.openPath(logPath);
-});
-
-ipcMain.handle('app:clear-logs', async () => {
-    try {
-        const logPath = process.platform === 'darwin'
-            ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
-            : path.join(app.getPath('userData'), 'logs/main.log');
-
-        // Truncate file
-        if (fs.existsSync(logPath)) {
-            fs.writeFileSync(logPath, '');
-            log.info('[SYSTEM] Logs cleared by user.');
-            return { success: true };
+        if (ALLOWED_URLS.includes(url)) {
+            await shell.openExternal(url);
+            log.info('[IPC] app:open-external success');
+        } else {
+            log.warn(`[SECURITY] Blocked unauthorized openExternal request: ${url}`);
+            console.warn(`[SECURITY] Blocked unauthorized openExternal request: ${url}`);
         }
-        return { success: false, reason: 'not_found' };
-    } catch (e) {
-        log.error('Failed to clear logs:', e);
-        return { success: false, error: String(e) };
-    }
-});
+    });
 
-// Initialize Auto Updater (Manual Mode: Logging only)
-initUpdater();
+    ipcMain.handle('app:open-log-folder', async () => {
+        log.info('[IPC] app:open-log-folder invoked');
+        const logPath = process.platform === 'darwin'
+            ? path.join(app.getPath('home'), 'Library/Logs/merfox')
+            : path.join(app.getPath('userData'), 'logs');
 
-// [DIAGNOSTIC] Log Certificate Errors & Allow Insecure bypass if requested
-app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
-    console.error(`[CERT-ERROR] URL: ${url}`);
-    console.error(`[CERT-ERROR] Error: ${error}`);
-    console.error(`[CERT-ERROR] Issuer: ${certificate.issuerName}`);
-    console.error(`[CERT-ERROR] Subject: ${certificate.subjectName}`);
+        await shell.openPath(logPath);
+    });
 
-    if (process.env.MERFOX_INSECURE_SSL === '1') {
-        console.warn('[CERT-ERROR] Bypassing certificate error due to MERFOX_INSECURE_SSL=1');
-        event.preventDefault();
-        callback(true);
-    } else {
-        callback(false);
-    }
-});
+    ipcMain.handle('app:clear-logs', async () => {
+        try {
+            const logPath = process.platform === 'darwin'
+                ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
+                : path.join(app.getPath('userData'), 'logs/main.log');
+
+            // Truncate file
+            if (fs.existsSync(logPath)) {
+                fs.writeFileSync(logPath, '');
+                log.info('[SYSTEM] Logs cleared by user.');
+                return { success: true };
+            }
+            return { success: false, reason: 'not_found' };
+        } catch (e) {
+            log.error('Failed to clear logs:', e);
+            return { success: false, error: String(e) };
+        }
+    });
+
+    // Scraper IPC Handlers
+    ipcMain.handle('scraper:start', async (_, config: ScraperConfig) => {
+        if (!config.outputDir) {
+            const docs = app.getPath('documents');
+            config.outputDir = path.join(docs, 'MerFoxResults');
+        }
+        await scraperManager.start(config);
+        startStatusStream();
+        return { success: true };
+    });
+
+    ipcMain.handle('scraper:stop', async () => {
+        await scraperManager.stop();
+        return { success: true };
+    });
+
+    ipcMain.handle('app:open-folder', async (_, dirPath?: string) => {
+        if (dirPath) {
+            await shell.openPath(dirPath);
+        } else {
+            const docs = app.getPath('documents');
+            await shell.openPath(path.join(docs, 'MerFoxResults'));
+        }
+    });
+
+    ipcMain.handle('app:open-file', async (_, filePath: string) => {
+        await shell.openPath(filePath);
+    });
+
+    ipcMain.handle('app:get-log-path', () => {
+        log.info('[IPC] app:get-log-path invoked');
+        return process.platform === 'darwin'
+            ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
+            : path.join(app.getPath('userData'), 'logs', 'main.log');
+    });
+};
 
 let mainWindow: BrowserWindow | null = null;
 let serverProcess: ChildProcess | null = null;
@@ -161,50 +189,12 @@ const createWindow = async () => {
 };
 
 app.on('ready', async () => {
+    // Register IPC Handlers immediately
+    registerIpcHandlers();
+
+    // Start Server and Create Window
     await startServer();
     createWindow();
-
-    // IPC Handlers
-    ipcMain.handle('scraper:start', async (_, config: ScraperConfig) => {
-        if (!config.outputDir) {
-            const docs = app.getPath('documents');
-            config.outputDir = path.join(docs, 'MerFoxResults');
-        }
-        await scraperManager.start(config);
-        startStatusStream();
-        return { success: true };
-    });
-
-    ipcMain.handle('scraper:stop', async () => {
-        await scraperManager.stop();
-        return { success: true };
-    });
-
-    ipcMain.handle('app:open-folder', async (_, dirPath?: string) => {
-        if (dirPath) {
-            await shell.openPath(dirPath);
-        } else {
-            const docs = app.getPath('documents');
-            await shell.openPath(path.join(docs, 'MerFoxResults'));
-        }
-    });
-
-    ipcMain.handle('app:open-file', async (_, filePath: string) => {
-        await shell.openPath(filePath);
-    });
-
-    ipcMain.handle('app:open-log-folder', async () => {
-        const logPath = process.platform === 'darwin'
-            ? path.join(app.getPath('home'), 'Library/Logs/merfox')
-            : path.join(app.getPath('userData'), 'logs');
-        await shell.openPath(logPath);
-    });
-
-    ipcMain.handle('app:get-log-path', () => {
-        return process.platform === 'darwin'
-            ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
-            : path.join(app.getPath('userData'), 'logs', 'main.log');
-    });
 
     // Initialize Auto Updater
     initUpdater();

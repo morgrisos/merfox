@@ -7,7 +7,7 @@ export const Dashboard = () => {
 
     const fetchRuns = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/runs?limit=10');
+            const res = await fetch('/api/runs?limit=10');
             const data = await res.json();
             setLatestRuns(data.data || []);
         } catch (e) {
@@ -29,7 +29,7 @@ export const Dashboard = () => {
             // User requested "Test Run" button.
             // Let's us a generic search for "macbook" or similar to ensure hits, or user provided config.
             // Actually, we'll send a default "Test Run" request.
-            await fetch('http://localhost:3001/api/run/start', {
+            await fetch('/api/run/start', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -58,7 +58,7 @@ export const Dashboard = () => {
 
     const latest = latestRuns[0];
 
-    const getDownloadUrl = (runId: string, type: string) => `http://localhost:3001/api/runs/${runId}/files/${type}`;
+    const getDownloadUrl = (runId: string, type: string) => `/api/runs/${runId}/files/${type}`;
 
     return (
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
