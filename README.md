@@ -36,16 +36,15 @@ GitHub Releases から最新のインストーラーをダウンロードして�
 
 <a id="download-mirrors"></a>
 ## Download Mirrors (予備のダウンロード先)
-GitHub Releases からダウンロードできない場合（SSLエラー等）は、以下のミラーリンクを使用してください。
-※ 管理者が手動で更新しているため、最新版の反映に時間がかかる場合があります。
+自宅Wi-Fi等で GitHub Releases (release-assets) への接続がTLS認証エラーで失敗する場合は、以下のミラーリンクを使用してください。
 
-**(管理者追記エリア: Google Drive / Dropbox等の共有リンクをここに貼ってください)**
-- [ダウンロード (Google Drive)](https://example.com)
-- [ダウンロード (Dropbox)](https://example.com)
+- **[ダウンロード (Google Drive)](https://drive.google.com/drive/folders/1uRY49dqN6NPydRJ1BvO0M2mtkY8_gBga?usp=sharing)**
 
-**ファイル名:**
-- Mac: `MerFox-latest-mac.dmg`
+**収録ファイル (推奨運用):**
+- Mac: `MerFox-latest-mac.dmg` (または `MerFox-0.1.44-mac-arm64.dmg`)
 - Windows: `MerFox-latest-win.exe`
+
+※ 管理者が手動で更新しているため、最新版の反映に時間がかかる場合があります。
 
 ---
 
