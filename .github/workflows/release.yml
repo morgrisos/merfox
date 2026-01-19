@@ -1,0 +1,382 @@
+name: Release Build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Compile Main Process (TS)
+        run: npx tsc -p src/electron/tsconfig.json
+
+      - name: Configure Builder Args
+        id: build-config
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            echo "ARGS=--publish=always" >> $GITHUB_OUTPUT
+          else
+            echo "ARGS=--publish=never" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Electron App
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release: false
+          args: ${{ steps.build-config.outputs.ARGS }}
+          mac_certs: ''
+          mac_certs_password: ''
+
+      - name: Normalize Metadata (Pre-Upload)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== [DEBUG] Start Normalize Metadata ==="
+          echo "Current Dir: $(pwd)"
+          echo "Dist Content (Recursive):"
+          ls -R dist || echo "dist dir missing or empty"
+
+          mkdir -p dist
+
+          # 1. Try to Collect Existing Metadata
+          echo "1. Searching for existing latest*.yml..."
+          # Safe find loop
+          find . -type f -name "latest*.yml" -print0 | while IFS= read -r -d '' file; do
+             echo "Found existing metadata: $file"
+             cp -f "$file" dist/
+          done || true
+
+          # 2. Fallback Generator Function
+          generate_yml() {
+            local os=$1
+            local version="${{ github.ref_name }}"
+            version=${version#v} 
+            local date=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+            local target_ext=""
+            local out_name=""
+
+            if [ "$os" == "mac" ]; then
+               target_ext=".zip" # User requested .zip for updates
+               out_name="latest-mac.yml"
+            else
+               target_ext=".exe"
+               out_name="latest.yml"
+            fi
+
+            # Find artifact
+            local file=$(find dist -name "*$target_ext" | head -n 1)
+            
+            # If zip not found for Mac, try dmg (just in case, though zip is better for update)
+            if [ "$os" == "mac" ] && [ -z "$file" ]; then
+               echo "WARNING: .zip not found for Mac, trying .dmg..."
+               file=$(find dist -name "*.dmg" | head -n 1)
+            fi
+
+            if [ -z "$file" ]; then
+               echo "::error::No artifact ($target_ext) found to generate metadata for $os"
+               exit 1
+            fi
+
+            local name=$(basename "$file")
+            # Stat size compatible with Mac (BSD) and Linux (GNU)
+            local size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file")
+            local sha=$(shasum -a 512 "$file" | awk '{print $1}')
+            local out="dist/$out_name"
+
+            echo "Generating fallback metadata ($out) for artifact: $name"
+            
+            # printf for safe YAML generation
+            printf "version: %s\nfiles:\n  - url: %s\n    sha512: %s\n    size: %s\npath: %s\nsha512: %s\nreleaseDate: %s\n" \
+              "$version" "$name" "$sha" "$size" "$name" "$sha" "$date" > "$out"
+              
+            cat "$out"
+          }
+
+          # 3. Ensure Mac Metadata
+          if [ "${{ runner.os }}" != "Windows" ]; then
+             if [ ! -f "dist/latest-mac.yml" ]; then
+                # Check for just 'latest.yml' produced by mac build?
+                # Usually electron-builder makes latest-mac.yml for mac.
+                FOUND=$(find dist -name "latest-mac.yml" | head -n 1)
+                
+                if [ -n "$FOUND" ] && [ "$FOUND" != "dist/latest-mac.yml" ]; then
+                   cp -f "$FOUND" dist/latest-mac.yml
+                elif [ -z "$FOUND" ]; then
+                   echo "Missing latest-mac.yml. Running Fallback Generator..."
+                   generate_yml "mac"
+                fi
+             fi
+          fi
+
+          # 4. Ensure Windows Metadata
+          if [ "${{ runner.os }}" == "Windows" ]; then
+             if [ ! -f "dist/latest.yml" ]; then
+                FOUND=$(find dist -name "latest.yml" | head -n 1)
+                
+                if [ -n "$FOUND" ] && [ "$FOUND" != "dist/latest.yml" ]; then
+                   cp -f "$FOUND" dist/latest.yml
+                elif [ -z "$FOUND" ]; then
+                   echo "Missing latest.yml. Running Fallback Generator..."
+                   generate_yml "win"
+                fi
+             fi
+          fi
+
+          echo "=== [DEBUG] Final Dist Content ==="
+          ls -lah dist
+          
+          # VALIDATE ARTIFACTS
+          if [ "${{ runner.os }}" == "Windows" ]; then
+             if [ -z "$(find dist -name '*.exe')" ]; then echo "::error::No .exe found in dist!"; exit 1; fi
+          else
+             if [ -z "$(find dist -name '*.zip')" ] && [ -z "$(find dist -name '*.dmg')" ]; then echo "::error::No .zip or .dmg found in dist!"; exit 1; fi
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dist-${{ matrix.os }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Pre-Flight Check
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          echo "TAG=$TAG"
+          echo "REPO=${{ github.repository }}"
+          curl -sI "https://api.github.com/repos/${{ github.repository }}" | head -n 1
+
+      - name: Download Artifacts (Mac)
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-macos-latest
+          path: release-dist/macos
+
+      - name: Download Artifacts (Windows)
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-windows-latest
+          path: release-dist/windows
+
+      - name: List Release Content
+        run: |
+          echo "=== Release Content Tree ==="
+          ls -R release-dist
+          
+          echo "=== Verifying Key Assets ==="
+          if [ ! -f release-dist/macos/latest-mac.yml ]; then echo "::error::Missing latest-mac.yml"; exit 1; fi
+          if [ ! -f release-dist/windows/latest.yml ]; then echo "::error::Missing latest.yml"; exit 1; fi
+          echo "SUCCESS: Key assets found."
+
+      - name: Create Release (gh cli)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -x
+          echo "Checking release $TAG..."
+          
+          # Check if release exists
+          if gh release view "$TAG" >/dev/null 2>&1; then
+             echo "Release $TAG already exists. Skipping creation."
+          else
+             echo "Creating release $TAG..."
+             # Create release WITHOUT assets first
+             if ! gh release create "$TAG" --title "Release $TAG" --generate-notes --repo "${{ github.repository }}" > create.log 2>&1; then
+                echo "::error::Release creation failed!"
+                cat create.log
+                exit 1
+             fi
+             cat create.log
+          fi
+
+      - name: Upload Assets (gh cli)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -e
+          echo "Uploading assets to $TAG..."
+          
+          # Collect Assets
+          # Collect Assets
+          # Use find for robust recursive search
+          while IFS= read -r -d '' file; do
+             ASSETS+=("$file")
+          done < <(find release-dist -type d \( -name "win-unpacked" -o -name "*.app" \) -prune -o -type f \( -name "*.dmg" -o -name "*.zip" -o -name "*.exe" -o -name "latest*.yml" -o -name "*.blockmap" \) -print0)
+          
+          echo "=== Found Assets (${#ASSETS[@]}) ==="
+          if [ ${#ASSETS[@]} -gt 0 ]; then
+              printf '%s\n' "${ASSETS[@]}"
+          else
+              echo "::error::No assets found to upload!"
+              find release-dist
+              exit 1
+          fi
+          
+          # Upload with clobber
+          echo "Executing gh release upload..."
+          if gh release upload "$TAG" "${ASSETS[@]}" --clobber --repo "${{ github.repository }}" > upload.log 2>&1; then
+             echo "Upload SUCCESS."
+             cat upload.log
+             
+             # Force publish (ensure not draft) to fix 404 on API
+             echo "Ensuring release is published..."
+             gh release edit "$TAG" --draft=false --latest --repo "${{ github.repository }}" || echo "Warning: Failed to publish"
+          else
+             EC=$?
+             echo "::error::Asset upload failed! Exit Code: $EC"
+             cat upload.log
+             exit 1
+          fi
+
+      - name: Debug Failure (Log Upload)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-logs
+          path: |
+            create.log
+            upload.log
+            release-dist/
+
+      - name: Verify Uploaded Assets (API)
+        # continue-on-error: true  <-- Removed to enforce strict verification
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          echo "Waiting 90s for GitHub API consistency..."
+          sleep 90
+
+          ok=0
+          for i in $(seq 1 15); do
+            echo "=== Attempt ${i}/15: Checking Release & Assets ==="
+
+            code=$(curl -sS -H "Authorization: token ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -o release.json -w "%{http_code}" \
+              "https://api.github.com/repos/${REPO}/releases/tags/${TAG}" || true)
+
+            if [ "$code" != "200" ]; then
+              echo "Release not ready (HTTP $code). Waiting 20s..."
+              sleep 20
+              continue
+            fi
+
+            # Exit Codes: 0=Success, 1=Retry(Missing), 2=Fail(Draft/Fatal)
+            set +e
+            python3 - << 'PY'
+            import json, sys, os
+
+            try:
+                with open("release.json","r",encoding="utf-8") as f:
+                    r=json.load(f)
+            except Exception as e:
+                print(f"::warning::JSON parse failed: {e}")
+                sys.exit(1)
+
+            if r.get("draft") is True:
+                print("::error::Release is draft=True")
+                sys.exit(2)
+
+            tag=os.environ["TAG"]
+            ver=tag.lstrip("v")
+            required={
+                f"MerFox-{ver}-mac-arm64.dmg",
+                f"MerFox-{ver}-mac-arm64.zip",
+                f"MerFox-{ver}-win-x64.exe",
+                "latest-mac.yml",
+                "latest.yml",
+            }
+            assets=set(a.get("name") for a in r.get("assets",[]) if a.get("name"))
+            missing=sorted(required - assets)
+
+            if missing:
+                print(f"::warning::Missing assets: {missing}")
+                print(f"Found assets count: {len(assets)}")
+                sys.exit(1)
+
+            print("SUCCESS: All required assets present.")
+            sys.exit(0)
+            PY
+            rc=$?
+            set -e
+
+            if [ $rc -eq 0 ]; then
+              ok=1
+              break
+            elif [ $rc -eq 2 ]; then
+              echo "::error::Draft release detected. Failing."
+              exit 1
+            else
+              echo "Assets incomplete. Waiting 20s..."
+              sleep 20
+            fi
+          done
+
+          if [ "$ok" != "1" ]; then
+            echo "::warning::Verification timed out (Release visible but assets not fully propagated)."
+            echo "Last response:"
+            cat release.json || true
+            exit 1
+          fi
+
+      - name: Upload verify evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-evidence
+          path: |
+            release.json
+            upload.log
+            create.log
+          if-no-files-found: warn
+          retention-days: 7
