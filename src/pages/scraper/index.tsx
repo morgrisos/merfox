@@ -28,7 +28,7 @@ export const Scraper = () => {
     const [excludeShops, setExcludeShops] = useState(true);
     const [excludeKeywords, setExcludeKeywords] = useState('');
     const [showNgModal, setShowNgModal] = useState(false);
-
+    const [stopCondition, setStopCondition] = useState<'count' | 'time' | 'manual'>('count');
     const [stopLimit] = useState(50);
     const [watchInterval, setWatchInterval] = useState(30);
 
