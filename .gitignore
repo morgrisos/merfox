@@ -10,3 +10,7 @@ server/data/*.tsv
 .DS_Store
 .env
 .gemini/
+dist_electron/
+browsers/
+dist_electron/
+browsers/
