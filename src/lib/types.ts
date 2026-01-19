@@ -13,24 +13,19 @@ export type WatchInterval = 25 | 30 | 45 | 60;
 
 export type Filters = {
     excludeShops: boolean;
-    excludeUnknown: boolean; // default true
-    onlyFreeShipping: boolean; // "送料無料だけ"
-    ngWords: string[]; // partial match
-    ngRegex: string[]; // regex
+    excludeUnknown: boolean;
+    onlyFreeShipping: boolean;
+    ngWords: string[];
+    ngRegex: string[];
     ngTargetTitle: boolean;
     ngTargetDescription: boolean;
-    // excludeHighPrice is fixed logic, but maybe we store it if we want to toggle? 
-    // Spec says "Safety device: High price exclusion: 1,000,000 yen (Fixed)". 
-    // So we effectively just display it, but maybe we keep it in state for "system" usage?
-    // Let's keep it implicit or just constant.
 };
 
 export type StopConditions = {
     useCount: boolean;
-    countLimit: number; // default 1000
+    countLimit: number;
     useTime: boolean;
-    timeLimit: number; // default 25, max 60
-    // Manual is always available
+    timeLimit: number;
 };
 
 export type AppSettings = {
@@ -40,7 +35,7 @@ export type AppSettings = {
     watchInterval: WatchInterval;
     filters: Filters;
     stopConditions: StopConditions;
-    outputDir: string; // "Last execution folder" concept
+    outputDir: string;
 };
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -72,3 +67,13 @@ export const DEFAULT_SETTINGS: AppSettings = {
     },
     outputDir: ''
 };
+
+// [ELECTRON] Helper configuration for IPC
+export interface ScraperConfig {
+    outputDir: string;
+    targetUrl?: string;
+    stopLimit?: number;
+    excludeKeywords?: string;
+    // Allow any other config options that Scraper.js might accept
+    [key: string]: any;
+}
