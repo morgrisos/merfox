@@ -1,6 +1,6 @@
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { dialog, BrowserWindow, shell } from 'electron';
+// import { dialog, BrowserWindow, shell } from 'electron';
 
 // Configure logging
 log.transports.file.level = 'info';

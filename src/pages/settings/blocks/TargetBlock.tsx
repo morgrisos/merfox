@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useSettings } from '../../../hooks/useSettings';
-import { Input, Label } from '../../../components/ui/Form';
+import { Input, Label } from '../../../components/ui/form';
 import { Button } from '../../../components/ui/button';
 import { Card, CardHeader, Section } from '../../../components/ui/card';
 

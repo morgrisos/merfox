@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { LayoutDashboard, Zap, Settings, FileOutput, Server, ArrowLeft } from 'lucide-react';
+import { LayoutDashboard, Zap, Settings, Server, ArrowLeft } from 'lucide-react';
 
 export const WizardSidebar = () => {
     const router = useRouter();
