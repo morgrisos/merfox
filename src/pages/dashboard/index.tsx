@@ -1,4 +1,4 @@
-export const Dashboard = () => {
+export default function Dashboard() {
     return (
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
             <header className="flex flex-col gap-4 mb-8">

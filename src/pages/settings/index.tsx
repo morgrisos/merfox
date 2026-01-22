@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export const Settings = () => {
+export default function Settings() {
     return (
         <div className="flex flex-col h-full bg-background-light dark:bg-background-dark">
             <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-background-dark px-6 py-4 sticky top-0 z-10 w-full">
