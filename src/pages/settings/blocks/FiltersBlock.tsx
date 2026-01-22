@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import { useSettings } from '../../../hooks/useSettings';
-import { Card, CardHeader, Section } from '../../../components/ui/Card';
-import { Toggle, Label } from '../../../components/ui/Form';
-import { Button } from '../../../components/ui/Button';
+import { Card, CardHeader, Section } from '../../../components/ui/card';
+import { Toggle, Label } from '../../../components/ui/form';
+import { Button } from '../../../components/ui/button';
 
 export const FiltersBlock = () => {
     const { settings, updateSettings } = useSettings();

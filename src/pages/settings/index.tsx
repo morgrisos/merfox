@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 export const Settings = () => {
     return (
@@ -21,7 +21,7 @@ export const Settings = () => {
             <div className="flex flex-1 justify-center py-8 px-4 md:px-10 overflow-y-auto">
                 <div className="flex flex-col max-w-[960px] flex-1 gap-6">
                     <nav className="flex flex-wrap gap-2 text-sm">
-                        <Link to="/" className="text-slate-500 dark:text-[#9da8b9] font-medium hover:text-primary transition-colors">ダッシュボード</Link>
+                        <Link href="/" className="text-slate-500 dark:text-[#9da8b9] font-medium hover:text-primary transition-colors">ダッシュボード</Link>
                         <span className="text-slate-400 dark:text-[#9da8b9] font-medium">/</span>
                         <span className="text-slate-500 dark:text-[#9da8b9] font-medium">スクレイパー</span>
                         <span className="text-slate-400 dark:text-[#9da8b9] font-medium">/</span>
