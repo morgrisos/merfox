@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { useRunHistory } from '../../hooks/useRunHistory';
 import { RunRecord, LogEntry } from '../../types';
 
@@ -458,4 +459,6 @@ export default function Scraper() {
             )}
         </div>
     );
-};
+}
+
+Scraper.getLayout = (page: React.ReactElement) => <AppLayout>{page}</AppLayout>;
