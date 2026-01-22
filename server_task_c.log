@@ -1,0 +1,36 @@
+
+> merfox@0.1.51 dev:server
+> next dev -p 13337
+
+   ▲ Next.js 14.0.4
+   - Local:        http://localhost:13337
+
+ ✓ Ready in 1316ms
+ ○ Compiling /wizard/step6 ...
+ ✓ Compiled /wizard/step6 in 1617ms (373 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled / in 381ms (377 modules)
+ ✓ Compiled /wizard/step2 in 415ms (387 modules)
+ ✓ Compiled /wizard/step3 in 147ms (397 modules)
+ ○ Compiling /wizard/step4 ...
+ ✓ Compiled /wizard/step4 in 697ms (395 modules)
+ ✓ Compiled /api/runs in 256ms (170 modules)
+ ○ Compiling /wizard/step5 ...
+ ✓ Compiled /wizard/step5 in 524ms (422 modules)
+ ✓ Compiled /api/runs/[runId]/convert in 175ms (178 modules)
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] Loaded 0 mappings from mapping.csv
+[CONVERT] Loaded 0 mappings from mapping.csv
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] Loaded 0 mappings from mapping.csv
+[CONVERT] Loaded 0 mappings from mapping.csv
+ ✓ Compiled / in 198ms (378 modules)
+ ✓ Compiled /wizard/step1 in 73ms (385 modules)
+ ✓ Compiled in 299ms (232 modules)
+ ✓ Compiled in 83ms (232 modules)
+ ✓ Compiled in 239ms (376 modules)
+ ✓ Compiled in 273ms (407 modules)
+[?25h

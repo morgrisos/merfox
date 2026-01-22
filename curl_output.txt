@@ -1,0 +1,22 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 127.0.0.1:13337...
+* Connected to 127.0.0.1 (127.0.0.1) port 13337
+> POST /api/runs/4b221f9c-9f80-4be3-99dc-58545e6ae503/convert HTTP/1.1
+> Host: 127.0.0.1:13337
+> User-Agent: curl/8.6.0
+> Accept: */*
+> 
+< HTTP/1.1 404 Not Found
+< vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch
+< content-type: application/json
+< Date: Wed, 21 Jan 2026 05:22:05 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< Transfer-Encoding: chunked
+< 
+{ [77 bytes data]
+* Leftovers after chunking: 11 bytes
+100    66    0    66    0     0   5075      0 --:--:-- --:--:-- --:--:--  5500
+* Connection #0 to host 127.0.0.1 left intact
+{"error":"Run directory not found. Please ensure the run exists."}

@@ -1,0 +1,5 @@
+
+> merfox@0.1.51 dev:server
+> next dev -p 13337
+
+sh: next: command not found

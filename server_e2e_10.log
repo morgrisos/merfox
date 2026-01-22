@@ -1,0 +1,28 @@
+
+> merfox@0.1.51 dev:server
+> next dev -p 13337
+
+ ⨯ Failed to start server
+Error: listen EADDRINUSE: address already in use :::13337
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/start-server.js:279:16
+    at new Promise (<anonymous>)
+    at startServer (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/start-server.js:190:11)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/start-server.js:309:52
+    at Span.traceAsyncFn (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/trace/trace.js:147:26)
+    at process.<anonymous> (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/start-server.js:309:35)
+    at process.emit (node:events:508:28) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 13337
+}
+[?25h
+npm notice
+npm notice New minor version of npm available! 11.6.2 -> 11.8.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+npm notice To update run: npm install -g npm@11.8.0
+npm notice

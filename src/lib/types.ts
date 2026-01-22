@@ -7,9 +7,26 @@ export type SearchTarget = {
     sort: 'new' | 'recommended';
 };
 
+export interface MerItem {
+    item_id: string;
+    title: string;
+    price_yen: number;
+    item_url?: string;
+    amazon_product_id?: string;
+    amazon_product_id_type?: string;
+    [key: string]: any;
+}
+
 export type PresetMode = 'beginner' | 'custom';
 export type CollectionMode = 'bulk' | 'watch';
 export type WatchInterval = 25 | 30 | 45 | 60;
+
+export type ExecutionStats = {
+    total: number;
+    success: number;
+    failed: number;
+    duration: number;
+};
 
 export type Filters = {
     excludeShops: boolean;

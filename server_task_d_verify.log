@@ -1,0 +1,586 @@
+
+> merfox@0.1.51 dev:server
+> next dev -p 13337
+
+   ▲ Next.js 14.0.4
+   - Local:        http://localhost:13337
+
+ ✓ Ready in 1408ms
+ ○ Compiling /wizard/step6 ...
+ ✓ Compiled /dashboard in 867ms (408 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled /wizard/step3 in 151ms (420 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ○ Compiling /wizard/step2 ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /wizard/step2 in 586ms (432 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled in 314ms (335 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /_error in 37ms (336 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled in 93ms (336 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 360ms (303 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled in 85ms (154 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled in 138ms (154 modules)
+ ✓ Compiled in 261ms (154 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ○ Compiling /wizard/step1 ...
+ ✓ Compiled /wizard/step1 in 513ms (336 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /wizard/step4 in 338ms (404 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled /api/runs in 272ms (175 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /wizard/step6 in 439ms (439 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ○ Compiling /wizard/step5 ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /wizard/step5 in 722ms (447 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled /api/runs/[runId]/convert in 440ms (191 modules)
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] Loaded 0 mappings from mapping.csv
+[CONVERT] Loaded 0 mappings from mapping.csv
+ ○ Compiling /wizard/step2 ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /wizard/step2 in 731ms (461 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ○ Compiling /wizard/step3 ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /wizard/step3 in 674ms (471 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] Loaded 0 mappings from mapping.csv
+[CONVERT] Loaded 0 mappings from mapping.csv
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 901ms (448 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled /api/runs in 388ms (448 modules)
+ ✓ Compiled (467 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled in 286ms (425 modules)
+ ✓ Compiled /dashboard in 84ms (405 modules)
+ ✓ Compiled /_error in 68ms (407 modules)
+ ✓ Compiled /api/runs in 35ms (179 modules)
+ ✓ Compiled / in 153ms (430 modules)
+ ✓ Compiled /wizard/step1 in 183ms (443 modules)
+ ✓ Compiled /scraper in 242ms (439 modules)
+ ✓ Compiled in 414ms (187 modules)
+ ✓ Compiled in 258ms (322 modules)
+ ✓ Compiled in 190ms (179 modules)
+ ✓ Compiled in 104ms (179 modules)
+ ✓ Compiled in 95ms (179 modules)
+ ✓ Compiled in 123ms (179 modules)
+ ✓ Compiled in 144ms (179 modules)
+ ⨯ ./src/pages/converter/index.tsx:2:0
+Module not found: Can't resolve 'papaparse'
+[0m [90m 1 |[39m [36mimport[39m { useState } [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m [33mPapa[39m [36mfrom[39m [32m'papaparse'[39m[33m;[39m[0m
+[0m [90m 3 |[39m[0m
+[0m [90m 4 |[39m [36mexport[39m [36mconst[39m [33mConverter[39m [33m=[39m () [33m=>[39m {[0m
+[0m [90m 5 |[39m     [36mconst[39m [stats[33m,[39m setStats] [33m=[39m useState({ total[33m:[39m [35m0[39m[33m,[39m success[33m:[39m [35m0[39m[33m,[39m failed[33m:[39m [35m0[39m })[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ○ Compiling /converter ...
+ ⨯ ./src/pages/converter/index.tsx:2:0
+Module not found: Can't resolve 'papaparse'
+[0m [90m 1 |[39m [36mimport[39m { useState } [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m [33mPapa[39m [36mfrom[39m [32m'papaparse'[39m[33m;[39m[0m
+[0m [90m 3 |[39m[0m
+[0m [90m 4 |[39m [36mexport[39m [36mconst[39m [33mConverter[39m [33m=[39m () [33m=>[39m {[0m
+[0m [90m 5 |[39m     [36mconst[39m [stats[33m,[39m setStats] [33m=[39m useState({ total[33m:[39m [35m0[39m[33m,[39m success[33m:[39m [35m0[39m[33m,[39m failed[33m:[39m [35m0[39m })[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
+ ⨯ ./src/pages/converter/index.tsx:2:0
+Module not found: Can't resolve 'papaparse'
+[0m [90m 1 |[39m [36mimport[39m { useState } [36mfrom[39m [32m'react'[39m[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 2 |[39m [36mimport[39m [33mPapa[39m [36mfrom[39m [32m'papaparse'[39m[33m;[39m[0m
+[0m [90m 3 |[39m[0m
+[0m [90m 4 |[39m [36mexport[39m [36mconst[39m [33mConverter[39m [33m=[39m () [33m=>[39m {[0m
+[0m [90m 5 |[39m     [36mconst[39m [stats[33m,[39m setStats] [33m=[39m useState({ total[33m:[39m [35m0[39m[33m,[39m success[33m:[39m [35m0[39m[33m,[39m failed[33m:[39m [35m0[39m })[33m;[39m[0m
+
+https://nextjs.org/docs/messages/module-not-found
