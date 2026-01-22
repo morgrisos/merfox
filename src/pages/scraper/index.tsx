@@ -13,7 +13,7 @@ interface WatchJob {
     stats: { totalRuns: number; totalItemsFound: number };
 }
 
-export const Scraper = () => {
+export default function Scraper() {
     const { addRecord, updateRecord } = useRunHistory();
     const [targetUrl, setTargetUrl] = useState('https://jp.mercari.com/search?keyword=vintage%20camera&status=on_sale');
     const [isValidating, setIsValidating] = useState(false);
