@@ -75,7 +75,7 @@ ipcMain.handle('app:clear-logs', async () => {
 initUpdater();
 
 // [DIAGNOSTIC] Log Certificate Errors & Allow Insecure bypass if requested
-app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+app.on('certificate-error', (event, _webContents, url, error, certificate, callback) => {
     console.error(`[CERT-ERROR] URL: ${url}`);
     console.error(`[CERT-ERROR] Error: ${error}`);
     console.error(`[CERT-ERROR] Issuer: ${certificate.issuerName}`);

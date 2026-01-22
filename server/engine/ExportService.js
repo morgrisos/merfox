@@ -65,6 +65,7 @@ class ExportService {
 
         const amazonPath = path.join(runDir, 'amazon.tsv');
         const amazonCols = ['sku', 'product_id', 'product_id_type', 'price', 'quantity', 'condition_type', 'condition_note', 'handling_time', 'fulfillment_channel', 'shipping_template_name'];
+        // [User Requirement] Mandatory BOM
         const amazonData = stringify(amazonItems, { header: true, bom: true, delimiter: '\t', columns: amazonCols });
         fs.writeFileSync(amazonPath, amazonData);
 

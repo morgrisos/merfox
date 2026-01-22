@@ -1,0 +1,30 @@
+
+> merfox@0.1.51 dev:server
+> next dev -p 13337
+
+   ▲ Next.js 14.0.4
+   - Local:        http://localhost:13337
+
+ ✓ Ready in 1320ms
+ ○ Compiling /wizard/step1 ...
+ ✓ Compiled /wizard/step1 in 1610ms (301 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled /wizard/step2 in 435ms (313 modules)
+ ✓ Compiled /wizard/step3 in 146ms (327 modules)
+ ✓ Compiled /wizard/step4 in 477ms (393 modules)
+ ✓ Compiled /api/runs in 71ms (169 modules)
+ ✓ Compiled /wizard/step5 in 307ms (418 modules)
+ ✓ Compiled /api/runs/[runId]/convert in 56ms (176 modules)
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] mapping.csv found. size=52 bytes
+[CONVERT] Loaded 0 mappings from mapping.csv
+[CONVERT] Loaded 0 mappings from mapping.csv
+ ✓ Compiled /wizard/step6 in 91ms (436 modules)
+ ✓ Compiled in 302ms (232 modules)
+ ✓ Compiled in 171ms (375 modules)
+ ✓ Compiled in 131ms (232 modules)
+ ✓ Compiled in 60ms (232 modules)
+ ✓ Compiled in 94ms (232 modules)
+ ✓ Compiled in 317ms (376 modules)
+ ✓ Compiled in 76ms (376 modules)
+[?25h

@@ -28,7 +28,7 @@ export const Scraper = () => {
     const [excludeShops, setExcludeShops] = useState(true);
     const [excludeKeywords, setExcludeKeywords] = useState('');
     const [showNgModal, setShowNgModal] = useState(false);
-    const [stopCondition, setStopCondition] = useState<'count' | 'time' | 'manual'>('count');
+    // const [stopCondition, setStopCondition] = useState<'count' | 'time' | 'manual'>('count');
     const [stopLimit] = useState(50);
     const [watchInterval, setWatchInterval] = useState(30);
 
@@ -46,7 +46,7 @@ export const Scraper = () => {
     useEffect(() => {
         const fetchJobs = async () => {
             try {
-                const res = await fetch('http://localhost:3001/api/watch/jobs');
+                const res = await fetch('/api/watch/jobs');
                 const jobs: WatchJob[] = await res.json();
                 const matched = jobs.find(j => j.targetUrl === targetUrl);
                 setActiveJob(matched || null);
@@ -81,10 +81,10 @@ export const Scraper = () => {
     const handleStartWatch = async () => {
         if (activeJob && !activeJob.isEnabled) {
             // Resume/Enable
-            await fetch(`http://localhost:3001/api/watch/jobs/${activeJob.id}/enable`, { method: 'POST' });
+            await fetch(`/api/watch/jobs/${activeJob.id}/enable`, { method: 'POST' });
         } else if (!activeJob) {
             // Create New
-            await fetch('http://localhost:3001/api/watch/jobs', {
+            await fetch('/api/watch/jobs', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -99,7 +99,7 @@ export const Scraper = () => {
 
     const handleStopWatch = async () => {
         if (activeJob) {
-            await fetch(`http://localhost:3001/api/watch/jobs/${activeJob.id}/disable`, { method: 'POST' });
+            await fetch(`/api/watch/jobs/${activeJob.id}/disable`, { method: 'POST' });
         }
     };
 
@@ -128,7 +128,7 @@ export const Scraper = () => {
 
         // API Call to Start Run
         try {
-            const res = await fetch('http://localhost:3001/api/run/start', {
+            const res = await fetch('/api/run/start', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -146,7 +146,7 @@ export const Scraper = () => {
             if (!res.ok) throw new Error('Failed to start run');
 
             // Setup SSE
-            const eventSource = new EventSource(`http://localhost:3001/api/run/stream?runId=${runId}`);
+            const eventSource = new EventSource(`/api/run/stream?runId=${runId}`);
 
             eventSource.addEventListener('log', (e) => {
                 const data = JSON.parse(e.data);
@@ -191,7 +191,7 @@ export const Scraper = () => {
     const handleStop = async () => {
         if (!isRunning) return;
         try {
-            await fetch('http://localhost:3001/api/run/stop', { method: 'POST' });
+            await fetch('/api/run/stop', { method: 'POST' });
             addLog('停止リクエストを送信しました...', 'warn');
         } catch (e) {
             console.error(e);

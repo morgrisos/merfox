@@ -17,7 +17,7 @@ export const CsvManager = () => {
     // Fetch path when run selected
     useEffect(() => {
         if (selectedRunId) {
-            fetch(`http://localhost:3001/api/runs/${selectedRunId}/path`)
+            fetch(`/api/runs/${selectedRunId}/path`)
                 .then(res => res.json())
                 .then(data => setRunPath(data.path))
                 .catch(() => setRunPath(''));
@@ -28,12 +28,12 @@ export const CsvManager = () => {
 
     const handleDownload = (type: 'raw' | 'log' | 'amazon' | 'failed') => {
         if (!selectedRunId) return;
-        window.location.href = `http://localhost:3001/api/runs/${selectedRunId}/files/${type}`;
+        window.location.href = `/api/runs/${selectedRunId}/files/${type}`;
     };
 
     const handleReveal = async () => {
         if (!selectedRunId) return;
-        await fetch(`http://localhost:3001/api/runs/${selectedRunId}/reveal`, { method: 'POST' });
+        await fetch(`/api/runs/${selectedRunId}/reveal`, { method: 'POST' });
     };
 
     const copyPath = () => {

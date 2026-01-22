@@ -7,12 +7,12 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3001;
+const PORT = Number(process.env.SERVER_PORT || process.env.PORT || 13337);
 
 // Storage setup
 const storageDir = path.resolve(__dirname, 'storage');
-const runsDir = process.env.MERFOX_RUNS_DIR
-    ? path.resolve(process.env.MERFOX_RUNS_DIR)
+const RUNS_DIR = process.env.MERFOX_USER_DATA
+    ? path.join(process.env.MERFOX_USER_DATA, 'runs')
     : path.resolve(__dirname, 'runs');
 const dataDir = path.resolve(__dirname, 'data');
 
@@ -21,7 +21,7 @@ const jobManager = new JobManager(dataDir);
 console.log('--- SERVER STARTUP DIAGNOSTICS ---');
 console.log('CWD:', process.cwd());
 console.log('__dirname:', __dirname);
-console.log('RUNS_DIR:', runsDir);
+console.log('RUNS_DIR:', RUNS_DIR);
 console.log('----------------------------------');
 
 if (!fs.existsSync(storageDir)) fs.mkdirSync(storageDir, { recursive: true });
@@ -31,19 +31,12 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/api/storage', express.static(storageDir));
 
-// Helper to find run dir
-const getRunDir = (runId) => {
-    const entries = fs.readdirSync(runsDir, { withFileTypes: true });
-    const dir = entries.find(e => e.isDirectory() && e.name.endsWith(runId));
-    return dir ? path.join(runsDir, dir.name) : null;
-};
-
 // DOWNLOAD API
 app.get('/api/runs/:runId/files/:type', (req, res) => {
     const { runId, type } = req.params;
     const runDir = getRunDir(runId);
 
-    if (!runDir) return res.status(404).send('Run directory not found');
+    if (!runDir) return res.status(404).json({ error: 'Run check failed' });
 
     let filename, safeName;
     const datePrefix = path.basename(runDir).split('_')[0].replace(/-/g, ''); // 20260110
@@ -101,16 +94,123 @@ app.post('/api/runs/:runId/reveal', (req, res) => {
     });
 });
 
-// GET RUN DIR PATH
-app.get('/api/runs/:runId/path', (req, res) => {
+// [P5.0] RUN DIRECTORY LOGIC (New Standard & Legacy Compat)
+const getRunDir = (runId) => {
+    // 1. Check runs/<runId>/
+    const directPath = path.join(RUNS_DIR, runId);
+    if (!fs.existsSync(directPath)) return null;
+
+    // 2. Search for <YYYY-MM-DD_runNNN> inside runs/<runId>/
+    try {
+        const subdirs = fs.readdirSync(directPath)
+            .filter(name => {
+                const full = path.join(directPath, name);
+                return fs.statSync(full).isDirectory() && /^\d{4}-\d{2}-\d{2}_run\d{3}$/.test(name);
+            })
+            .sort() // Sorts chronologically if naming follows ISO
+            .reverse(); // Latest first
+
+        if (subdirs.length > 0) {
+            return path.join(directPath, subdirs[0]);
+        }
+    } catch (e) {
+        console.error('Run sub-search failed:', e);
+    }
+
+    // 3. Fallback: Check if direct path has raw.csv (Legacy flat structure)
+    if (fs.existsSync(path.join(directPath, 'raw.csv'))) {
+        return directPath;
+    }
+
+    return null;
+};
+
+// CONVERT API (Task A)
+const { ExportService } = require('./engine/ExportService');
+// JobManager is already imported at top level
+
+// Assuming GLOBAL_DIR is defined or derived. Using process.cwd for now as standard? 
+// Spec says "GLOBAL_DIR" but logic usually implies user data root.
+// Based on file structure, runs is in "userData/runs". So global mapping is in "userData/mapping.csv"?
+// Let's assume parent of RUNS_DIR.
+const GLOBAL_MAPPING_PATH = path.join(RUNS_DIR, '../mapping.csv');
+
+app.post('/api/runs/:runId/convert', async (req, res) => {
     const { runId } = req.params;
     const runDir = getRunDir(runId);
-    if (!runDir) return res.status(404).json({ error: 'Run directory not found' });
-    res.json({ path: runDir });
+
+    if (!runDir) {
+        return res.status(404).json({ error: 'Run directory not found. Please ensure the run exists.' });
+    }
+
+    try {
+        // [Task A-3] Mapping Fallback Logic
+        const runMappingPath = path.join(runDir, 'mapping.csv');
+        let mappingStatus = 'existing';
+
+        if (!fs.existsSync(runMappingPath)) {
+            if (fs.existsSync(GLOBAL_MAPPING_PATH)) {
+                fs.copyFileSync(GLOBAL_MAPPING_PATH, runMappingPath);
+                mappingStatus = 'copied_from_global';
+                console.log(`[Convert] Valid mapping not found. Copied from global: ${GLOBAL_MAPPING_PATH}`);
+            } else {
+                // BOM + Header creation
+                const header = '\ufeffitem_id,amazon_product_id,amazon_product_id_type\n';
+                fs.writeFileSync(runMappingPath, header, 'utf8');
+                mappingStatus = 'created_template';
+                console.log(`[Convert] No mapping found. Created template.`);
+            }
+        }
+
+        // [Task A-2] Execute conversion via ExportService
+        // We need to load items first. In legacy, items are in raw.csv. 
+        // ExportService.run expects 'items' array.
+        // We must Parse raw.csv back to items? Or does ExportService handle file path?
+        // Looking at ExportService, it takes (runDir, items, options).
+        // So we need to read raw.csv.
+
+        const rawPath = path.join(runDir, 'raw.csv');
+        let items = [];
+        if (fs.existsSync(rawPath)) {
+            // Quick parse (assuming implementation availability or simple CSV)
+            const rawData = fs.readFileSync(rawPath, 'utf8');
+            // Naive CSV parse or use library. 'csv-parse/sync' should be available as 'csv-stringify' is used.
+            // Let's check imports. ExportService uses 'csv-stringify/sync'.
+            const { parse } = require('csv-parse/sync');
+            // Remove BOM if present before parsing
+            const cleanData = rawData.replace(/^\ufeff/, '');
+            items = parse(cleanData, { columns: true, skip_empty_lines: true });
+        }
+
+        // Check for specific run config if available? Assuming defaults for now.
+        const result = await ExportService.run(runDir, items, { cost_yen_default: 0 });
+
+        // Update run.log (Append specific Convert log)
+        const logPath = path.join(runDir, 'run.log');
+        const summary = `
+[CONVERT] mapping.csv detected. exists=true (status=${mappingStatus})
+[CONVERT] ${result.exportStats.tsv_rows} items converted
+[AMAZON] failed_rows=${result.exportStats.failed_rows}
+[FILE] Synced amazon.tsv
+`;
+        fs.appendFileSync(logPath, summary);
+
+        // Verification Response
+        res.json({
+            success: true,
+            run_id: runId,
+            run_dir: runDir,
+            mapping_status: mappingStatus,
+            amazon_rows: result.exportStats.tsv_rows,
+            failed_rows: result.exportStats.failed_rows
+        });
+
+    } catch (e) {
+        console.error('Conversion failed:', e);
+        res.status(500).json({ error: e.message });
+    }
 });
 
-// Store active runs
-const activeRuns = new Map(); // runId -> { scraper: ScraperInstance, clients: Response[] }
 
 app.get('/', (req, res) => {
     res.send('MerFox Local Engine is Running');

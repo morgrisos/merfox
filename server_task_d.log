@@ -1,0 +1,879 @@
+
+> merfox@0.1.51 dev:server
+> next dev -p 13337
+
+   ▲ Next.js 14.0.4
+   - Local:        http://localhost:13337
+
+ ✓ Ready in 1369ms
+ ○ Compiling /wizard/step6 ...
+ ✓ Compiled /wizard/step6 in 1679ms (357 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled /wizard/step1 in 462ms (404 modules)
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 507ms (408 modules)
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled / in 413ms (412 modules)
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ○ Compiling /wizard/step2 ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /wizard/step2 in 657ms (424 modules)
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /dashboard in 432ms (432 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ src/pages/wizard/step1.tsx (28:32) @ preset
+ ⨯ ReferenceError: preset is not defined
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:61:37)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    ... collapsed 5 duplicate lines matching above lines ...
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+[0m [90m 26 |[39m                 [33m<[39m[33mdiv[39m className[33m=[39m[32m"grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"[39m[33m>[39m[0m
+[0m [90m 27 |[39m                     [33m<[39m[33mPresetCard[39m[0m
+[0m[31m[1m>[22m[39m[90m 28 |[39m                         active[33m=[39m{preset [33m===[39m [32m'test'[39m}[0m
+[0m [90m    |[39m                                [31m[1m^[22m[39m[0m
+[0m [90m 29 |[39m                         onClick[33m=[39m{() [33m=>[39m setPreset([32m'test'[39m)}[0m
+[0m [90m 30 |[39m                         icon[33m=[39m{[33m<[39m[33mZap[39m className[33m=[39m[32m"w-6 h-6 text-yellow-500"[39m [33m/[39m[33m>[39m}[0m
+[0m [90m 31 |[39m                         title[33m=[39m[32m"Test Run"[39m[0m
+ ✓ Compiled in 443ms (432 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled in 392ms (432 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled in 261ms (416 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /dashboard in 333ms (420 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled in 120ms (254 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /dashboard in 116ms (420 modules)
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+ ✓ Compiled in 441ms (420 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: The default export is not a React Component in page: "/dashboard"
+    at e6 (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:193)
+    at tt.render (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:28:599)
+    at doRender (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1378:48)
+    at cacheEntry.responseCache.get.routeKind (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1552:34)
+    at ResponseCache.get (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1460:53)
+    at /Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:121
+    at NextTracerImpl.trace (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/lib/trace/tracer.js:104:20)
+    at DevServer.renderToResponseWithComponents (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:990:41)
+    at DevServer.renderPageComponent (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1843:35)
+    at async DevServer.renderToResponseImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:1881:32)
+    at async DevServer.pipeImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:909:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/next-server.js:266:17)
+    at async DevServer.handleRequestImpl (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/server/base-server.js:805:17) {
+  page: '/dashboard'
+}
+[?25h

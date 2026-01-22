@@ -1,0 +1,51 @@
+=== PROCESS ===
+COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    77186 yuga   13u  IPv6 0xf4d0c9943e98b413      0t0  TCP *:13337 (LISTEN)
+77186 next-server 
+node    77186 yuga  cwd       DIR               1,18      1152             9389610 /Users/yuga/VSCode/V4/merfox
+=== API ===
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+ETag: "xnd55ywdx1kb"
+Content-Length: 731
+Vary: Accept-Encoding
+Date: Wed, 21 Jan 2026 06:25:40 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"data":[{"id":"4b221f9c-9f80-4be3-99dc-58545e6ae503","name":"4b221f9c-9f80-4be3-99dc-58545e6ae503","date":"2026-01-21","path":"/Users/yuga/VSCode/V4/merfox/runs_dev/4b221f9c-9f80-4be3-99dc-58545e6ae503","stats":{"totalScanned":4,"success":2,"failed":2},"failureReasons":[{"reason":"ASIN/JAN mapping is missing","count":2}],"failedUrls":[{"url":"https://jp.mercari.com/item/m111111","reason":"ASIN/JAN mapping is missing","title":"Test Item 1"},{"url":"https://jp.mercari.com/item/m222222","reason":"ASIN/JAN mapping is missing","title":"Test Item 2"}],"artifacts":{"hasGoogle":false,"hasAmazon":false,"hasProfit":false,"hasAsin":false,"hasRaw":true,"hasMapping":true}}],"meta":{"scanPath":"/Users/yuga/VSCode/V4/merfox/runs_dev"}}
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+ETag: "mgb6y7wfc45v"
+Content-Length: 211
+Vary: Accept-Encoding
+Date: Wed, 21 Jan 2026 06:25:40 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":true,"run_id":"4b221f9c-9f80-4be3-99dc-58545e6ae503","run_dir":"/Users/yuga/VSCode/V4/merfox/runs_dev/4b221f9c-9f80-4be3-99dc-58545e6ae503","mapping_status":"existing","amazon_rows":0,"failed_rows":2}
+=== ARTIFACTS ===
+total 56
+drwxr-xr-x  9 yuga  staff   288  1 21 14:59 .
+drwxr-xr-x  3 yuga  staff    96  1 21 14:59 ..
+-rw-r--r--  1 yuga  staff   314  1 21 15:25 amazon_convert_failed.csv
+-rw-r--r--  1 yuga  staff   112  1 21 15:25 amazon_convert_report.csv
+-rw-r--r--  1 yuga  staff   136  1 21 15:25 amazon_upload.tsv
+-rw-r--r--  1 yuga  staff   864  1 21 15:25 failed_urls.csv
+-rw-r--r--  1 yuga  staff    52  1 21 14:59 mapping.csv
+-rw-r--r--  1 yuga  staff   159  1 21 14:59 raw.csv
+-rw-r--r--  1 yuga  staff  1068  1 21 15:25 run.log
+exists True size 136
+=== CODE ===
+src/pages/api/runs/[runId]/convert.ts
+src/pages/api/runs/[runId]/files/[type].ts
+src/pages/api/runs/[runId]/reveal.ts
+src/pages/api/runs/index.ts
+src/pages/api/runs/[runId]/convert.ts:5:import { AmazonConverter } from '../../../../lib/converter'; // Ensure this exists or adapt import
+src/pages/api/runs/[runId]/convert.ts:59:        // The user says "existing converter logic".
+src/pages/api/runs/[runId]/convert.ts:61:        // Wait, user said "Use existing converter logic".
+src/pages/api/runs/[runId]/convert.ts:62:        // In VSCode/merfox it was src/lib/converter.
+src/pages/api/runs/[runId]/convert.ts:63:        // In V4, ls src/lib had no converter folder in step 13668.
+src/pages/api/runs/[runId]/convert.ts:67:        const stats = await AmazonConverter.convert(runDir, {});
+src/pages/api/runs/[runId]/convert.ts:74:            amazon_rows: stats.converted,
+src/pages/api/runs/[runId]/files/[type].ts:29:        case 'failed': filename = 'amazon_convert_failed.csv'; break;

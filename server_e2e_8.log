@@ -1,0 +1,750 @@
+
+> merfox@0.1.51 dev:server
+> next dev -p 13337
+
+   ▲ Next.js 14.0.4
+   - Local:        http://localhost:13337
+
+ ✓ Ready in 1267ms
+ ○ Compiling /wizard/step1 ...
+ ✓ Compiled /wizard/step1 in 835ms (299 modules)
+ ✓ Compiled in 79ms (299 modules)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+ ✓ Compiled /_error in 20ms (301 modules)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /wizard/step2 in 473ms (315 modules)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step2.tsx:50.
+    at Step2_Extract (webpack-internal:///./src/pages/wizard/step2.tsx:30:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step2.tsx:52.
+    at Step2_Extract (webpack-internal:///./src/pages/wizard/step2.tsx:30:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step2'
+}
+ ✓ Compiled /api/runs in 317ms (157 modules)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+ ○ Compiling /wizard/step3 ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /wizard/step3 in 669ms (348 modules)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step2.tsx:50.
+    at Step2_Extract (webpack-internal:///./src/pages/wizard/step2.tsx:30:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step2.tsx:52.
+    at Step2_Extract (webpack-internal:///./src/pages/wizard/step2.tsx:30:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step2.tsx:50.
+    at Step2_Extract (webpack-internal:///./src/pages/wizard/step2.tsx:30:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step2.tsx:52.
+    at Step2_Extract (webpack-internal:///./src/pages/wizard/step2.tsx:30:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step3.tsx:31.
+    at Step3_Verify (webpack-internal:///./src/pages/wizard/step3.tsx:26:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step3.tsx:32.
+    at Step3_Verify (webpack-internal:///./src/pages/wizard/step3.tsx:26:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step2'
+}
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step2'
+}
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7) {
+  page: '/wizard/step3'
+}
+Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at step1.tsx:79.
+    at Step1_Url (webpack-internal:///./src/pages/wizard/step1.tsx:28:74)
+    at OutcomeProvider (webpack-internal:///./src/contexts/OutcomeContext.tsx:13:28)
+    at ScraperProvider (webpack-internal:///./src/hooks/useScraper.tsx:13:28)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:15:29)
+    at App (webpack-internal:///./src/pages/_app.tsx:19:16)
+    at StyleRegistry (/Users/yuga/VSCode/V4/merfox/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at eY (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:8:22559)
+    at eI (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:1760)
+    at eD (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:17:3083)
+    at div
+    at eQ (/Users/yuga/VSCode/V4/merfox/node_modules/next/dist/compiled/next-server/pages.runtime.dev.js:26:763)
+Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+ ⨯ Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6043:9)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderChildrenArray (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6211:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6141:7)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderNode (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6259:12)
+    at renderHostElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5642:3)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5952:5)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11) {
+  page: '/wizard/step1'
+}
+ ✓ Compiled in 501ms (329 modules)
+[?25h

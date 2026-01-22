@@ -1,0 +1,64 @@
+
+> merfox@0.1.51 dev:server
+> next dev -p 13337
+
+   ▲ Next.js 14.0.4
+   - Local:        http://localhost:13337
+
+ ✓ Ready in 1292ms
+Warning: Your PostCSS configuration defines a field which is not supported (`__esModule`). Please remove this configuration value.
+ ○ Compiling /wizard/step2 ...
+ ⨯ ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[1]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[2]!./src/index.css
+Error: Your custom PostCSS configuration must export a `plugins` key.
+Import trace for requested module:
+./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[1]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[2]!./src/index.css
+./src/index.css
+TypeError: localStorage.getItem is not a function
+    at eval (webpack-internal:///./src/hooks/useSettings.tsx:17:37)
+    at useReducer (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5079:57)
+    at Object.useState (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5017:10)
+    at useState (/Users/yuga/VSCode/V4/merfox/node_modules/react/cjs/react.development.js:1622:21)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:16:84)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    ... collapsed 4 duplicate lines matching above lines ...
+ ⨯ TypeError: localStorage.getItem is not a function
+    at eval (webpack-internal:///./src/hooks/useSettings.tsx:17:37)
+    at useReducer (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5079:57)
+    at Object.useState (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5017:10)
+    at useState (/Users/yuga/VSCode/V4/merfox/node_modules/react/cjs/react.development.js:1622:21)
+    at SettingsProvider (webpack-internal:///./src/hooks/useSettings.tsx:16:84)
+    at renderWithHooks (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5658:16)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5731:15)
+    at renderElement (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5946:7)
+    at renderNodeDestructiveImpl (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6104:11)
+    at renderNodeDestructive (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at renderIndeterminateComponent (/Users/yuga/VSCode/V4/merfox/node_modules/react-dom/cjs/react-dom-server.browser.development.js:5785:7)
+    ... collapsed 4 duplicate lines matching above lines ...
+(node:82051) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/yuga/VSCode/V4/merfox/.next/cache/webpack/client-development-fallback/0.pack.gz_' -> '/Users/yuga/VSCode/V4/merfox/.next/cache/webpack/client-development-fallback/0.pack.gz'
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/yuga/VSCode/V4/merfox/.next/cache/webpack/client-development-fallback/0.pack.gz_' -> '/Users/yuga/VSCode/V4/merfox/.next/cache/webpack/client-development-fallback/0.pack.gz'
+ ⨯ ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[1]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[2]!./src/index.css
+Error: Your custom PostCSS configuration must export a `plugins` key.
+Import trace for requested module:
+./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[1]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[2]!./src/index.css
+./src/index.css
+ ✓ Compiled /api/runs in 367ms (150 modules)
+ ⨯ ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[1]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[2]!./src/index.css
+Error: Your custom PostCSS configuration must export a `plugins` key.
+Import trace for requested module:
+./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[1]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[2]!./src/index.css
+./src/index.css
+ ○ Compiling /wizard/step2 ...
+ ⨯ ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[1]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[2]!./src/index.css
+Error: Your custom PostCSS configuration must export a `plugins` key.
+Import trace for requested module:
+./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[1]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[6].oneOf[13].use[2]!./src/index.css
+./src/index.css
+[?25h
