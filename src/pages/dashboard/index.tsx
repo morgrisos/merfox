@@ -71,16 +71,43 @@ export default function Dashboard() {
     const { history } = useRunHistory();
     const latestRun = history.length > 0 ? history[0] : null;
 
-    // --- Mock Data (TODO: Connect to real API) ---
-    const summaryData = {
-        newCandidates: 124,
-        uploadReady: 45, // "最終TSVあり"
-        needMapping: 12,
-        warnings: 3
-    };
+    // --- Real Data Fetching ---
+    const [summaryData, setSummaryData] = React.useState({
+        newCandidates: 0,
+        uploadReady: 0,
+        needMapping: 0,
+        warnings: 0
+    });
+
+    // Additional state for resolving Main CTA source
+    // const [latestRunId, setLatestRunId] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const res = await fetch('/api/dashboard/summary');
+                if (res.ok) {
+                    const data = await res.json();
+                    setSummaryData({
+                        newCandidates: data.newCandidates,
+                        uploadReady: data.uploadReady,
+                        needMapping: data.mappingPending,
+                        warnings: data.warnings
+                    });
+                    // setLatestRunId(data.latestRunId);
+                }
+            } catch (e) {
+                console.error('Failed to fetch dashboard stats', e);
+            }
+        };
+        fetchStats();
+    }, []);
 
     // --- Logic: Main CTA ---
     const getMainCTA = () => {
+        // 1. Running Status (from History hook which tracks client-side state correctly for running)
+        // Note: API might not know 'running' status instantly if files aren't updated, 
+        // but existing hook is better for 'Running' status. 
         if (latestRun?.status === 'running') {
             return {
                 title: '実行状況を見る',
@@ -91,6 +118,8 @@ export default function Dashboard() {
                 color: 'bg-orange-500'
             };
         }
+
+        // 2. Upload Ready (High Priority)
         if (summaryData.uploadReady > 0) {
             return {
                 title: '最終TSVを開く',
@@ -101,6 +130,8 @@ export default function Dashboard() {
                 color: 'bg-green-600'
             };
         }
+
+        // 3. Mapping Needed
         if (summaryData.needMapping > 0) {
             return {
                 title: 'マッピングを行う',
@@ -111,6 +142,8 @@ export default function Dashboard() {
                 color: 'bg-blue-600'
             };
         }
+
+        // 4. Default: Start New
         return {
             title: '新規抽出を開始',
             desc: '新しい商品をリサーチしましょう。ウィザードから開始できます。',
