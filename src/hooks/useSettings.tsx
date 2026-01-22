@@ -11,10 +11,20 @@ type SettingsContextType = {
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [settings, setSettings] = useState<AppSettings>(() => {
-        const stored = localStorage.getItem('merfox_settings');
-        return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
-    });
+    const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('merfox_settings');
+            if (stored) {
+                try {
+                    setSettings(JSON.parse(stored));
+                } catch (e) {
+                    console.error('Failed to parse settings', e);
+                }
+            }
+        }
+    }, []);
 
     useEffect(() => {
         localStorage.setItem('merfox_settings', JSON.stringify(settings));

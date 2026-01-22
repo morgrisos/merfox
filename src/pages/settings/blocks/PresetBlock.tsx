@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useSettings } from '../../../hooks/useSettings';
-import { CardHeader, Section } from '../../../components/ui/Card';
-import { Badge } from '../../../components/ui/Badge';
+import { CardHeader, Section } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
 import { WatchInterval } from '../../../lib/types';
 
 export const PresetBlock = () => {
