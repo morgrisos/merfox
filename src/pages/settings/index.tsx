@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 export default function Settings() {
     return (
@@ -160,4 +161,7 @@ export default function Settings() {
             </div>
         </div>
     );
-};
+
+}
+
+Settings.getLayout = (page: React.ReactElement) => <AppLayout>{page}</AppLayout>;

@@ -1,3 +1,6 @@
+import React from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
+
 export default function Dashboard() {
     return (
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
@@ -196,4 +199,6 @@ export default function Dashboard() {
             </div>
         </div>
     );
-};
+}
+
+Dashboard.getLayout = (page: React.ReactElement) => <AppLayout>{page}</AppLayout>;
