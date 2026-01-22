@@ -76,7 +76,10 @@ export default function Dashboard() {
         newCandidates: 0,
         uploadReady: 0,
         needMapping: 0,
-        warnings: 0
+        warnings: 0,
+        top10: [] as any[],
+        dangers: [] as any[],
+        cta: { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' } as any
     });
 
     // Additional state for resolving Main CTA source
@@ -92,7 +95,10 @@ export default function Dashboard() {
                         newCandidates: data.newCandidates,
                         uploadReady: data.uploadReady,
                         needMapping: data.mappingPending,
-                        warnings: data.warnings
+                        warnings: data.warnings,
+                        top10: data.top10 || [],
+                        dangers: data.dangers || [],
+                        cta: data.cta || { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' }
                     });
                     // setLatestRunId(data.latestRunId);
                 }
@@ -155,6 +161,9 @@ export default function Dashboard() {
     };
 
     const mainCTA = getMainCTA();
+
+    const priorityCandidates = summaryData.top10.length > 0 ? summaryData.top10 : [];
+    const dangerList = summaryData.dangers.length > 0 ? summaryData.dangers : [];
 
     return (
         <div className="flex-1 overflow-y-auto p-6 bg-[#0d1117] text-white font-sans">
@@ -258,12 +267,24 @@ export default function Dashboard() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* Mock Data */}
-                                    <PriorityRow priority="High" status="OK" profit="¥4,500" risk="低" title="Canon AE-1 Program body only black" />
-                                    <PriorityRow priority="High" status="Mapping" profit="¥3,200" risk="低" title="Vintage Nikon F3 Camera" />
-                                    <PriorityRow priority="Med" status="Warning" profit="¥2,800" risk="中" title="Sony PlayStation 4 Pro 1TB" />
-                                    <PriorityRow priority="Med" status="OK" profit="¥2,100" risk="低" title="Nintendo Switch Lite Blue" />
-                                    <PriorityRow priority="Low" status="OK" profit="¥1,500" risk="低" title="Apple AirPods Pro (2nd Gen)" />
+                                    {priorityCandidates.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={6} className="px-4 py-8 text-center text-[#9da8b9]">
+                                                データがありません
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        priorityCandidates.map((item: any, idx: number) => (
+                                            <PriorityRow
+                                                key={idx}
+                                                priority="High" // TODO: Real priority logic
+                                                status="OK"     // TODO: Real status logic
+                                                profit={item.price}
+                                                risk="低"
+                                                title={item.title}
+                                            />
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -283,14 +304,16 @@ export default function Dashboard() {
                             危険 / 注意一覧
                         </h3>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between text-sm p-3 bg-red-500/5 border border-red-500/10 rounded-lg">
-                                <span className="text-red-400">公開終了の可能性</span>
-                                <span className="font-bold text-white">1件</span>
-                            </div>
-                            <div className="flex items-center justify-between text-sm p-3 bg-orange-500/5 border border-orange-500/10 rounded-lg">
-                                <span className="text-orange-400">価格変動あり</span>
-                                <span className="font-bold text-white">2件</span>
-                            </div>
+                            {dangerList.length === 0 ? (
+                                <div className="text-center text-[#9da8b9] text-xs py-4">問題なし</div>
+                            ) : (
+                                dangerList.map((item: any, idx: number) => (
+                                    <div key={idx} className="flex items-center justify-between text-sm p-3 bg-red-500/5 border border-red-500/10 rounded-lg">
+                                        <span className="text-red-400 truncate max-w-[200px]" title={item.message}>{item.message}</span>
+                                        <span className="font-bold text-white">WARN</span>
+                                    </div>
+                                ))
+                            )}
                         </div>
                         <button className="w-full mt-4 py-2 text-xs font-bold text-[#9da8b9] border border-[#282f39] rounded-lg hover:bg-[#282f39] hover:text-white transition-colors">
                             詳細リストを確認
