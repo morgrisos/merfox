@@ -38,28 +38,24 @@ export const AppSidebar = () => {
                         <span className="text-sm font-medium">スタート</span>
                     </Link>
 
-                    {/* Pending Items (Visual only, no links yet) */}
-                    <div className="opacity-50 cursor-not-allowed flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9da8b9]">
+                    {/* Runs (履歴) */}
+                    <Link href="/runs" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive('/runs') ? 'bg-primary/20 text-primary border border-primary/10' : 'text-[#9da8b9] hover:bg-[#282f39] hover:text-white'}`}>
                         <span className="material-symbols-outlined text-[20px]">history</span>
                         <span className="text-sm font-medium">Runs (履歴)</span>
-                    </div>
-                    <div className="opacity-50 cursor-not-allowed flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9da8b9]">
+                    </Link>
+
+                    {/* Mapping (マッピング) */}
+                    <Link href="/mapping" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive('/mapping') ? 'bg-primary/20 text-primary border border-primary/10' : 'text-[#9da8b9] hover:bg-[#282f39] hover:text-white'}`}>
                         <span className="material-symbols-outlined text-[20px]">table_view</span>
                         <span className="text-sm font-medium">マッピング</span>
-                    </div>
+                    </Link>
 
-                    {/* Automation -> Scraper (Watch) for now, or just disabled */}
-                    {/* User said "Automation -> /automation (New)". To avoid 404, we can link Scraper page but maybe best to disable or link to scraper for now? 
-                        The user instruction: "Runs/Mapping/Automationは今回リンクしない...表示するなら disabled の非リンク項目でOK".
-                        However, scraper page exists. Let's redirect "Scraper Status" of old sidebar to where?
-                        User: "/scraper はサイドバーから外してOK。ただし Outcome/Runsに入口を作る（迷子防止）"
-                        Wait, if I remove /scraper from sidebar, how to access it?
-                        Ah, "Outcome/Runsに入口を作る". Outcome is Dashboard. 
-                        For now, I need to verify /scraper is accessible.
-                        Let's keep a "Scraper" link for safety under "Tools" or just keep it hidden?
-                        User instruction "AppSidebarのリンクは “存在するページだけ” にする: /dashboard, /wizard/step1, /scraper, /settings"
-                        So I MUST link /scraper.
-                    */}
+                    {/* Automation (自動化) */}
+                    <Link href="/automation" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive('/automation') ? 'bg-primary/20 text-primary border border-primary/10' : 'text-[#9da8b9] hover:bg-[#282f39] hover:text-white'}`}>
+                        <span className="material-symbols-outlined text-[20px]">smart_toy</span>
+                        <span className="text-sm font-medium">自動化</span>
+                    </Link>
+
                     <div className="px-3 pb-2 text-xs font-bold text-[#9da8b9] uppercase tracking-wider mt-6">
                         Tools
                     </div>
