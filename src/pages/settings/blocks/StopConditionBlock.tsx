@@ -1,5 +1,5 @@
 import { useSettings } from '../../../hooks/useSettings';
-import { Card, CardHeader, Section } from '../../../components/ui/Card';
+import { Card, CardHeader, Section } from '../../../components/ui/card';
 import { Checkbox, Label } from '../../../components/ui/Form';
 
 export const StopConditionBlock = () => {
