@@ -3,8 +3,156 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { useRunHistory } from '../../hooks/useRunHistory';
 import { RunRecord, LogEntry } from '../../types';
 
+
+// [Phase 6]
+interface LatestRunData {
+    latestRunId: string | null;
+    status: string;
+    summary: any;
+    files: {
+        raw: boolean;
+        mapping: boolean;
+        amazon: boolean;
+        failed: number;
+        logFile: string;
+    };
+    log: {
+        file: string;
+        tail: string[];
+    };
+}
+
+function LatestRunStatus() {
+    const [data, setData] = useState<LatestRunData | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    const fetchStatus = async () => {
+        try {
+            const res = await fetch('/api/scraper/status');
+            if (res.ok) setData(await res.json());
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchStatus();
+        // Poll every 5s if running
+        const interval = setInterval(() => {
+            fetchStatus();
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleReveal = async (file?: string) => {
+        if (!data?.latestRunId) return;
+        await fetch('/api/runs/reveal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ runId: data.latestRunId, file })
+        });
+    };
+
+    if (loading) return <div className="animate-pulse h-32 bg-slate-100 dark:bg-slate-800 rounded-xl" />;
+    if (!data || !data.latestRunId) return null;
+
+    const isRunning = data.status === 'running';
+    const isFailed = data.files.failed > 0 || data.status === 'failed';
+
+    return (
+        <div className="bg-surface-light dark:bg-[#1a2430] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+            <div className="flex items-center justify-between mb-4 relative z-10">
+                <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${isRunning ? 'bg-blue-500/10 text-blue-500' : isFailed ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
+                        <span className="material-symbols-outlined">{isRunning ? 'sync' : isFailed ? 'error' : 'check_circle'}</span>
+                    </div>
+                    <div>
+                        <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            最新の実行 ({data.latestRunId.slice(0, 10)}...)
+                            {isRunning && <span className="animate-pulse text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full">RUNNING</span>}
+                        </h3>
+                        <p className="text-xs text-slate-500 font-mono">{data.latestRunId}</p>
+                    </div>
+                </div>
+                <div className="flex gap-2">
+                    <button onClick={() => handleReveal()} className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded text-xs font-bold transition-colors">
+                        <span className="material-symbols-outlined text-sm">folder_open</span> フォルダ
+                    </button>
+                    <button onClick={fetchStatus} className="text-slate-400 hover:text-primary">
+                        <span className="material-symbols-outlined">refresh</span>
+                    </button>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                {/* Stats & Actions */}
+                <div className="flex flex-col gap-4">
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                        <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+                            <div className="text-xs text-slate-500 mb-1">候補数</div>
+                            <div className="font-bold font-mono text-lg">{data.summary.totalCandidates ?? '-'}</div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+                            <div className="text-xs text-slate-500 mb-1">成功</div>
+                            <div className="font-bold font-mono text-lg text-green-500">{data.summary.scraped ?? '-'}</div>
+                        </div>
+                        <div className={`p-3 rounded-lg border dark:border-slate-700 ${data.files.failed > 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 'bg-slate-50 dark:bg-slate-900/50 border-slate-200'}`}>
+                            <div className="text-xs text-slate-500 mb-1">失敗</div>
+                            <div className={`font-bold font-mono text-lg ${data.files.failed > 0 ? 'text-red-500' : ''}`}>{data.files.failed}</div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                        {data.files.raw && (
+                            <button onClick={() => handleReveal('raw.csv')} className="flex-1 py-2 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded text-xs font-bold flex items-center justify-center gap-1">
+                                <span className="material-symbols-outlined text-sm">description</span> raw.csv
+                            </button>
+                        )}
+                        {data.files.mapping && (
+                            <button onClick={() => handleReveal('mapping.csv')} className="flex-1 py-2 px-3 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 text-blue-700 dark:text-blue-300 rounded text-xs font-bold flex items-center justify-center gap-1">
+                                <span className="material-symbols-outlined text-sm">edit_document</span> mapping
+                            </button>
+                        )}
+                        {data.files.amazon && (
+                            <button onClick={() => handleReveal('amazon.tsv')} className="flex-1 py-2 px-3 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 text-green-700 dark:text-green-300 rounded text-xs font-bold flex items-center justify-center gap-1">
+                                <span className="material-symbols-outlined text-sm">download</span> amazon.tsv
+                            </button>
+                        )}
+                    </div>
+
+                    {/* CTA Guidelines */}
+                    <div className="mt-2 text-xs font-bold flex gap-2">
+                        {isRunning && <span className="text-blue-500">▶️ 実行中です。ログを確認してください。</span>}
+                        {data.files.failed > 0 && <span className="text-red-500 cursor-pointer hover:underline" onClick={() => window.location.href = '/runs'}>⚠️ エラーがあります。Runsで詳細を確認。</span>}
+                        {data.files.mapping && !data.files.amazon && <span className="text-orange-500 cursor-pointer hover:underline" onClick={() => window.location.href = '/mapping'}>📝 マッピングが必要です。Mappingページへ。</span>}
+                    </div>
+                </div>
+
+                {/* Log Tail */}
+                <div className="flex flex-col h-40">
+                    <div className="flex items-center justify-between text-xs text-slate-500 mb-1 px-1">
+                        <span>ログ: {data.log.file || 'N/A'} (末尾)</span>
+                    </div>
+                    <div className="flex-1 bg-[#0d1117] rounded-lg p-3 overflow-y-auto font-mono text-[10px] text-slate-300 border border-slate-700 shadow-inner">
+                        {data.log.tail.length > 0 ? (
+                            data.log.tail.map((line, i) => (
+                                <div key={i} className="whitespace-pre-wrap leading-tight opacity-90 hover:opacity-100">{line}</div>
+                            ))
+                        ) : (
+                            <div className="text-slate-600 italic p-2">ログファイルが見つかりません</div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 // [P2.4] Job Interface
 interface WatchJob {
+
     id: string;
     targetUrl: string;
     isEnabled: boolean;
@@ -213,6 +361,10 @@ export default function Scraper() {
 
             <div className="flex-1 overflow-y-auto p-4 md:p-8">
                 <div className="max-w-[1200px] mx-auto flex flex-col gap-6">
+
+
+                    {/* [Phase 6] Latest Run Status */}
+                    <LatestRunStatus />
 
                     {/* 1. Presets */}
                     <div className="flex gap-4 overflow-x-auto pb-2">

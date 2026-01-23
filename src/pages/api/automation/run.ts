@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs/promises';
 import path from 'path';
-import { scraperManager } from '../../../lib/manager';
+
 import { getRunsDir } from '../../../lib/runUtils';
 
 const CONFIG_PATH = path.join(process.cwd(), 'merfox.automation.json');
