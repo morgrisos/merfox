@@ -240,3 +240,5 @@ export const Converter = () => {
         </div>
     );
 };
+
+export default Converter;
