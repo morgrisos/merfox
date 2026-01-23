@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { useOutcome } from '@/contexts/OutcomeContext';
 import { AlertTriangle, ArrowRight, RefreshCw, Settings, Play } from 'lucide-react';
 import { WizardLayout } from '@/components/layout/WizardLayout';
