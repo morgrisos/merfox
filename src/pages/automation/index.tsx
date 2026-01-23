@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Save, Clock, Power, Link as LinkIcon, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Save, Clock, Power, Link as LinkIcon, CheckCircle, AlertTriangle, Activity } from 'lucide-react';
 
 type AutomationConfig = {
     enabled: boolean;
@@ -65,13 +66,16 @@ export default function Automation() {
 
     return (
         <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#0d1117] text-white">
-            <header className="flex flex-col gap-4 mb-8">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-3xl font-black leading-tight tracking-tight text-white">自動化設定</h1>
                     <p className="text-[#9da8b9] text-sm mt-2">
                         毎日の自動スクレイピングを設定します。
                     </p>
                 </div>
+                <Link href="/scraper" className="flex items-center gap-2 px-4 py-2 bg-[#1a2027] hover:bg-[#282f39] border border-[#282f39] rounded-lg text-sm font-bold text-white transition-colors">
+                    <Activity className="w-4 h-4 text-orange-500" /> ステータスを見る
+                </Link>
             </header>
 
             <div className="max-w-3xl space-y-6">
