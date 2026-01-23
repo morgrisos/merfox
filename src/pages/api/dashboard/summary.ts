@@ -185,7 +185,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (lines.length > 1) {
                 const headerRaw = lines[0];
                 const header = splitLine(headerRaw).map(h => normalizeHeader(h));
-                const candidates = ['asin', 'amazonasin', 'amazonasincode', 'amazonid', 'asincode'];
+                const candidates = ['asin', 'amazonasin', 'amazonasincode', 'amazonid', 'asincode', 'amazonproductid', 'amazon_product_id'];
                 const asinIdx = header.findIndex(h => candidates.some(c => h === c || h.includes(c)));
 
                 if (asinIdx !== -1) {

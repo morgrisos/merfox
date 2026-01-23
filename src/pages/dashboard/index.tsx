@@ -208,7 +208,7 @@ export default function Dashboard() {
                     sub="未設定 (埋めると出品増)"
                     icon={<AlertCircle className="w-5 h-5 text-orange-500" />}
                     colorClass="bg-orange-500"
-                    onClick={() => router.push('/wizard/step4')}
+                    onClick={() => router.push('/mapping')}
                 />
                 <SummaryCard
                     title="危険 / 注意"
