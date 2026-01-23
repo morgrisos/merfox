@@ -32,7 +32,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const entries = await fs.readdir(runsDir, { withFileTypes: true });
-        const runDirs = entries.filter(e => e.isDirectory()).map(e => e.name);
+        // Sort by mtime
+        const dirStats = await Promise.all(
+            entries.filter(e => e.isDirectory()).map(async e => {
+                try {
+                    const stats = await fs.stat(path.join(runsDir, e.name));
+                    return { name: e.name, mtime: stats.mtime.getTime() };
+                } catch { return { name: e.name, mtime: 0 }; }
+            })
+        );
+        const runDirs = dirStats.sort((a, b) => b.mtime - a.mtime).map(e => e.name);
 
         const runs = [];
 
