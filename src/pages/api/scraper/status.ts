@@ -13,13 +13,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         let runDirs: string[] = [];
         try {
             const entries = await fs.readdir(runsDir, { withFileTypes: true });
-            runDirs = entries
-                .filter(e => e.isDirectory())
-                .map(e => e.name)
-                // Filter for likely run directories (YYYY-MM-DD or auto- or legacy UUIDs)
-                .filter(name => /^\d{4}-\d{2}-\d{2}_run\d{3}$/.test(name) || name.includes('run999') || name.startsWith('auto-') || name.length > 20)
-                .sort()
-                .reverse();
+
+            // Get stats for sorting by Modification Time (Desc)
+            const dirStats = await Promise.all(
+                entries
+                    .filter(e => e.isDirectory())
+                    .map(async e => {
+                        const fullPath = path.join(runsDir, e.name);
+                        try {
+                            const stats = await fs.stat(fullPath);
+                            return { name: e.name, mtime: stats.mtime.getTime() };
+                        } catch {
+                            return { name: e.name, mtime: 0 };
+                        }
+                    })
+            );
+
+            runDirs = dirStats
+                .sort((a, b) => b.mtime - a.mtime) // Newest first
+                .map(d => d.name);
+
         } catch {
             return res.status(200).json({ latestRunId: null, status: 'none' });
         }
@@ -69,8 +82,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         let logContent: string[] = [];
         const logCandidates = ['run.log', 'scraper.log', 'server.log'];
         for (const candidate of logCandidates) {
-            // Find first matching log or *log wildcard if needed?
-            // Just specific list for now.
             if (runDirEntries.includes(candidate)) {
                 files.logFile = candidate;
                 break;
