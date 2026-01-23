@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { FileText, Download, ChevronDown, ChevronUp, Folder } from 'lucide-react';
 import { useOutcome } from '@/contexts/OutcomeContext';
 import { WizardLayout } from '@/components/layout/WizardLayout';

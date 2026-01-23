@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { useScraper } from '@/hooks/useScraper';
 import { Loader2, StopCircle, CheckCircle, AlertTriangle, ArrowRight } from 'lucide-react';
 import { useOutcome } from '@/contexts/OutcomeContext';

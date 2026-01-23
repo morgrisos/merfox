@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/hooks/useSettings';
 import { Play, AlertCircle, HelpCircle } from 'lucide-react';
 import { WizardLayout } from '@/components/layout/WizardLayout';

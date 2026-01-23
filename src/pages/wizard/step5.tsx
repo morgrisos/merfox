@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { useOutcome } from '@/contexts/OutcomeContext';
 import { Loader2, ArrowRight, AlertCircle, CheckCircle, FileJson } from 'lucide-react';
 import axios from 'axios';

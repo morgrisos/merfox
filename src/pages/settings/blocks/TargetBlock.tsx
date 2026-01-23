@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useSettings } from '../../../hooks/useSettings';
-import { Input, Label } from '../../../components/ui/form';
-import { Button } from '../../../components/ui/button';
+import { Input, Label } from '../../../components/ui/Form';
+import { Button } from '../../../components/ui/Button';
 import { Card, CardHeader, Section } from '../../../components/ui/card';
 
 export const TargetBlock = () => {

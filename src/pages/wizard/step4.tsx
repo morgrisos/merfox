@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { useOutcome } from '@/contexts/OutcomeContext';
 import { FileSpreadsheet, ArrowRight, RefreshCw } from 'lucide-react';
 import axios from 'axios';
