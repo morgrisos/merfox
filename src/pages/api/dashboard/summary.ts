@@ -3,37 +3,25 @@ import fs from 'fs/promises';
 import path from 'path';
 import { getRunsDir } from '../../../lib/runUtils';
 
-// Helper to count lines in CSV/TSV, excluding header
-// Returns 0 if empty or just header
-function countLinesOneIndexed(content: string): number {
-    const lines = content.trim().split('\n').filter(line => line.trim().length > 0);
-    return Math.max(0, lines.length - 1);
+// Helper: Normalize string for header comparison
+function normalizeHeader(h: string): string {
+    return h.trim().toLowerCase().replace(/['"_\s]/g, '');
 }
 
-// Helper: Calculate mapping pending count from mapping.csv content
-// Assumes header exists. Checks for empty values in typical required columns.
-function countMappingPending(content: string): number {
-    const lines = content.trim().split('\n').filter(l => l.trim().length > 0);
-    if (lines.length <= 1) return 0;
+// Helper: Robust line counting (BOM, CRLF, Header, Empty)
+function countDataLines(content: string): number {
+    // Remove BOM
+    const cleanContent = content.charCodeAt(0) === 0xFEFF ? content.slice(1) : content;
+    const lines = cleanContent.split(/\r?\n/).filter(line => line.trim().length > 0);
+    return Math.max(0, lines.length - 1); // Exclude header
+}
 
-    const header = lines[0].split(',').map(h => h.trim().toLowerCase());
-    // Find generic target columns
-    const asinIdx = header.findIndex(h => h.includes('asin') || h.includes('amazon_id'));
-
-    let pending = 0;
-    for (let i = 1; i < lines.length; i++) {
-        const row = lines[i].split(',');
-
-        if (asinIdx >= 0) {
-            if (!row[asinIdx] || row[asinIdx].trim() === '') {
-                pending++;
-            }
-        } else {
-            // If column not found, fallback to counting all rows
-            pending++;
-        }
-    }
-    return pending;
+// Helper: Split line by comma or tab (simple detection)
+function splitLine(line: string): string[] {
+    if (line.includes('\t')) return line.split('\t');
+    // Handle quoted fields simply for this phase (robust CSV parser not required yet)
+    // Just simple split to satisfy "split by comma" requirement
+    return line.split(',');
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -45,7 +33,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         newCandidates: 'none',
         uploadReady: 'none',
         mappingPending: 'none',
-        warnings: 'none'
+        warnings: 'none',
+        dangers: 'none'
     };
 
     try {
@@ -89,28 +78,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 uploadReady: 0,
                 mappingPending: 0,
                 warnings: 0,
-                sources: debugSources
+                sources: debugSources,
+                top10: [],
+                dangers: [],
+                cta: { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' }
             });
         }
 
-        // 2. Define Metrics
-        let newCandidates = 0;
-        let uploadReady = 0;
-        let mappingPending = 0;
-        let warnings = 0;
-
-        // Helpers
-        const checkFile = async (candidates: string[]): Promise<{ path: string, content: string } | null> => {
-            for (const c of candidates) {
-                const p = path.join(latestRunDir, c);
-                try {
-                    const content = await fs.readFile(p, 'utf8');
-                    return { path: c, content };
-                } catch {
-                    // continue
-                }
-            }
-            return null;
+        // --- Helpers ---
+        const readFileSafe = async (filename: string): Promise<{ content: string, path: string } | null> => {
+            try {
+                const p = path.join(latestRunDir, filename);
+                const content = await fs.readFile(p, 'utf8');
+                return { content, path: filename };
+            } catch { return null; }
         };
 
         const tryReadJson = async (p: string) => {
@@ -120,93 +101,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             } catch { return null; }
         }
 
-        // --- Metric: New Candidates ---
-        // Priority: summary.json (export_rows) -> raw.csv
+        // --- Metrics ---
+        let newCandidates = 0;
+        let uploadReady = 0;
+        let mappingPending = 0;
+        let warnings = 0;
+        let top10: any[] = [];
+        let dangers: any[] = [];
+
+        // 1. New Candidates (from summary.json or raw.csv)
+        // Also extract Top 10 here to save read
         const summaryJson = await tryReadJson('summary.json');
+
+        // Always try to read raw.csv for Top 10 even if summary.json exists
+        const rawFile = await readFileSafe('raw.csv') || await readFileSafe('raw/raw.csv');
 
         if (summaryJson && typeof summaryJson.export_rows === 'number') {
             newCandidates = summaryJson.export_rows;
             debugSources.newCandidates = 'summary.json:export_rows';
-        } else {
-            const rawFile = await checkFile(['raw.csv', 'raw/raw.csv']);
-            if (rawFile) {
-                newCandidates = countLinesOneIndexed(rawFile.content);
-                debugSources.newCandidates = rawFile.path;
-            }
+        } else if (rawFile) {
+            newCandidates = countDataLines(rawFile.content);
+            debugSources.newCandidates = rawFile.path;
         }
 
-        // --- Metric: Upload Ready ---
-        // amazon/amazon.tsv -> amazon.tsv -> csv variants
-        const amazonFile = await checkFile(['amazon/amazon.tsv', 'amazon.tsv', 'amazon/amazon.csv', 'amazon.csv']);
-        if (amazonFile) {
-            uploadReady = countLinesOneIndexed(amazonFile.content);
-            debugSources.uploadReady = amazonFile.path;
-        }
-
-        // --- Metric: Warnings ---
-        // summary.json (failed_rows) -> failed files
-        if (summaryJson && typeof summaryJson.failed_rows === 'number') {
-            warnings = summaryJson.failed_rows;
-            debugSources.warnings = 'summary.json:failed_rows';
-        } else {
-            const failedCandidates = ['failed/failed.csv', 'failed.csv', 'failed/mapping_failed.csv', 'failed/_failed.csv', '_failed.csv'];
-            const failedFile = await checkFile(failedCandidates);
-            if (failedFile) {
-                warnings = countLinesOneIndexed(failedFile.content);
-                debugSources.warnings = failedFile.path;
-            }
-        }
-
-        // --- Metric: Mapping Pending ---
-        // mapping.csv -> failed (fallback logic per instructions)
-        const mappingFile = await checkFile(['mapping.csv', 'mapping/mapping.csv']);
-        if (mappingFile) {
-            mappingPending = countMappingPending(mappingFile.content);
-            debugSources.mappingPending = mappingFile.path;
-        } else {
-            const mappingFailedFile = await checkFile(['failed/mapping_failed.csv', 'mapping_failed.csv']);
-            if (mappingFailedFile) {
-                mappingPending = countLinesOneIndexed(mappingFailedFile.content);
-                debugSources.mappingPending = mappingFailedFile.path;
-            } else {
-                mappingPending = 0;
-            }
-        }
-
-        // Final Safety: Non-negative integers
-        newCandidates = Math.max(0, Math.round(newCandidates));
-        uploadReady = Math.max(0, Math.round(uploadReady));
-        mappingPending = Math.max(0, Math.round(mappingPending));
-        warnings = Math.max(0, Math.round(warnings));
-
-        // --- Phase 2-2: Extended Data ---
-
-        // 1. Latest Run Info
-        const latestRun = {
-            runId: latestRunId,
-            startedAt: summaryJson?.started_at || 'Recently',
-            status: summaryJson?.status || 'unknown',
-            exportRows: newCandidates,
-            failedRows: warnings
-        };
-
-        // 2. Top 10 (from raw.csv)
-        const top10: any[] = [];
-        const rawFile = await checkFile(['raw.csv', 'raw/raw.csv']);
         if (rawFile) {
-            const lines = rawFile.content.trim().split('\n').filter(l => l.trim().length > 0);
-            if (lines.length > 1) { // Has header + data
-                const header = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
+            const cleanContent = rawFile.content.charCodeAt(0) === 0xFEFF ? rawFile.content.slice(1) : rawFile.content;
+            const lines = cleanContent.split(/\r?\n/).filter(l => l.trim().length > 0);
+            if (lines.length > 1) {
+                const header = splitLine(lines[0]).map(h => normalizeHeader(h));
                 const titleIdx = header.findIndex(h => h.includes('title') || h.includes('name'));
                 const priceIdx = header.findIndex(h => h.includes('price'));
-                const urlIdx = header.findIndex(h => h.includes('url')); // url or item_url
+                const urlIdx = header.findIndex(h => h.includes('url')); // url or itemurl
 
-                // Take first 10 data rows
-                const dataLines = lines.slice(1, 11);
-                dataLines.forEach((line, idx) => {
-                    const cols = line.split(','); // Simple split, might break on quoted commas but OK for this phase constraint
-                    // Helper to safely get col
-                    const getCol = (i: number) => (i >= 0 && i < cols.length) ? cols[i].replace(/"/g, '').trim() : '';
+                lines.slice(1, 11).forEach((line, idx) => {
+                    const cols = splitLine(line);
+                    const getCol = (i: number) => (i >= 0 && i < cols.length) ? cols[i].replace(/^"|"$/g, '').trim() : '';
 
                     top10.push({
                         rank: idx + 1,
@@ -219,37 +148,146 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         }
 
-        // 3. Dangers (from failed files)
-        const dangers: any[] = [];
-        const failedCandidates = ['failed/failed.csv', 'failed.csv', 'failed/mapping_failed.csv', 'failed/_failed.csv', '_failed.csv'];
-        const failedFile = await checkFile(failedCandidates);
-        if (failedFile) {
-            const lines = failedFile.content.trim().split('\n').filter(l => l.trim().length > 0);
-            // Assuming no header or header is "error,url" etc. simpler to just take top lines
-            // If header exists, skip it? usually failed csvs have headers.
-            // Let's assume header exists if > 1 line and first line looks like header.
-            // For safety, just take lines 1-10 (skipping line 0 as potential header)
-            const startIdx = lines.length > 1 && (lines[0].includes('error') || lines[0].includes('reason')) ? 1 : 0;
-            const dangerLines = lines.slice(startIdx, startIdx + 10);
-
-            dangerLines.forEach(line => {
-                dangers.push({
-                    level: 'warn',
-                    message: line.substring(0, 100) // Truncate
-                });
-            });
+        // 2. Upload Ready
+        const amazonTsv = await readFileSafe('amazon.tsv') || await readFileSafe('amazon/amazon.tsv');
+        if (amazonTsv) {
+            uploadReady = countDataLines(amazonTsv.content);
+            debugSources.uploadReady = amazonTsv.path;
+        } else {
+            const amazonCsv = await readFileSafe('amazon.csv') || await readFileSafe('amazon/amazon.csv');
+            if (amazonCsv) {
+                uploadReady = countDataLines(amazonCsv.content);
+                debugSources.uploadReady = amazonCsv.path;
+            }
         }
+
+        // 3. Mapping Pending & 4. Warnings & 5. Dangers
+        // Gather failed files first
+        const failedFiles: { content: string, path: string }[] = [];
+        try {
+            const files = await fs.readdir(latestRunDir);
+            for (const f of files) {
+                // Broad match for failed files: *failed*.csv OR *failed*.tsv (excluding mapping.csv if it matches "failed" logic which it shouldn't, but explicitly checking)
+                // Also explicitly check common names
+                const lower = f.toLowerCase();
+                if ((lower.includes('failed') || lower.includes('failures')) && (lower.endsWith('.csv') || lower.endsWith('.tsv'))) {
+                    const data = await readFileSafe(f);
+                    if (data) failedFiles.push(data);
+                }
+            }
+        } catch { }
+
+        // Mapping Logic
+        const mappingCsv = await readFileSafe('mapping.csv') || await readFileSafe('mapping/mapping.csv');
+        if (mappingCsv) {
+            const cleanContent = mappingCsv.content.charCodeAt(0) === 0xFEFF ? mappingCsv.content.slice(1) : mappingCsv.content;
+            const lines = cleanContent.split(/\r?\n/).filter(l => l.trim().length > 0);
+            if (lines.length > 1) {
+                const headerRaw = lines[0];
+                const header = splitLine(headerRaw).map(h => normalizeHeader(h));
+                const candidates = ['asin', 'amazonasin', 'amazonasincode', 'amazonid', 'asincode'];
+                const asinIdx = header.findIndex(h => candidates.some(c => h === c || h.includes(c)));
+
+                if (asinIdx !== -1) {
+                    let pendingCount = 0;
+                    for (let i = 1; i < lines.length; i++) {
+                        const cols = splitLine(lines[i]);
+                        if (cols.length <= asinIdx || !cols[asinIdx] || cols[asinIdx].trim() === '') {
+                            pendingCount++;
+                        }
+                    }
+                    mappingPending = pendingCount;
+                    debugSources.mappingPending = `mapping.csv:${candidates.find(c => header[asinIdx].includes(c)) || 'col'}`;
+                } else {
+                    debugSources.mappingPending = `mapping.csv:no_asin_col`;
+                }
+            }
+        } else {
+            // Fallback: Scan failed files for keywords
+            let pendingCount = 0;
+            for (const f of failedFiles) {
+                const cleanContent = f.content.charCodeAt(0) === 0xFEFF ? f.content.slice(1) : f.content;
+                const lines = cleanContent.split(/\r?\n/).filter(l => l.trim().length > 0);
+                // Exclude header
+                if (lines.length > 1) {
+                    for (let i = 1; i < lines.length; i++) {
+                        const lineLower = lines[i].toLowerCase();
+                        if (lineLower.includes('mapping') || lineLower.includes('asin') || lineLower.includes('未設定')) {
+                            pendingCount++;
+                        }
+                    }
+                }
+            }
+            if (pendingCount > 0) {
+                mappingPending = pendingCount;
+                debugSources.mappingPending = 'failed_scan';
+            }
+        }
+
+        // Warnings & Dangers Logic
+        if (summaryJson && typeof summaryJson.failed_rows === 'number') {
+            warnings = summaryJson.failed_rows;
+            debugSources.warnings = 'summary.json:failed_rows';
+        } else {
+            // Sum of all failed files lines
+            let totalFailed = 0;
+            for (const f of failedFiles) {
+                totalFailed += countDataLines(f.content);
+            }
+            warnings = totalFailed;
+            if (failedFiles.length > 0) debugSources.warnings = 'failed_scan';
+        }
+
+        // Dangers List (Top 10 from failed files)
+        if (failedFiles.length > 0) {
+            let collected = 0;
+            for (const f of failedFiles) {
+                if (collected >= 10) break;
+                const cleanContent = f.content.charCodeAt(0) === 0xFEFF ? f.content.slice(1) : f.content;
+                const lines = cleanContent.split(/\r?\n/).filter(l => l.trim().length > 0);
+                if (lines.length > 1) {
+                    // Slice up to needed
+                    const needed = 10 - collected;
+                    const toAdd = lines.slice(1, 1 + needed);
+                    toAdd.forEach(l => {
+                        dangers.push({
+                            level: 'danger',
+                            message: l.substring(0, 200)
+                        });
+                        collected++;
+                    });
+                }
+            }
+            if (dangers.length > 0) {
+                debugSources.dangers = 'failed_scan';
+            }
+        }
+
+        // Final Safety
+        newCandidates = Math.max(0, Math.round(newCandidates));
+        uploadReady = Math.max(0, Math.round(uploadReady));
+        mappingPending = Math.max(0, Math.round(mappingPending));
+        warnings = Math.max(0, Math.round(warnings));
+
+        // --- Phase 2-2: Extended Attributes ---
+        const latestRun = {
+            runId: latestRunId,
+            startedAt: summaryJson?.started_at || 'Recently',
+            status: summaryJson?.status || 'unknown',
+            exportRows: newCandidates,
+            failedRows: warnings
+        };
 
         // 4. CTA Logic
         // Priority: warnings > mapping > upload > new > default
-        let cta = { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' }; // Default
+        let cta = { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' };
 
         if (warnings > 0) {
             cta = { kind: 'runs', label: 'エラーを確認', href: '/runs' };
         } else if (mappingPending > 0) {
-            cta = { kind: 'mapping', label: 'マッピングを行う', href: '/mapping' }; // Using mapping stub or wizard/step4
+            cta = { kind: 'mapping', label: 'マッピングを行う', href: '/mapping' };
         } else if (uploadReady > 0) {
-            cta = { kind: 'upload', label: '最終TSVを確認', href: '/runs' }; // Direct to runs to see artifacts
+            cta = { kind: 'upload', label: '最終TSVを確認', href: '/runs' };
         } else if (newCandidates > 0) {
             cta = { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' };
         }
@@ -270,14 +308,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     } catch (e: any) {
         console.error('Dashboard Summary API Error:', e);
-        // Fallback 0 for everything
         res.status(200).json({
             latestRunId: null,
             newCandidates: 0,
             uploadReady: 0,
             mappingPending: 0,
             warnings: 0,
-            sources: debugSources
+            sources: debugSources,
+            top10: [],
+            dangers: [],
+            cta: { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' }
         });
     }
 }
