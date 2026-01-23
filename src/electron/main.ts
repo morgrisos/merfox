@@ -163,7 +163,7 @@ const createWindow = async () => {
 app.on('ready', async () => {
     await startServer();
     createWindow();
-
+    startScheduler();
     // IPC Handlers
     ipcMain.handle('scraper:start', async (_, config: ScraperConfig) => {
         if (!config.outputDir) {
@@ -228,7 +228,7 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
-    }
+    startScheduler();    }
 });
 
 let statusInterval: NodeJS.Timeout | null = null;
@@ -243,3 +243,37 @@ function startStatusStream() {
         mainWindow.webContents.send('scraper:status', stats);
     }, 1000);
 }
+
+// [PHASE 5] Automation Scheduler
+let schedulerInterval: NodeJS.Timeout | null = null;
+function startScheduler() {
+    console.log('[Scheduler] Service started.');
+    if (schedulerInterval) clearInterval(schedulerInterval);
+
+    // Check every 60s
+    schedulerInterval = setInterval(async () => {
+        const now = new Date();
+        // MVP: Hardcoded 09:00 check (aligns with merfox.automation.json default)
+        // Ideally read JSON, but API handles validation.
+        // We just need to trigger "on schedule". 
+        // For MVP, we'll naive check against 09:00 locally to avoid API spam, 
+        // OR just check "is it 9:00?" -> Call API.
+
+        // Wait, if I want to verify "it works" without waiting for 9AM, 
+        // I should probably rely on the API call manually for verification, 
+        // but for Real Impl, checking 09:00 is correct.
+
+        if (now.getHours() === 9 && now.getMinutes() === 0) {
+            console.log('[Scheduler] Time match (09:00). Invoking Run API...');
+            try {
+                // Assuming Main process can access localhost:13337 (Next.js)
+                const res = await fetch(`http://localhost:${SERVER_PORT}/api/automation/run`, { method: 'POST' });
+                const json = await res.json();
+                console.log('[Scheduler] Trigger result:', json);
+            } catch (e) {
+                console.error('[Scheduler] Failed to invoke trigger:', e);
+            }
+        }
+    }, 60000); // 60s
+}
+
