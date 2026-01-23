@@ -3,7 +3,6 @@ dist/
 build/
 .next/
 *.tsbuildinfo
-next-env.d.ts
 
 # Logs
 *.log
