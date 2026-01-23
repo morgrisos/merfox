@@ -2,6 +2,26 @@ import React from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 
 export default function Runs() {
+    const [runs, setRuns] = React.useState<any[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        const fetchRuns = async () => {
+            try {
+                const res = await fetch('/api/runs');
+                if (res.ok) {
+                    const json = await res.json();
+                    setRuns(json.data || []);
+                }
+            } catch (e) {
+                console.error('Failed to fetch runs', e);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchRuns();
+    }, []);
+
     return (
         <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#0d1117] text-white">
             <header className="flex flex-col gap-4 mb-8">
@@ -29,93 +49,58 @@ export default function Runs() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[#282f39] text-white">
-                            <tr className="hover:bg-[#202b3a] transition-colors">
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="size-8 rounded bg-[#282f39] flex items-center justify-center text-xs font-bold text-[#9da8b9]">M</div>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-white">Search: "vintage camera"</span>
-                                            <span className="text-xs text-[#9da8b9]">https://jp.mercari.com/...</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        <span className="size-2 rounded-full bg-red-500"></span>
-                                        <span>Mercari</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/20">
-                                        完了
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 font-mono">150</td>
-                                <td className="px-6 py-4 text-[#9da8b9]">2分前</td>
-                                <td className="px-6 py-4 text-right">
-                                    <button className="text-slate-400 hover:text-white transition-colors">
-                                        <span className="material-symbols-outlined">more_vert</span>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr className="hover:bg-[#202b3a] transition-colors">
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="size-8 rounded bg-[#282f39] flex items-center justify-center text-xs font-bold text-[#9da8b9]">S</div>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-white">Shop: "Kyoto Antiques"</span>
-                                            <span className="text-xs text-[#9da8b9]">https://shopee.sg/...</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        <span className="size-2 rounded-full bg-orange-500"></span>
-                                        <span>Shopee</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
-                                        実行中
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 font-mono">45 / 200</td>
-                                <td className="px-6 py-4 text-[#9da8b9]">15分前</td>
-                                <td className="px-6 py-4 text-right">
-                                    <button className="text-slate-400 hover:text-white transition-colors">
-                                        <span className="material-symbols-outlined">more_vert</span>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr className="hover:bg-[#202b3a] transition-colors">
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="size-8 rounded bg-[#282f39] flex items-center justify-center text-xs font-bold text-[#9da8b9]">M</div>
-                                        <div className="flex flex-col">
-                                            <span className="font-bold text-white">Search: "ps5 console"</span>
-                                            <span className="text-xs text-[#9da8b9]">https://jp.mercari.com/...</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        <span className="size-2 rounded-full bg-red-500"></span>
-                                        <span>Mercari</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/20">
-                                        エラー
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 font-mono">0</td>
-                                <td className="px-6 py-4 text-[#9da8b9]">1時間前</td>
-                                <td className="px-6 py-4 text-right">
-                                    <button className="text-slate-400 hover:text-white transition-colors">
-                                        <span className="material-symbols-outlined">more_vert</span>
-                                    </button>
-                                </td>
-                            </tr>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-12 text-center text-[#9da8b9]">
+                                        読み込み中...
+                                    </td>
+                                </tr>
+                            ) : runs.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-12 text-center text-[#9da8b9]">
+                                        履歴がありません
+                                    </td>
+                                </tr>
+                            ) : (
+                                runs.map((run) => (
+                                    <tr key={run.id} className="hover:bg-[#202b3a] transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-8 rounded bg-[#282f39] flex items-center justify-center text-xs font-bold text-[#9da8b9]">
+                                                    {run.platform === 'Mercari' ? 'M' : 'S'}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-white max-w-[200px] truncate" title={run.target}>{run.target}</span>
+                                                    <span className="text-xs text-[#9da8b9] max-w-[200px] truncate">{run.id}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <span className={`size-2 rounded-full ${run.platform === 'Mercari' ? 'bg-red-500' : 'bg-orange-500'}`}></span>
+                                                <span>{run.platform}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${run.status === 'completed' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
+                                                    run.status === 'failed' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                                                        'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                                                }`}>
+                                                {run.status === 'completed' ? '完了' : run.status === 'failed' ? 'エラー' : '実行中'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 font-mono">
+                                            {run.stats.success} <span className="text-[#5b6471]">/ {run.stats.totalScanned}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-[#9da8b9]">{run.date}</td>
+                                        <td className="px-6 py-4 text-right">
+                                            <button className="text-slate-400 hover:text-white transition-colors">
+                                                <span className="material-symbols-outlined">more_vert</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
