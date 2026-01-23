@@ -245,3 +245,5 @@ export const CsvManager = () => {
         </div>
     );
 };
+
+export default CsvManager;
