@@ -116,9 +116,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 } catch { date = 'Unknown' }
             }
 
+            // Status Logic
+            let status = 'unknown';
+            if (runFiles.includes('amazon.tsv') || runFiles.includes('amazon_upload.tsv')) {
+                status = 'completed';
+            } else if (stats.failed > 0) {
+                status = 'failed';
+            } else {
+                status = 'completed'; // Default for old runs if they exist
+            }
+
             runs.push({
                 id: dirName,
                 name: dirName,
+                platform: 'Mercari', // Default
+                target: dirName, // Default to ID as we lack metadata
+                status,
                 date,
                 path: runIdPath,
                 stats,
