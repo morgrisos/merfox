@@ -32,3 +32,12 @@ browsers/
 dash.json
 map.json
 curl_output.txt
+
+# local artifacts
+*.tsbuildinfo
+runs_public.json
+run_*.json
+jobs_*.json
+release_public_v*.json
+release_create_v*.json
+checks_*.json
