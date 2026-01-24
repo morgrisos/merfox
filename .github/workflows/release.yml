@@ -45,6 +45,31 @@ jobs:
         run: |
           echo "ARGS=--publish=never" >> $GITHUB_OUTPUT
 
+      - name: Debug Electron entrypoint + outputs
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "=== package.json main ==="
+          node -p "require('./package.json').main"
+          echo "=== extraMetadata.main ==="
+          node -p "require('./package.json').build?.extraMetadata?.main || ''"
+          echo "=== build.files ==="
+          node -p "JSON.stringify(require('./package.json').build?.files || [])"
+
+          echo "=== ls root candidates ==="
+          ls -la || true
+
+          echo "=== dist-electron tree ==="
+          ls -la dist-electron || true
+          find dist-electron -maxdepth 4 -type f -print || true
+
+          echo "=== dist_electron tree ==="
+          ls -la dist_electron || true
+          find dist_electron -maxdepth 4 -type f -print || true
+
+          echo "=== find main.js anywhere (limited) ==="
+          find . -maxdepth 4 -type f -name "main.js" -print || true
+
       - name: Build Electron App
         uses: samuelmeuli/action-electron-builder@v1
         with:
