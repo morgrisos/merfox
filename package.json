@@ -1,9 +1,9 @@
 {
   "name": "merfox",
   "productName": "MerFox",
-  "version": "0.1.56",
+  "version": "0.1.58",
   "description": "Mercari Automation Tool",
-  "main": "dist_electron/main.js",
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:electron\"",
     "dev:server": "next dev -p 13337",
@@ -53,8 +53,11 @@
     "directories": {
       "output": "dist"
     },
+    "extraMetadata": {
+      "main": "dist-electron/main.js"
+    },
     "files": [
-      "dist_electron/**/*",
+      "dist-electron/**/*",
       "server/**/*",
       ".next/**/*",
       "public/**/*",
