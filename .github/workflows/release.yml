@@ -43,11 +43,7 @@ jobs:
         id: build-config
         shell: bash
         run: |
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            echo "ARGS=--publish=always" >> $GITHUB_OUTPUT
-          else
-            echo "ARGS=--publish=never" >> $GITHUB_OUTPUT
-          fi
+          echo "ARGS=--publish=never" >> $GITHUB_OUTPUT
 
       - name: Build Electron App
         uses: samuelmeuli/action-electron-builder@v1
