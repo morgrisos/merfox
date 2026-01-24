@@ -12,7 +12,8 @@
     "build": "next build && tsc -p src/electron/tsconfig.json && electron-builder",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "build:ci": "next build && tsc -p src/electron/tsconfig.json"
   },
   "dependencies": {
     "@types/papaparse": "^5.5.2",
