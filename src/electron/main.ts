@@ -93,17 +93,24 @@ app.on('certificate-error', (event, _webContents, url, error, certificate, callb
 let mainWindow: BrowserWindow | null = null;
 let serverProcess: ChildProcess | null = null;
 const SERVER_PORT = 13337;
+// DIAGNOSTIC GLOBAL
+const logDir = app.getPath('userData'); // Safe in sandbox
+if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+const bootLog = path.join(logDir, 'merfox-boot.log');
+const nextOut = path.join(logDir, 'merfox-next.stdout.log');
+const nextErr = path.join(logDir, 'merfox-next.stderr.log');
+
+try {
+    fs.appendFileSync(bootLog, `\n[${new Date().toISOString()}] [GLOBAL] Main process loaded. PID: ${process.pid}\n`);
+} catch (e) {
+    // Determine where we CAN write if this fails? Unlikely in userData.
+}
 
 const startServer = async () => {
     // DIAGNOSTIC PATCH: Remove development check for production debugging if needed, but keeping logic
     if (process.env.NODE_ENV === 'development') return;
 
-    // Hardcoded diag logs
-    const bootLog = '/tmp/merfox-boot.log';
-    const nextOut = '/tmp/merfox-next.stdout.log';
-    const nextErr = '/tmp/merfox-next.stderr.log';
-
-    fs.appendFileSync(bootLog, `\n[${new Date().toISOString()}] [BOOT] startServer entered\n`);
+    fs.appendFileSync(bootLog, `[BOOT] startServer entered\n`);
     fs.appendFileSync(bootLog, `[DEBUG] app.getAppPath: ${app.getAppPath()}\n`);
     fs.appendFileSync(bootLog, `[DEBUG] resourcesPath: ${process.resourcesPath}\n`);
 
@@ -129,9 +136,14 @@ const startServer = async () => {
         }
     }
 
-    // Prepare logs
-    const outStream = fs.openSync(nextOut, 'a');
-    const errStream = fs.openSync(nextErr, 'a');
+    // Prepare logs - use file descriptor to ensure flush
+    let outStream: number | undefined, errStream: number | undefined;
+    try {
+        outStream = fs.openSync(nextOut, 'a');
+        errStream = fs.openSync(nextErr, 'a');
+    } catch (e) {
+        fs.appendFileSync(bootLog, `[ERROR] Failed to open streams: ${e}\n`);
+    }
 
     console.log('Starting Next.js Standalone Server via:', standaloneServer);
     fs.appendFileSync(bootLog, `[INFO] Spawning node process...\n`);
@@ -145,7 +157,7 @@ const startServer = async () => {
                 PORT: `${SERVER_PORT}`,
                 ELECTRON_RUN_AS_NODE: '1'
             },
-            stdio: ['ignore', outStream, errStream]
+            stdio: ['ignore', outStream || 'ignore', errStream || 'ignore']
         });
 
         fs.appendFileSync(bootLog, `[INFO] Spawned. PID: ${serverProcess.pid}\n`);
@@ -153,11 +165,11 @@ const startServer = async () => {
         if (serverProcess) {
             serverProcess.on('error', (err) => {
                 console.error('Server failed to start:', err);
-                fs.writeSync(errStream, `\n[LAUNCH ERROR] ${err}\n`);
+                if (errStream) fs.writeSync(errStream, `\n[LAUNCH ERROR] ${err}\n`);
                 fs.appendFileSync(bootLog, `[ERROR] Spawn error: ${err}\n`);
             });
             serverProcess.on('exit', (code, signal) => {
-                fs.writeSync(errStream, `\n[EXIT] Code: ${code}, Signal: ${signal}\n`);
+                if (errStream) fs.writeSync(errStream, `\n[EXIT] Code: ${code}, Signal: ${signal}\n`);
                 fs.appendFileSync(bootLog, `[EXIT] Server exited. Code: ${code}, Signal: ${signal}\n`);
             });
         }
