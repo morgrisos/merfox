@@ -45,60 +45,35 @@ jobs:
         run: |
           echo "ARGS=--publish=never" >> $GITHUB_OUTPUT
 
-      - name: Debug Output + Check dist-electron [mac]
-        if: runner.os != 'Windows'
+      - name: Ensure Electron entrypoint exists
         shell: bash
         run: |
           set -euxo pipefail
-          echo "=== Node/NPM Info ==="
-          node -v
-          npm -v
-          which npm
-          which npx
-
-          echo "=== package.json Info ==="
-          node -p "require('./package.json').main"
-          node -p "require('./package.json').build?.extraMetadata?.main || ''"
-          node -p "JSON.stringify(require('./package.json').build?.files || [])"
-          node -p "JSON.stringify(require('./package.json').build?.directories || {})"
-
-          echo "=== Check Files ==="
+          echo "== list dist-electron before =="
           ls -la dist-electron || true
-          find dist-electron -maxdepth 5 -type f -name "main.js" -print || true
-          
-          echo "=== Assert main.js exists ==="
+          echo "== find main.js candidates =="
+          find dist-electron -maxdepth 6 -type f -name "main.js" -print || true
+
+          # Recover if main.js is nested
           if [ ! -f dist-electron/main.js ]; then
-             echo "::error::dist-electron/main.js NOT FOUND"
-             exit 1
+             CAND="$(find dist-electron -maxdepth 6 -type f -name 'main.js' | head -n 1 || true)"
+             if [ -z "$CAND" ]; then
+               echo "::error::main.js not found under dist-electron. tsc output path mismatch."
+               exit 1
+             fi
+             echo "Copying $CAND -> dist-electron/main.js"
+             cp -f "$CAND" dist-electron/main.js
           fi
+          
+          test -f dist-electron/main.js
+          echo "OK: dist-electron/main.js exists"
+          node -e "console.log('size', require('fs').statSync('dist-electron/main.js').size)"
 
-      - name: Debug Output + Check dist-electron [win]
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = "Stop"
-          echo "=== Node/NPM Info ==="
-          node -v
-          npm -v
-          Get-Command npm | Select-Object Source
-          Get-Command npx | Select-Object Source
-
-          echo "=== package.json Info ==="
+          echo "=== package.json Verification ==="
           node -p "require('./package.json').main"
           node -p "require('./package.json').build?.extraMetadata?.main || ''"
           node -p "JSON.stringify(require('./package.json').build?.files || [])"
-          node -p "JSON.stringify(require('./package.json').build?.directories || {})"
-
-          echo "=== Check Files ==="
-          Get-ChildItem dist-electron -Force -ErrorAction SilentlyContinue
-          Get-ChildItem dist-electron -Recurse -Filter main.js -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
-
-          echo "=== Assert main.js exists ==="
-          if (-not (Test-Path "dist-electron/main.js")) {
-             Write-Error "dist-electron/main.js NOT FOUND"
-             exit 1
-          }
-
+          
       # macos
       - name: Build Electron App (electron-builder) [mac]
         if: runner.os != 'Windows'
