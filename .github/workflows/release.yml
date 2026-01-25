@@ -387,40 +387,16 @@ jobs:
 
             # Exit Codes: 0=Success, 1=Retry(Missing), 2=Fail(Draft/Fatal)
             set +e
-            python3 - << 'PY'
-            import json, sys, os
-
-            try:
-                with open("release.json","r",encoding="utf-8") as f:
-                    r=json.load(f)
-            except Exception as e:
-                print(f"::warning::JSON parse failed: {e}")
-                sys.exit(1)
-
-            if r.get("draft") is True:
-                print("::error::Release is draft=True")
-                sys.exit(2)
-
-            tag=os.environ["TAG"]
-            ver=tag.lstrip("v")
-            required={
-                f"MerFox-{ver}-mac-arm64.dmg",
-                f"MerFox-{ver}-mac-arm64.zip",
-                f"MerFox-{ver}-win-x64.exe",
-                "latest-mac.yml",
-                "latest.yml",
-            }
-            assets=set(a.get("name") for a in r.get("assets",[]) if a.get("name"))
-            missing=sorted(required - assets)
-
-            if missing:
-                print(f"::warning::Missing assets: {missing}")
-                print(f"Found assets count: {len(assets)}")
-                sys.exit(1)
-
-            print("SUCCESS: All required assets present.")
-            sys.exit(0)
-            PY
+            python3 -c 'import json,sys,os; \
+            try: r=json.load(open("release.json",encoding="utf-8")); \
+            except: sys.exit(1); \
+            if r.get("draft"): print("::error::Draft"); sys.exit(2); \
+            ver=os.environ["TAG"].lstrip("v"); \
+            req={f"MerFox-{ver}-mac-arm64.dmg", f"MerFox-{ver}-mac-arm64.zip", f"MerFox-{ver}-win-x64.exe", "latest-mac.yml", "latest.yml"}; \
+            assets={a["name"] for a in r.get("assets",[]) if "name" in a}; \
+            missing=req-assets; \
+            if missing: print(f"::warning::Missing: {missing}"); sys.exit(1); \
+            print("SUCCESS")'
             rc=$?
             set -e
 
