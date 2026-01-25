@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
-import { fork, ChildProcess } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import net from 'net';
 import log from 'electron-log';
 import fs from 'fs';
@@ -97,20 +97,24 @@ const SERVER_PORT = 13337;
 const startServer = async () => {
     if (process.env.NODE_ENV === 'development') return;
 
-    const resourcesPath = path.join(__dirname, '../..'); // Root of unpacked app
-    const nextBin = path.join(resourcesPath, 'node_modules/next/dist/bin/next');
+    const resourcesPath = process.resourcesPath;
+    const unpackedRoot = path.join(resourcesPath, 'app.asar.unpacked');
+    const nextBin = path.join(unpackedRoot, 'node_modules/next/dist/bin/next');
 
-    console.log('Starting Next.js Server via:', nextBin);
+    console.log('Starting Next.js Server via (unpacked):', nextBin);
+    console.log('CWD:', unpackedRoot);
 
-    serverProcess = fork(nextBin, ['start', '-p', `${SERVER_PORT}`], {
-        cwd: resourcesPath,
-        env: { ...process.env, NODE_ENV: 'production', PORT: `${SERVER_PORT}` },
+    serverProcess = spawn(process.execPath, [nextBin, 'start', '-p', `${SERVER_PORT}`], {
+        cwd: unpackedRoot,
+        env: { ...process.env, NODE_ENV: 'production', PORT: `${SERVER_PORT}`, ELECTRON_RUN_AS_NODE: '1' },
         stdio: 'inherit' // Pipe logs for debugging
     });
 
-    serverProcess.on('error', (err) => {
-        console.error('Server failed to start:', err);
-    });
+    if (serverProcess) {
+        serverProcess.on('error', (err) => {
+            console.error('Server failed to start:', err);
+        });
+    }
 };
 
 const waitForServer = (port: number): Promise<void> => {
@@ -228,7 +232,8 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
-    startScheduler();    }
+        startScheduler();
+    }
 });
 
 let statusInterval: NodeJS.Timeout | null = null;
