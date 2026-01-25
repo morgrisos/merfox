@@ -59,7 +59,8 @@
     "files": [
       "dist-electron/**",
       "server/**",
-      ".next/**",
+      ".next/standalone/**",
+      ".next/static/**",
       "public/**",
       "package.json"
     ],
@@ -91,12 +92,10 @@
     "asar": true,
     "asarUnpack": [
       "server/**",
-      "node_modules/next/**",
-      "node_modules/.bin/**",
       "**/*.node",
-      ".next/**",
-      "public/**",
-      "package.json"
+      ".next/standalone/**",
+      ".next/static/**",
+      "public/**"
     ]
   }
 }
