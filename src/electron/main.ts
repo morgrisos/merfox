@@ -4,18 +4,31 @@ import { spawn, ChildProcess } from 'child_process';
 import net from 'net';
 import log from 'electron-log';
 import fs from 'fs';
+
+// PANIC HANDLER - MUST BE FIRST
+process.on('uncaughtException', (error) => {
+    try {
+        const panicPath = path.join(app.getPath('userData'), 'merfox-panic.log');
+        fs.appendFileSync(panicPath, `[PANIC] ${error.stack || error}\n`);
+    } catch (_) { }
+});
+
 import { scraperManager } from '../lib/manager';
 import { ScraperConfig } from '../lib/types';
 import { initUpdater } from './updater';
 
 // [LOGGING] Configure Electron Log (P9.21)
-log.transports.file.level = 'info';
-log.transports.file.maxSize = 5 * 1024 * 1024; // 5MB
-log.transports.file.resolvePathFn = () => {
-    return process.platform === 'darwin'
-        ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
-        : path.join(app.getPath('userData'), 'logs/main.log');
-};
+try {
+    log.transports.file.level = 'info';
+    log.transports.file.maxSize = 5 * 1024 * 1024; // 5MB
+    log.transports.file.resolvePathFn = () => {
+        return process.platform === 'darwin'
+            ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
+            : path.join(app.getPath('userData'), 'logs/main.log');
+    };
+} catch (e) {
+    console.error('Log config failed:', e);
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (process.platform === 'win32') {
