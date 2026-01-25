@@ -57,12 +57,11 @@
       "main": "dist-electron/electron/main.js"
     },
     "files": [
-      "dist-electron/**/*",
-      "server/**/*",
-      ".next/**/*",
-      "public/**/*",
-      "package.json",
-      "src/lib/**/*"
+      "dist-electron/**",
+      "server/**",
+      ".next/**",
+      "public/**",
+      "package.json"
     ],
     "publish": [
       {
@@ -88,6 +87,16 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true
     },
-    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "asar": true,
+    "asarUnpack": [
+      "server/**",
+      "node_modules/next/**",
+      "node_modules/.bin/**",
+      "**/*.node",
+      ".next/**",
+      "public/**",
+      "package.json"
+    ]
   }
 }
