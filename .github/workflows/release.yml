@@ -97,9 +97,20 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
+          
+          # Force sync package.json version with git tag
+          TAG="${{ github.ref_name }}"
+          VER="${TAG#v}"
+          echo "Syncing package.json version to $VER"
+          npm version "$VER" --no-git-tag-version --allow-same-version --force
+          echo "Verified version: $(node -p "require('./package.json').version")"
+
           npx --version
           npx electron-builder --version
           npx electron-builder --publish=never
+          
+          echo "=== Dist Content ==="
+          ls -la dist
 
       # windows
       - name: Build Electron App (electron-builder) [win]
@@ -107,7 +118,18 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
+          
+          # Force sync package.json version with git tag
+          $TAG = "${{ github.ref_name }}"
+          $VER = $TAG -replace "^v", ""
+          Write-Host "Syncing package.json version to $VER"
+          npm version "$VER" --no-git-tag-version --allow-same-version --force
+          Write-Host "Verified version: $(node -p "require('./package.json').version")"
+
           npm exec -- electron-builder --win --x64 --publish=never
+          
+          Write-Host "=== Dist Content ==="
+          Get-ChildItem dist -Force
 
       - name: Normalize Metadata (Pre-Upload)
         shell: bash
