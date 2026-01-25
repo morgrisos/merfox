@@ -1,0 +1,9 @@
+https://github.com/morgrisos/merfox/releases/download/v0.1.70/latest-mac.yml
+https://github.com/morgrisos/merfox/releases/download/v0.1.70/latest.yml
+https://github.com/morgrisos/merfox/releases/download/v0.1.70/MerFox-0.1.70-mac-arm64.dmg
+https://github.com/morgrisos/merfox/releases/download/v0.1.70/MerFox-0.1.70-mac-arm64.dmg.blockmap
+https://github.com/morgrisos/merfox/releases/download/v0.1.70/MerFox-0.1.70-mac-arm64.zip
+https://github.com/morgrisos/merfox/releases/download/v0.1.70/MerFox-0.1.70-mac-arm64.zip.blockmap
+https://github.com/morgrisos/merfox/releases/download/v0.1.70/MerFox-0.1.70-win-x64.exe
+https://github.com/morgrisos/merfox/releases/download/v0.1.70/MerFox-0.1.70-win-x64.exe.blockmap
+https://github.com/morgrisos/merfox/releases/download/v0.1.70/MerFox-0.1.70-win-x64.zip
