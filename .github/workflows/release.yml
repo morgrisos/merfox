@@ -360,7 +360,7 @@ jobs:
             release-dist/
 
       - name: Verify Uploaded Assets (API)
-        # continue-on-error: true  <-- Removed to enforce strict verification
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
@@ -373,7 +373,6 @@ jobs:
           ok=0
           for i in $(seq 1 15); do
             echo "=== Attempt ${i}/15: Checking Release & Assets ==="
-
             code=$(curl -sS -H "Authorization: token ${GH_TOKEN}" \
               -H "Accept: application/vnd.github+json" \
               -o release.json -w "%{http_code}" \
@@ -385,28 +384,22 @@ jobs:
               continue
             fi
 
-            python3 -c 'import json,os,sys
-r=json.load(open("release.json",encoding="utf-8"))
-if r.get("draft") is True:
-  print("::error::Release is draft=True"); sys.exit(2)
-tag=os.environ["TAG"]; ver=tag.lstrip("v")
-required={f"MerFox-{ver}-mac-arm64.dmg", f"MerFox-{ver}-mac-arm64.zip", f"MerFox-{ver}-win-x64.exe", "latest-mac.yml", "latest.yml"}
-assets={a.get("name") for a in (r.get("assets") or []) if a.get("name")}
-missing=sorted(required-assets)
-if missing:
-  print(f"::warning::Missing assets: {missing}")
-  print(f"Found assets count: {len(assets)}")
-  sys.exit(1)
-print("SUCCESS: All required assets present."); sys.exit(0)'
-            rc=$?
-
-            if [ $rc -eq 0 ]; then
+            if python3 -c "import json,os,sys; r=json.load(open('release.json','r',encoding='utf-8')); \
+              tag=os.environ['TAG']; ver=tag[1:] if tag.startswith('v') else tag; \
+              draft=r.get('draft',False); \
+              assets=set(a.get('name') for a in r.get('assets',[]) if a.get('name')); \
+              req=set([f'MerFox-{ver}-mac-arm64.dmg', f'MerFox-{ver}-mac-arm64.zip', f'MerFox-{ver}-win-x64.exe', 'latest-mac.yml', 'latest.yml']); \
+              missing=sorted(req-assets); \
+              print('draft=',draft); print('assets_count=',len(assets)); print('missing=',missing); \
+              sys.exit(2 if draft else (1 if missing else 0))"; then
               ok=1
               break
-            elif [ $rc -eq 2 ]; then
-              echo "::error::Draft release detected. Failing."
-              exit 1
             else
+              rc=$?
+              if [ "$rc" -eq 2 ]; then
+                echo "::error::Draft release detected. Failing."
+                exit 1
+              fi
               echo "Assets incomplete. Waiting 20s..."
               sleep 20
             fi
