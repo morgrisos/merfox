@@ -45,33 +45,59 @@ jobs:
         run: |
           echo "ARGS=--publish=never" >> $GITHUB_OUTPUT
 
-      - name: Debug Electron entrypoint + outputs [mac]
+      - name: Debug Output + Check dist-electron [mac]
         if: runner.os != 'Windows'
         shell: bash
         run: |
           set -euxo pipefail
+          echo "=== Node/NPM Info ==="
           node -v
           npm -v
-          npx --version
-          echo "main:"; node -p "require('./package.json').main"
-          echo "extraMetadata.main:"; node -p "require('./package.json').build?.extraMetadata?.main || ''"
-          echo "files:"; node -p "JSON.stringify(require('./package.json').build?.files || [])"
-          ls -la dist-electron || true
-          find dist-electron -maxdepth 4 -type f -name "main.js" -print || true
+          which npm
+          which npx
 
-      - name: Debug Electron entrypoint + outputs [win]
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = "Continue"
-          node -v
-          npm -v
-          npx --version
+          echo "=== package.json Info ==="
           node -p "require('./package.json').main"
           node -p "require('./package.json').build?.extraMetadata?.main || ''"
           node -p "JSON.stringify(require('./package.json').build?.files || [])"
+          node -p "JSON.stringify(require('./package.json').build?.directories || {})"
+
+          echo "=== Check Files ==="
+          ls -la dist-electron || true
+          find dist-electron -maxdepth 5 -type f -name "main.js" -print || true
+          
+          echo "=== Assert main.js exists ==="
+          if [ ! -f dist-electron/main.js ]; then
+             echo "::error::dist-electron/main.js NOT FOUND"
+             exit 1
+          fi
+
+      - name: Debug Output + Check dist-electron [win]
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          echo "=== Node/NPM Info ==="
+          node -v
+          npm -v
+          Get-Command npm | Select-Object Source
+          Get-Command npx | Select-Object Source
+
+          echo "=== package.json Info ==="
+          node -p "require('./package.json').main"
+          node -p "require('./package.json').build?.extraMetadata?.main || ''"
+          node -p "JSON.stringify(require('./package.json').build?.files || [])"
+          node -p "JSON.stringify(require('./package.json').build?.directories || {})"
+
+          echo "=== Check Files ==="
           Get-ChildItem dist-electron -Force -ErrorAction SilentlyContinue
           Get-ChildItem dist-electron -Recurse -Filter main.js -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+
+          echo "=== Assert main.js exists ==="
+          if (-not (Test-Path "dist-electron/main.js")) {
+             Write-Error "dist-electron/main.js NOT FOUND"
+             exit 1
+          }
 
       # macos
       - name: Build Electron App (electron-builder) [mac]
@@ -89,9 +115,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          npx --version
-          npx electron-builder --version
-          npx electron-builder --publish=never
+          npm exec -- electron-builder --win --x64 --publish=never
 
       - name: Normalize Metadata (Pre-Upload)
         shell: bash
