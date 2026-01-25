@@ -98,21 +98,48 @@ const startServer = async () => {
     if (process.env.NODE_ENV === 'development') return;
 
     const resourcesPath = process.resourcesPath;
+    // In standalone build, 'server.js' is at .next/standalone/server.js
+    // We try unpacked path first.
     const unpackedRoot = path.join(resourcesPath, 'app.asar.unpacked');
-    const nextBin = path.join(unpackedRoot, 'node_modules/next/dist/bin/next');
+    const standaloneServer = path.join(unpackedRoot, '.next/standalone/server.js');
 
-    console.log('Starting Next.js Server via (unpacked):', nextBin);
-    console.log('CWD:', unpackedRoot);
+    // Log paths for debugging
+    const logDir = process.platform === 'darwin'
+        ? path.join(app.getPath('home'), 'Library/Logs/merfox')
+        : path.join(app.getPath('userData'), 'logs');
 
-    serverProcess = spawn(process.execPath, [nextBin, 'start', '-p', `${SERVER_PORT}`], {
-        cwd: unpackedRoot,
-        env: { ...process.env, NODE_ENV: 'production', PORT: `${SERVER_PORT}`, ELECTRON_RUN_AS_NODE: '1' },
-        stdio: 'inherit' // Pipe logs for debugging
+    if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+
+    const outLog = fs.openSync(path.join(logDir, 'next.stdout.log'), 'a');
+    const errLog = fs.openSync(path.join(logDir, 'next.stderr.log'), 'a');
+
+    console.log('Starting Next.js Standalone Server via:', standaloneServer);
+
+    // Check if standalone server exists in unpacked
+    const serverExists = fs.existsSync(standaloneServer);
+    if (!serverExists) {
+        console.error('[FATAL] Standalone server not found at:', standaloneServer);
+        // Fallback or error UI could be shown here
+    }
+
+    serverProcess = spawn(process.execPath, [standaloneServer], {
+        cwd: path.join(unpackedRoot, '.next/standalone'), // CWD must be standalone root
+        env: {
+            ...process.env,
+            NODE_ENV: 'production',
+            PORT: `${SERVER_PORT}`,
+            ELECTRON_RUN_AS_NODE: '1'
+        },
+        stdio: ['ignore', outLog, errLog]
     });
 
     if (serverProcess) {
         serverProcess.on('error', (err) => {
             console.error('Server failed to start:', err);
+            fs.appendFileSync(path.join(logDir, 'next.stderr.log'), `\n[LAUNCH ERROR] ${err}\n`);
+        });
+        serverProcess.on('exit', (code, signal) => {
+            fs.appendFileSync(path.join(logDir, 'next.stderr.log'), `\n[EXIT] Code: ${code}, Signal: ${signal}\n`);
         });
     }
 };
