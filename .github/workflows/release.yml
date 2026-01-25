@@ -45,40 +45,53 @@ jobs:
         run: |
           echo "ARGS=--publish=never" >> $GITHUB_OUTPUT
 
-      - name: Debug Electron entrypoint + outputs
+      - name: Debug Electron entrypoint + outputs [mac]
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           set -euxo pipefail
-          echo "=== package.json main ==="
-          node -p "require('./package.json').main"
-          echo "=== extraMetadata.main ==="
-          node -p "require('./package.json').build?.extraMetadata?.main || ''"
-          echo "=== build.files ==="
-          node -p "JSON.stringify(require('./package.json').build?.files || [])"
-
-          echo "=== ls root candidates ==="
-          ls -la || true
-
-          echo "=== dist-electron tree ==="
+          node -v
+          npm -v
+          npx --version
+          echo "main:"; node -p "require('./package.json').main"
+          echo "extraMetadata.main:"; node -p "require('./package.json').build?.extraMetadata?.main || ''"
+          echo "files:"; node -p "JSON.stringify(require('./package.json').build?.files || [])"
           ls -la dist-electron || true
-          find dist-electron -maxdepth 4 -type f -print || true
+          find dist-electron -maxdepth 4 -type f -name "main.js" -print || true
 
-          echo "=== dist_electron tree ==="
-          ls -la dist_electron || true
-          find dist_electron -maxdepth 4 -type f -print || true
+      - name: Debug Electron entrypoint + outputs [win]
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Continue"
+          node -v
+          npm -v
+          npx --version
+          node -p "require('./package.json').main"
+          node -p "require('./package.json').build?.extraMetadata?.main || ''"
+          node -p "JSON.stringify(require('./package.json').build?.files || [])"
+          Get-ChildItem dist-electron -Force -ErrorAction SilentlyContinue
+          Get-ChildItem dist-electron -Recurse -Filter main.js -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
 
-          echo "=== find main.js anywhere (limited) ==="
-          find . -maxdepth 4 -type f -name "main.js" -print || true
+      # macos
+      - name: Build Electron App (electron-builder) [mac]
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          npx --version
+          npx electron-builder --version
+          npx electron-builder --publish=never
 
-      - name: Build Electron App
-        uses: samuelmeuli/action-electron-builder@v1
-        with:
-          skip_build: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          release: false
-          args: ${{ steps.build-config.outputs.ARGS }}
-          mac_certs: ''
-          mac_certs_password: ''
+      # windows
+      - name: Build Electron App (electron-builder) [win]
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          npx --version
+          npx electron-builder --version
+          npx electron-builder --publish=never
 
       - name: Normalize Metadata (Pre-Upload)
         shell: bash
