@@ -382,7 +382,7 @@ jobs:
             fi
 
             set +e
-            python3 -c "import json,os,sys; r=json.load(open('release.json','r',encoding='utf-8')); tag=os.environ['TAG']; ver=tag[1:] if tag.startswith('v') else tag; draft=bool(r.get('draft',False)); assets=set(a.get('name') for a in (r.get('assets') or []) if a.get('name')); req=set([f'MerFox-{ver}-mac-arm64.dmg', f'MerFox-{ver}-mac-arm64.dmg.blockmap', f'MerFox-{ver}-mac-arm64.zip', f'MerFox-{ver}-mac-arm64.zip.blockmap', f'MerFox-{ver}-win-x64.exe', f'MerFox-{ver}-win-x64.exe.blockmap', 'latest-mac.yml', 'latest.yml']); missing=sorted(req-assets); print('draft=',draft); print('assets_count=',len(assets)); print('missing=',missing); sys.exit(2 if draft else (1 if missing else 0))"
+            python3 -c "import json,os,sys; r=json.load(open('release.json','r',encoding='utf-8')); tag=os.environ['TAG']; ver=tag[1:] if tag.startswith('v') else tag; draft=bool(r.get('draft',False)); assets=set(a.get('name') for a in (r.get('assets') or []) if a.get('name')); req=set([f'MerFox-{ver}-mac-arm64.dmg', f'MerFox-{ver}-mac-arm64.dmg.blockmap', f'MerFox-{ver}-mac-arm64.zip', f'MerFox-{ver}-mac-arm64.zip.blockmap', f'MerFox-{ver}-win-x64.exe', f'MerFox-{ver}-win-x64.exe.blockmap', 'latest-mac.yml', 'latest.yml', f'MerFox-{ver}-win-x64.zip']); missing=sorted(req-assets); print('draft=',draft); print('assets_count=',len(assets)); print('missing=',missing); sys.exit(2 if draft else (1 if missing else 0))"
             rc=$?
             set -e
 
