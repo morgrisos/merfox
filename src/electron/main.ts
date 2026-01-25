@@ -94,45 +94,61 @@ let mainWindow: BrowserWindow | null = null;
 let serverProcess: ChildProcess | null = null;
 const SERVER_PORT = 13337;
 // DIAGNOSTIC GLOBAL
-const logDir = app.getPath('userData'); // Safe in sandbox
-if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
-const bootLog = path.join(logDir, 'merfox-boot.log');
-const nextOut = path.join(logDir, 'merfox-next.stdout.log');
-const nextErr = path.join(logDir, 'merfox-next.stderr.log');
+let logDir = '';
+let bootLog = '';
+let nextOut = '';
+let nextErr = '';
 
-try {
-    fs.appendFileSync(bootLog, `\n[${new Date().toISOString()}] [GLOBAL] Main process loaded. PID: ${process.pid}\n`);
-} catch (e) {
-    // Determine where we CAN write if this fails? Unlikely in userData.
-}
+const initLogs = () => {
+    try {
+        logDir = app.getPath('userData');
+        if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+        bootLog = path.join(logDir, 'merfox-boot.log');
+        nextOut = path.join(logDir, 'merfox-next.stdout.log');
+        nextErr = path.join(logDir, 'merfox-next.stderr.log');
+
+        fs.appendFileSync(bootLog, `\n[${new Date().toISOString()}] [GLOBAL] Main process loaded. PID: ${process.pid}\n`);
+    } catch (e) {
+        console.error('Failed to init logs:', e);
+    }
+};
 
 const startServer = async () => {
-    // DIAGNOSTIC PATCH: Remove development check for production debugging if needed, but keeping logic
+    // DIAGNOSTIC PATCH: Remove development check for production debugging if needed
     if (process.env.NODE_ENV === 'development') return;
 
-    fs.appendFileSync(bootLog, `[BOOT] startServer entered\n`);
-    fs.appendFileSync(bootLog, `[DEBUG] app.getAppPath: ${app.getAppPath()}\n`);
-    fs.appendFileSync(bootLog, `[DEBUG] resourcesPath: ${process.resourcesPath}\n`);
+    if (!bootLog) initLogs(); // Safety fallback
+
+    try {
+        fs.appendFileSync(bootLog, `[BOOT] startServer entered\n`);
+        fs.appendFileSync(bootLog, `[DEBUG] app.getAppPath: ${app.getAppPath()}\n`);
+        fs.appendFileSync(bootLog, `[DEBUG] resourcesPath: ${process.resourcesPath}\n`);
+    } catch (e) {
+        console.error('Log write failed', e);
+    }
 
     const resourcesPath = process.resourcesPath;
     const unpackedRoot = path.join(resourcesPath, 'app.asar.unpacked');
     const standaloneServer = path.join(unpackedRoot, '.next/standalone/server.js');
 
-    fs.appendFileSync(bootLog, `[DEBUG] unpackedRoot: ${unpackedRoot}\n`);
-    fs.appendFileSync(bootLog, `[DEBUG] standaloneServer Target: ${standaloneServer}\n`);
+    try {
+        fs.appendFileSync(bootLog, `[DEBUG] unpackedRoot: ${unpackedRoot}\n`);
+        fs.appendFileSync(bootLog, `[DEBUG] standaloneServer Target: ${standaloneServer}\n`);
+    } catch (_) { }
 
     const serverExists = fs.existsSync(standaloneServer);
-    fs.appendFileSync(bootLog, `[DEBUG] standaloneServer Exists: ${serverExists}\n`);
+    try {
+        fs.appendFileSync(bootLog, `[DEBUG] standaloneServer Exists: ${serverExists}\n`);
+    } catch (_) { }
 
     if (!serverExists) {
         console.error('[FATAL] Standalone server missing');
-        fs.appendFileSync(bootLog, `[FATAL] Standalone server missing at ${standaloneServer}\n`);
-        // List contents of unpacked root to verify structure
         try {
+            fs.appendFileSync(bootLog, `[FATAL] Standalone server missing at ${standaloneServer}\n`);
             const contents = fs.readdirSync(unpackedRoot);
             fs.appendFileSync(bootLog, `[DEBUG] unpackedRoot contents: ${contents.join(', ')}\n`);
         } catch (e) {
-            fs.appendFileSync(bootLog, `[ERROR] Failed to list unpackedRoot: ${e}\n`);
+            try { fs.appendFileSync(bootLog, `[ERROR] Failed to list unpackedRoot: ${e}\n`); } catch (_) { }
         }
     }
 
@@ -142,11 +158,11 @@ const startServer = async () => {
         outStream = fs.openSync(nextOut, 'a');
         errStream = fs.openSync(nextErr, 'a');
     } catch (e) {
-        fs.appendFileSync(bootLog, `[ERROR] Failed to open streams: ${e}\n`);
+        try { fs.appendFileSync(bootLog, `[ERROR] Failed to open streams: ${e}\n`); } catch (_) { }
     }
 
     console.log('Starting Next.js Standalone Server via:', standaloneServer);
-    fs.appendFileSync(bootLog, `[INFO] Spawning node process...\n`);
+    try { fs.appendFileSync(bootLog, `[INFO] Spawning node process...\n`); } catch (_) { }
 
     try {
         serverProcess = spawn(process.execPath, [standaloneServer], {
@@ -160,21 +176,21 @@ const startServer = async () => {
             stdio: ['ignore', outStream || 'ignore', errStream || 'ignore']
         });
 
-        fs.appendFileSync(bootLog, `[INFO] Spawned. PID: ${serverProcess.pid}\n`);
+        try { fs.appendFileSync(bootLog, `[INFO] Spawned. PID: ${serverProcess.pid}\n`); } catch (_) { }
 
         if (serverProcess) {
             serverProcess.on('error', (err) => {
                 console.error('Server failed to start:', err);
-                if (errStream) fs.writeSync(errStream, `\n[LAUNCH ERROR] ${err}\n`);
-                fs.appendFileSync(bootLog, `[ERROR] Spawn error: ${err}\n`);
+                if (errStream) { try { fs.writeSync(errStream, `\n[LAUNCH ERROR] ${err}\n`); } catch (_) { } }
+                try { fs.appendFileSync(bootLog, `[ERROR] Spawn error: ${err}\n`); } catch (_) { }
             });
             serverProcess.on('exit', (code, signal) => {
-                if (errStream) fs.writeSync(errStream, `\n[EXIT] Code: ${code}, Signal: ${signal}\n`);
-                fs.appendFileSync(bootLog, `[EXIT] Server exited. Code: ${code}, Signal: ${signal}\n`);
+                if (errStream) { try { fs.writeSync(errStream, `\n[EXIT] Code: ${code}, Signal: ${signal}\n`); } catch (_) { } }
+                try { fs.appendFileSync(bootLog, `[EXIT] Server exited. Code: ${code}, Signal: ${signal}\n`); } catch (_) { }
             });
         }
     } catch (e) {
-        fs.appendFileSync(bootLog, `[CRITICAL] Exception during spawn: ${e}\n`);
+        try { fs.appendFileSync(bootLog, `[CRITICAL] Exception during spawn: ${e}\n`); } catch (_) { }
     }
 };
 
@@ -226,6 +242,7 @@ const createWindow = async () => {
 };
 
 app.on('ready', async () => {
+    initLogs(); // Initialize logs safely AFTER app is ready
     await startServer();
     createWindow();
     startScheduler();
