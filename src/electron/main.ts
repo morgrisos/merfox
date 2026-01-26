@@ -5,12 +5,26 @@ import net from 'net';
 import log from 'electron-log';
 import fs from 'fs';
 
-// PANIC HANDLER - MUST BE FIRST
-process.on('uncaughtException', (error) => {
+// PANIC HANDLER - DEPENDENCY FREE
+const PANIC_LOG = path.join(process.env.HOME || '/tmp', 'merfox-panic.log');
+
+const panicLog = (msg: string) => {
     try {
-        const panicPath = path.join(app.getPath('userData'), 'merfox-panic.log');
-        fs.appendFileSync(panicPath, `[PANIC] ${error.stack || error}\n`);
+        fs.appendFileSync(PANIC_LOG, `[${new Date().toISOString()}] ${msg}\n`);
     } catch (_) { }
+};
+
+panicLog(`[START] Main process execution started. PID: ${process.pid}`);
+
+process.on('uncaughtException', (err: Error) => {
+    panicLog('uncaughtException');
+    panicLog(err && err.stack ? err.stack : String(err));
+    process.exit(1); // Standard exit on panic
+});
+
+process.on('unhandledRejection', (reason) => {
+    panicLog('unhandledRejection');
+    panicLog(String(reason));
 });
 
 import { scraperManager } from '../lib/manager';
