@@ -155,11 +155,13 @@ const startServer = async () => {
     }
 
     const resourcesPath = process.resourcesPath;
-    const unpackedRoot = path.join(resourcesPath, 'app.asar.unpacked');
-    const standaloneServer = path.join(unpackedRoot, '.next/standalone/server.js');
+    const serverDir = app.isPackaged
+        ? path.join(resourcesPath, 'standalone')
+        : path.join(__dirname, '../../.next/standalone');
+    const standaloneServer = path.join(serverDir, 'server.js');
 
     try {
-        fs.appendFileSync(bootLog, `[DEBUG] unpackedRoot: ${unpackedRoot}\n`);
+        fs.appendFileSync(bootLog, `[DEBUG] serverDir: ${serverDir}\n`);
         fs.appendFileSync(bootLog, `[DEBUG] standaloneServer Target: ${standaloneServer}\n`);
     } catch (_) { }
 
@@ -172,10 +174,12 @@ const startServer = async () => {
         console.error('[FATAL] Standalone server missing');
         try {
             fs.appendFileSync(bootLog, `[FATAL] Standalone server missing at ${standaloneServer}\n`);
-            const contents = fs.readdirSync(unpackedRoot);
-            fs.appendFileSync(bootLog, `[DEBUG] unpackedRoot contents: ${contents.join(', ')}\n`);
+            if (app.isPackaged) {
+                const contents = fs.readdirSync(resourcesPath);
+                fs.appendFileSync(bootLog, `[DEBUG] resourcesPath contents: ${contents.join(', ')}\n`);
+            }
         } catch (e) {
-            try { fs.appendFileSync(bootLog, `[ERROR] Failed to list unpackedRoot: ${e}\n`); } catch (_) { }
+            try { fs.appendFileSync(bootLog, `[ERROR] Failed to list resources: ${e}\n`); } catch (_) { }
         }
     }
 
@@ -193,7 +197,7 @@ const startServer = async () => {
 
     try {
         serverProcess = spawn(process.execPath, [standaloneServer], {
-            cwd: path.join(unpackedRoot, '.next/standalone'),
+            cwd: serverDir,
             env: {
                 ...process.env,
                 NODE_ENV: 'production',

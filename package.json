@@ -1,7 +1,7 @@
 {
   "name": "merfox",
   "productName": "MerFox",
-  "version": "0.1.78",
+  "version": "0.1.79",
   "description": "Mercari Automation Tool",
   "main": "dist-electron/electron/main.js",
   "scripts": {
@@ -58,11 +58,24 @@
     },
     "files": [
       "dist-electron/**",
-      "server/**",
-      ".next/standalone/**",
-      ".next/static/**",
-      "public/**",
       "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": ".next/standalone",
+        "to": "standalone",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": ".next/static",
+        "to": "standalone/.next/static"
+      },
+      {
+        "from": "public",
+        "to": "standalone/public"
+      }
     ],
     "publish": [
       {
@@ -91,11 +104,7 @@
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "asar": true,
     "asarUnpack": [
-      "server/**",
-      "**/*.node",
-      ".next/standalone/**",
-      ".next/static/**",
-      "public/**"
+      "**/*.node"
     ]
   }
 }
