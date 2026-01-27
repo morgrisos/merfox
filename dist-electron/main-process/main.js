@@ -243,9 +243,14 @@ const startServer = async () => {
         catch (_) { }
     }
 };
-const waitForServer = (port) => {
-    return new Promise((resolve) => {
+const waitForServer = (port, timeoutMs = 20000) => {
+    return new Promise((resolve, reject) => {
+        const started = Date.now();
         const tryConnect = () => {
+            if (Date.now() - started > timeoutMs) {
+                reject(new Error(`waitForServer timeout ${timeoutMs}ms`));
+                return;
+            }
             const socket = new net_1.default.Socket();
             socket.on('connect', () => {
                 socket.destroy();
@@ -280,12 +285,17 @@ const createWindow = async () => {
         // Production: Wait for server then load
         console.log('Waiting for backend server...');
         try {
-            await waitForServer(SERVER_PORT);
+            await waitForServer(SERVER_PORT, 20000);
             console.log('Server ready!');
             mainWindow.loadURL(`http://localhost:${SERVER_PORT}`);
         }
         catch (e) {
             console.error('Failed to connect to server:', e);
+            try {
+                fs_1.default.appendFileSync(bootLog, `[FATAL] waitForServer failed: ${e}\n`);
+            }
+            catch (_) { }
+            mainWindow.loadURL(`data:text/plain,MerFox backend failed to start. See logs in userData.`);
         }
     }
 };

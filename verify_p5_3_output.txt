@@ -1,0 +1,71 @@
+Waiting for MERFOX_RUNS_DIR in electron.log...
+Found RUNS_DIR: /Users/yuga/Library/Application Support/merfox/MerFox/runs
+Triggering Run via API: electron_poc_test_run_1768104555
+API Response: {"success":true,"runId":"electron_poc_test_run_1768104555"}
+Waiting for run to complete...
+Run artifacts found!
+=== UserData Runs Evidence ===
+RUNS_DIR=/Users/yuga/Library/Application Support/merfox/MerFox/runs
+total 0
+drwxr-xr-x   3 yuga  staff    96B  1 11 13:09 .
+drwxr-xr-x   3 yuga  staff    96B  1 11 13:05 ..
+drwxr-xr-x  11 yuga  staff   352B  1 11 13:09 2026-01-11_electron_poc_test_run_1768104555
+LATEST=/Users/yuga/Library/Application Support/merfox/MerFox/runs/2026-01-11_electron_poc_test_run_1768104555
+total 72
+drwxr-xr-x  11 yuga  staff   352B  1 11 13:09 .
+drwxr-xr-x   3 yuga  staff    96B  1 11 13:09 ..
+-rw-r--r--   1 yuga  staff   136B  1 11 13:09 amazon.tsv
+-rw-r--r--   1 yuga  staff    63B  1 11 13:09 asin.log
+-rw-r--r--   1 yuga  staff   146B  1 11 13:09 asin.tsv
+-rw-r--r--   1 yuga  staff    42B  1 11 13:09 asin_failed.csv
+-rw-r--r--   1 yuga  staff    87B  1 11 13:09 profit.log
+-rw-r--r--   1 yuga  staff    86B  1 11 13:09 profit.tsv
+-rw-r--r--   1 yuga  staff    42B  1 11 13:09 profit_failed.csv
+-rw-r--r--   1 yuga  staff   130B  1 11 13:09 raw.csv
+-rw-r--r--   1 yuga  staff   884B  1 11 13:09 run.log
+=== API 200 Evidence ===
+Fetching from RUN_ID=electron_poc_test_run_1768104555
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0    14    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Type: text/html; charset=utf-8
+Content-Length: 14
+ETag: W/"e-oi6cO2qfXHDeT3akZIEOy6H7l8M"
+Date: Sun, 11 Jan 2026 04:09:33 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0    17    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/1.1 400 Bad Request
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Type: text/html; charset=utf-8
+Content-Length: 17
+ETag: W/"11-VvhI9J4qjJ7+thuYbsSOYyjKxcw"
+Date: Sun, 11 Jan 2026 04:09:33 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0    17    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+HTTP/1.1 400 Bad Request
+X-Powered-By: Express
+Access-Control-Allow-Origin: *
+Content-Type: text/html; charset=utf-8
+Content-Length: 17
+ETag: W/"11-VvhI9J4qjJ7+thuYbsSOYyjKxcw"
+Date: Sun, 11 Jan 2026 04:09:33 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+=== BOM + Header Evidence ===
+00000000: ef bb bf 73 6b 75 09 70 72 6f 64 75 63 74 5f 69  ...sku.product_i
+﻿sku	product_id	product_id_type	price	quantity	condition_type	condition_note	handling_time	fulfillment_channel	shipping_template_name
+00000000: ef bb bf 73 6b 75 09 69 74 65 6d 5f 69 64 09 74  ...sku.item_id.t
+﻿sku	item_id	title	sell_price_yen	cost_yen	profit_yen	margin_pct	item_url	condition
