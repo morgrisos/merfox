@@ -58,7 +58,7 @@ export const WizardSidebar = () => {
                     </Link>
                     <Link href="/scraper" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9da8b9] hover:bg-[#282f39] hover:text-white transition-colors">
                         <Server className="w-5 h-5" />
-                        <span className="text-sm font-medium">スクレイパー状況</span>
+                        <span className="text-sm font-medium">在庫監視状況</span>
                     </Link>
                     <Link href="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9da8b9] hover:bg-[#282f39] hover:text-white transition-colors">
                         <Settings className="w-5 h-5" />
