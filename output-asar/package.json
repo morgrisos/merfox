@@ -1,0 +1,25 @@
+{
+  "name": "merfox",
+  "productName": "MerFox",
+  "version": "0.1.80",
+  "description": "Mercari Automation Tool",
+  "main": "dist-electron/main-process/main.js",
+  "dependencies": {
+    "@types/papaparse": "^5.5.2",
+    "axios": "^1.6.2",
+    "clsx": "^2.0.0",
+    "csv-parse": "^6.1.0",
+    "csv-stringify": "^6.6.0",
+    "electron-log": "^5.0.0",
+    "electron-updater": "^6.1.7",
+    "fs-extra": "^11.2.0",
+    "lucide-react": "^0.562.0",
+    "next": "14.0.4",
+    "papaparse": "^5.5.3",
+    "playwright": "^1.40.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwind-merge": "^2.1.0",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}

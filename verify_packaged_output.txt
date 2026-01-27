@@ -1,0 +1,24 @@
+[17:25:09] === 1. Checking Clean State ===
+[17:25:09] === 2. Launching Packaged App ===
+[17:25:09] App launched (PID: 40183). Waiting for Server Health...
+.[17:25:10] Server Health OK (200).
+
+[17:25:11] === 4. Checking UI (Root) ===
+[17:25:11] UI Root OK (200).
+[17:25:11] === 5. Triggering Test Run ===
+Start Response: {"success":true,"runId":"verify_pkg_1768119911"}
+[17:25:11] Test Run Triggered Successfully.
+[17:25:11] === 6. Waiting for Artifacts ===
+.................................................................................
+[17:27:55] Artifacts found at: /Users/yuga/Library/Application Support/merfox/MerFox/runs/2026-01-11_verify_pkg_1768119911
+[17:27:55] === 7. Verifying BOM & Headers ===
+[17:27:55] ERROR: /Users/yuga/Library/Application Support/merfox/MerFox/runs/2026-01-11_verify_pkg_1768119911/amazon.tsv Header Mismatch. Got: ﻿sku	product_id	product_id_type	price	quantity	condition_type	condition_note	handling_time	fulfillment_channel	shipping_template_name
+[17:27:55] PASS: /Users/yuga/Library/Application Support/merfox/MerFox/runs/2026-01-11_verify_pkg_1768119911/amazon.tsv (BOM OK)
+[17:27:55] ERROR: /Users/yuga/Library/Application Support/merfox/MerFox/runs/2026-01-11_verify_pkg_1768119911/profit.tsv Header Mismatch. Got: ﻿sku	item_id	title	sell_price_yen	cost_yen	profit_yen	margin_pct	item_url	condition
+[17:27:55] PASS: /Users/yuga/Library/Application Support/merfox/MerFox/runs/2026-01-11_verify_pkg_1768119911/profit.tsv (BOM OK)
+[17:27:55] === 8. Verifying Download API ===
+[17:27:55] Download API (Amazon) OK (200).
+[17:27:55] === 9. Shutdown & Cleanup ===
+[17:27:55] Sending Quit Command...
+[17:27:59] Port 3001 is free. Clean shutdown confirmed.
+[17:27:59] === VERIFICATION PASS ===

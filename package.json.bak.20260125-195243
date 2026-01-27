@@ -1,19 +1,19 @@
 {
   "name": "merfox",
   "productName": "MerFox",
-  "version": "0.1.80",
+  "version": "0.1.71",
   "description": "Mercari Automation Tool",
-  "main": "dist-electron/main-process/main.js",
+  "main": "dist-electron/electron/main.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:electron\"",
     "dev:server": "next dev -p 13337",
-    "dev:electron": "wait-on tcp:13337 && tsc -p src/main-process/tsconfig.json && electron .",
+    "dev:electron": "wait-on tcp:13337 && tsc -p src/electron/tsconfig.json && electron .",
     "typecheck": "tsc --noEmit",
-    "build": "next build && tsc -p src/main-process/tsconfig.json && electron-builder",
+    "build": "next build && tsc -p src/electron/tsconfig.json && electron-builder",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "postinstall": "electron-builder install-app-deps",
-    "build:ci": "next build && tsc -p src/main-process/tsconfig.json"
+    "build:ci": "next build && tsc -p src/electron/tsconfig.json"
   },
   "dependencies": {
     "@types/papaparse": "^5.5.2",
@@ -54,31 +54,15 @@
       "output": "dist"
     },
     "extraMetadata": {
-      "main": "dist-electron/main-process/main.js"
+      "main": "dist-electron/electron/main.js"
     },
     "files": [
       "dist-electron/**/*",
       "server/**/*",
+      ".next/**/*",
       "public/**/*",
       "package.json",
       "src/lib/**/*"
-    ],
-    "extraResources": [
-      {
-        "from": ".next/standalone",
-        "to": "standalone",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
-        "from": "public",
-        "to": "standalone/public"
-      },
-      {
-        "from": ".next/static",
-        "to": "standalone/.next/static"
-      }
     ],
     "publish": [
       {

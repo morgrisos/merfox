@@ -1,0 +1,35 @@
+[
+  {
+    "id": "3fe9fc2d-d042-4e07-99bf-016228413aa3",
+    "name": "Auto: Zero Item Test",
+    "targetUrl": "https://jp.mercari.com/search?keyword=nonexistentitem12345&status=on_sale",
+    "intervalMinutes": 30,
+    "isEnabled": true,
+    "createdAt": "2026-01-09T17:37:44.947Z",
+    "updatedAt": "2026-01-11T03:39:46.798Z",
+    "lastRunAt": "2026-01-11T03:39:30.203Z",
+    "nextRunAt": "2026-01-11T04:09:30.203Z",
+    "lastSeenItemId": "m87119903313",
+    "seenHistory": [
+      "m87119903313"
+    ],
+    "config": {
+      "dailyLimit": 1000,
+      "maxPriceYen": 100000,
+      "excludeShops": true,
+      "excludeUnknown": true,
+      "stopConditions": {
+        "maxItems": 50
+      }
+    },
+    "stats": {
+      "totalRuns": 28,
+      "totalNewCandidates": 0,
+      "totalScanned": 0,
+      "totalFetchedSuccess": 0,
+      "totalFetchedFailed": 0,
+      "totalWrittenRows": 0,
+      "totalExcluded": 0
+    }
+  }
+]
