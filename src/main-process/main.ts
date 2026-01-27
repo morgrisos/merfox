@@ -1,5 +1,18 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
+
+// [HARDENING] Prevent Zombie Processes (v0.1.83)
+if (process.env.ELECTRON_RUN_AS_NODE === "1") {
+    // We cannot use 'dialog' before app ready in some contexts, 
+    // but for 'main' entrypoint, it might work if we are careful.
+    // However, console.error + exit is safer if dialog fails.
+    console.error("[FATAL] ELECTRON_RUN_AS_NODE=1 detected. MerFox cannot run in this mode.");
+
+    // Attempt dialog if possible (best effort), but force exit.
+    // We need to wait for app 'ready' to reliably show dialog? 
+    // Actually, simple panic log + exit is the most robust prevention.
+    process.exit(1);
+}
 import { spawn, ChildProcess } from 'child_process';
 import net from 'net';
 import log from 'electron-log';
