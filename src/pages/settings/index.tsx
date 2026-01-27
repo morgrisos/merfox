@@ -11,7 +11,7 @@ export default function Settings() {
                 <nav className="flex flex-wrap gap-2 text-sm">
                     <Link href="/" className="text-app-text-muted font-medium hover:text-white transition-colors">ダッシュボード</Link>
                     <span className="text-app-text-muted font-medium">/</span>
-                    <span className="text-app-text-muted font-medium">スクレイパー</span>
+                    <span className="text-app-text-muted font-medium">在庫監視</span>
                     <span className="text-app-text-muted font-medium">/</span>
                     <span className="text-white font-medium">設定</span>
                 </nav>
@@ -68,7 +68,7 @@ export default function Settings() {
             {/* Coming Soon Area */}
             <ComingSoon
                 title="設定機能は開発中です"
-                description="現在、設定の永続化は未実装です。スクレイピングのパラメータは「スクレイパー」画面で都度指定してください。P2フェーズにて実装予定です。"
+                description="現在、設定の永続化は未実装です。監視条件のパラメータは「在庫監視」画面で都度指定してください。P2フェーズにて実装予定です。"
             />
 
             {/* Disabled UI Visualization (Faded out) */}

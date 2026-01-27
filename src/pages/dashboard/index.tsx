@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { AppShell } from '@/components/layout/AppShell';
 import { useRunHistory } from '@/hooks/useRunHistory';
 
-import { PlayCircle, FileText, FolderOpen, AlertTriangle, CheckCircle, ArrowRight, Activity, TrendingUp, AlertCircle, Search } from 'lucide-react';
+import { PlayCircle, FileText, FolderOpen, AlertTriangle, CheckCircle, ArrowRight, Activity, TrendingUp, Search } from 'lucide-react';
 
 // --- Types ---
 type CardProps = {
@@ -193,19 +193,12 @@ export default function Dashboard() {
                     colorClass="bg-green-500"
                 />
                 <SummaryCard
-                    title="要商品ID"
-                    count={summaryData.needMapping}
-                    sub="未設定 (埋めると出品増)"
-                    icon={<AlertCircle className="w-5 h-5 text-orange-500" />}
-                    colorClass="bg-orange-500"
-                    onClick={() => router.push('/mapping')}
-                />
-                <SummaryCard
                     title="危険 / 注意"
                     count={summaryData.warnings}
                     sub="欠品・公開終了の可能性"
                     icon={<AlertTriangle className="w-5 h-5 text-red-500" />}
                     colorClass="bg-red-500"
+                    onClick={() => router.push('/scraper')}
                 />
             </div>
 
@@ -305,7 +298,7 @@ export default function Dashboard() {
                                 ))
                             )}
                         </div>
-                        <button className="w-full mt-4 py-2 text-xs font-bold text-app-text-muted border border-app-border rounded-lg hover:bg-app-border hover:text-white transition-colors">
+                        <button onClick={() => router.push('/scraper')} className="w-full mt-4 py-2 text-xs font-bold text-app-text-muted border border-app-border rounded-lg hover:bg-app-border hover:text-white transition-colors">
                             詳細リストを確認
                         </button>
                     </div>
@@ -347,12 +340,12 @@ export default function Dashboard() {
                         <div className="size-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-blue-400">
                             <span className="material-symbols-outlined">smart_toy</span>
                         </div>
-                        <h3 className="font-bold text-white mb-1">運用を自動化</h3>
+                        <h3 className="font-bold text-white mb-1">在庫監視（Watch）</h3>
                         <p className="text-xs text-app-text-muted mb-4">
-                            毎日決まった時間に自動で抽出を実行し、通知を受け取れます。
+                            売り切れや新着を自動で検知します。
                         </p>
-                        <Link href="/automation" className="block w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors">
-                            自動化を設定する
+                        <Link href="/scraper" className="block w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors">
+                            在庫監視を設定する
                         </Link>
                     </div>
 

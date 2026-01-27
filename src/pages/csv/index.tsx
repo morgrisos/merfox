@@ -88,7 +88,7 @@ export const CsvManager = () => {
                                         {history.length === 0 ? (
                                             <tr>
                                                 <td colSpan={5} className="px-6 py-10 text-center text-slate-500">
-                                                    実行履歴がありません。「スクレイパー」画面から抽出を実行してください。
+                                                    実行履歴がありません。「新規リサーチ」画面から抽出を実行してください。
                                                 </td>
                                             </tr>
                                         ) : (

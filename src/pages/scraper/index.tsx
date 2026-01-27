@@ -1,158 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
-import { useRunHistory } from '../../hooks/useRunHistory';
-import { RunRecord, LogEntry } from '../../types';
 
 
-// [Phase 6]
-interface LatestRunData {
-    latestRunId: string | null;
-    status: string;
-    summary: any;
-    files: {
-        raw: boolean;
-        mapping: boolean;
-        amazon: boolean;
-        failed: number;
-        logFile: string;
-    };
-    log: {
-        file: string;
-        tail: string[];
-    };
-}
+import { Activity, Plus, Play, Square, Trash2, Edit, AlertCircle, Clock, CheckCircle } from 'lucide-react';
 
-function LatestRunStatus() {
-    const [data, setData] = useState<LatestRunData | null>(null);
-    const [loading, setLoading] = useState(true);
+// [Phase 6] Latest Log Summary for Monitor
 
-    const fetchStatus = async () => {
-        try {
-            const res = await fetch('/api/scraper/status');
-            if (res.ok) setData(await res.json());
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchStatus();
-        // Poll every 5s if running
-        const interval = setInterval(() => {
-            fetchStatus();
-        }, 5000);
-        return () => clearInterval(interval);
-    }, []);
-
-    const handleReveal = async (file?: string) => {
-        if (!data?.latestRunId) return;
-        await fetch('/api/runs/reveal', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ runId: data.latestRunId, file })
-        });
-    };
-
-    if (loading) return <div className="animate-pulse h-32 bg-app-surface rounded-xl" />;
-    if (!data || !data.latestRunId) return null;
-
-    const isRunning = data.status === 'running';
-    const isFailed = data.files.failed > 0 || data.status === 'failed';
-
-    return (
-        <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm relative overflow-hidden">
-            <div className="flex items-center justify-between mb-4 relative z-10">
-                <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${isRunning ? 'bg-blue-500/10 text-blue-500' : isFailed ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
-                        <span className="material-symbols-outlined">{isRunning ? 'sync' : isFailed ? 'error' : 'check_circle'}</span>
-                    </div>
-                    <div>
-                        <h3 className="text-base font-bold text-white flex items-center gap-2">
-                            最新の実行 ({data.latestRunId.slice(0, 10)}...)
-                            {isRunning && <span className="animate-pulse text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full">RUNNING</span>}
-                        </h3>
-                        <p className="text-xs text-app-text-muted font-mono">{data.latestRunId}</p>
-                    </div>
-                </div>
-                <div className="flex gap-2">
-                    <button onClick={() => handleReveal()} className="flex items-center gap-1 px-3 py-1.5 bg-app-element hover:bg-app-border text-app-text-muted hover:text-white rounded text-xs font-bold transition-colors">
-                        <span className="material-symbols-outlined text-sm">folder_open</span> フォルダ
-                    </button>
-                    <button onClick={fetchStatus} className="text-app-text-muted hover:text-primary">
-                        <span className="material-symbols-outlined">refresh</span>
-                    </button>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-                {/* Stats & Actions */}
-                <div className="flex flex-col gap-4">
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                        <div className="p-3 rounded-lg bg-app-element border border-app-border">
-                            <div className="text-xs text-app-text-muted mb-1">候補数</div>
-                            <div className="font-bold font-mono text-lg text-white">{data.summary.totalCandidates ?? '-'}</div>
-                        </div>
-                        <div className="p-3 rounded-lg bg-app-element border border-app-border">
-                            <div className="text-xs text-app-text-muted mb-1">成功</div>
-                            <div className="font-bold font-mono text-lg text-green-500">{data.summary.scraped ?? '-'}</div>
-                        </div>
-                        <div className={`p-3 rounded-lg border border-app-border ${data.files.failed > 0 ? 'bg-red-900/20 border-red-800' : 'bg-app-element'}`}>
-                            <div className="text-xs text-app-text-muted mb-1">失敗</div>
-                            <div className={`font-bold font-mono text-lg ${data.files.failed > 0 ? 'text-red-500' : 'text-white'}`}>{data.files.failed}</div>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                        {data.files.raw && (
-                            <button onClick={() => handleReveal('raw.csv')} className="flex-1 py-2 px-3 bg-app-element hover:bg-app-border text-app-text-muted hover:text-white rounded text-xs font-bold flex items-center justify-center gap-1">
-                                <span className="material-symbols-outlined text-sm">description</span> raw.csv
-                            </button>
-                        )}
-                        {data.files.mapping && (
-                            <button onClick={() => handleReveal('mapping.csv')} className="flex-1 py-2 px-3 bg-blue-900/20 hover:bg-blue-900/40 text-blue-300 rounded text-xs font-bold flex items-center justify-center gap-1">
-                                <span className="material-symbols-outlined text-sm">edit_document</span> mapping
-                            </button>
-                        )}
-                        {data.files.amazon && (
-                            <button onClick={() => handleReveal('amazon.tsv')} className="flex-1 py-2 px-3 bg-green-900/20 hover:bg-green-900/40 text-green-300 rounded text-xs font-bold flex items-center justify-center gap-1">
-                                <span className="material-symbols-outlined text-sm">download</span> amazon.tsv
-                            </button>
-                        )}
-                    </div>
-
-                    {/* CTA Guidelines */}
-                    <div className="mt-2 text-xs font-bold flex gap-2">
-                        {isRunning && <span className="text-blue-500">▶️ 実行中です。ログを確認してください。</span>}
-                        {data.files.failed > 0 && <span className="text-red-500 cursor-pointer hover:underline" onClick={() => window.location.href = '/runs'}>⚠️ エラーがあります。Runsで詳細を確認。</span>}
-                        {data.files.mapping && !data.files.amazon && <span className="text-orange-500 cursor-pointer hover:underline" onClick={() => window.location.href = '/mapping'}>📝 マッピングが必要です。Mappingページへ。</span>}
-                    </div>
-                </div>
-
-                {/* Log Tail */}
-                <div className="flex flex-col h-40">
-                    <div className="flex items-center justify-between text-xs text-app-text-muted mb-1 px-1">
-                        <span>ログ: {data.log.file || 'N/A'} (末尾)</span>
-                    </div>
-                    <div className="flex-1 bg-app-base rounded-lg p-3 overflow-y-auto font-mono text-[10px] text-app-text-muted border border-app-border shadow-inner">
-                        {data.log.tail.length > 0 ? (
-                            data.log.tail.map((line, i) => (
-                                <div key={i} className="whitespace-pre-wrap leading-tight opacity-90 hover:opacity-100">{line}</div>
-                            ))
-                        ) : (
-                            <div className="text-slate-600 italic p-2">ログファイルが見つかりません</div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
 
 // [P2.4] Job Interface
 interface WatchJob {
-
     id: string;
     targetUrl: string;
     isEnabled: boolean;
@@ -162,439 +18,247 @@ interface WatchJob {
     stats: { totalRuns: number; totalItemsFound: number };
 }
 
-export default function Scraper() {
-    const { addRecord, updateRecord } = useRunHistory();
-    const [targetUrl, setTargetUrl] = useState('https://jp.mercari.com/search?keyword=vintage%20camera&status=on_sale');
-    const [isValidating, setIsValidating] = useState(false);
-    const [isValidUrl, setIsValidUrl] = useState<boolean | null>(null);
-    const [isRunning, setIsRunning] = useState(false);
-    const [logs, setLogs] = useState<LogEntry[]>([]);
-    const [progress, setProgress] = useState(0);
-    const [stats, setStats] = useState({ total: 0, success: 0, failed: 0, excluded: 0 });
+export default function InventoryMonitor() {
 
-    // Config States
-    const [mode, setMode] = useState<'onetime' | 'watch' | 'bulk'>('onetime');
-    const [excludeShops, setExcludeShops] = useState(true);
-    const [excludeKeywords, setExcludeKeywords] = useState('');
-    const [showNgModal, setShowNgModal] = useState(false);
-    // const [stopCondition, setStopCondition] = useState<'count' | 'time' | 'manual'>('count');
-    const [stopLimit] = useState(50);
-    const [watchInterval, setWatchInterval] = useState(30);
+    const [jobs, setJobs] = useState<WatchJob[]>([]);
 
-    // Watch Job State
-    const [activeJob, setActiveJob] = useState<WatchJob | null>(null);
+    // UI States
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [urlInput, setUrlInput] = useState('');
+    const [intervalInput, setIntervalInput] = useState(30);
 
-    const logEndRef = useRef<HTMLDivElement>(null);
 
-    // Auto-scroll logs
+    // Mock Fetch Jobs (In real app, fetch from API)
     useEffect(() => {
-        logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [logs]);
-
-    // Fetch Jobs on Mount & when URL changes
-    useEffect(() => {
-        const fetchJobs = async () => {
-            try {
-                const res = await fetch('/api/watch/jobs');
-                const jobs: WatchJob[] = await res.json();
-                const matched = jobs.find(j => j.targetUrl === targetUrl);
-                setActiveJob(matched || null);
-            } catch (e) {
-                console.error('Failed to fetch jobs', e);
+        // Mock data for UI demo
+        setJobs([
+            {
+                id: 'job_1',
+                targetUrl: 'https://jp.mercari.com/search?keyword=EOS%20Kiss',
+                isEnabled: true,
+                intervalMinutes: 30,
+                lastRunAt: new Date().toISOString(),
+                nextRunAt: new Date(Date.now() + 30 * 60000).toISOString(),
+                stats: { totalRuns: 12, totalItemsFound: 45 }
             }
+        ]);
+    }, []);
+
+    const handleCreateJob = async () => {
+        // Mock creation
+        const newJob: WatchJob = {
+            id: crypto.randomUUID(),
+            targetUrl: urlInput,
+            isEnabled: true,
+            intervalMinutes: intervalInput,
+            lastRunAt: null,
+            nextRunAt: new Date().toISOString(),
+            stats: { totalRuns: 0, totalItemsFound: 0 }
         };
-        fetchJobs();
-        const interval = setInterval(fetchJobs, 5000); // Poll for status updates
-        return () => clearInterval(interval);
-    }, [targetUrl]);
-
-    const handleCheckUrl = () => {
-        setIsValidating(true);
-        setTimeout(() => {
-            setIsValidating(false);
-            setIsValidUrl(targetUrl.includes('mercari.com') || targetUrl.includes('shopee'));
-        }, 800);
+        setJobs(prev => [...prev, newJob]);
+        setShowCreateModal(false);
+        setUrlInput('');
     };
 
-    const addLog = (message: string, level: 'info' | 'warn' | 'error' | 'success' = 'info') => {
-        const entry: LogEntry = {
-            timestamp: new Date().toLocaleTimeString(),
-            level,
-            message
-        };
-        setLogs(prev => [...prev, entry]);
-        return entry;
+    const toggleJob = (id: string) => {
+        setJobs(prev => prev.map(j => j.id === id ? { ...j, isEnabled: !j.isEnabled } : j));
     };
 
-    // Watch Actions
-    const handleStartWatch = async () => {
-        if (activeJob && !activeJob.isEnabled) {
-            // Resume/Enable
-            await fetch(`/api/watch/jobs/${activeJob.id}/enable`, { method: 'POST' });
-        } else if (!activeJob) {
-            // Create New
-            await fetch('/api/watch/jobs', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    targetUrl,
-                    intervalMinutes: watchInterval,
-                    name: `Watch: ${targetUrl.slice(0, 20)}...`
-                })
-            });
-        }
-        // State update via poll
-    };
-
-    const handleStopWatch = async () => {
-        if (activeJob) {
-            await fetch(`/api/watch/jobs/${activeJob.id}/disable`, { method: 'POST' });
-        }
-    };
-
-    const startTestRun = async () => {
-        if (!isValidUrl && targetUrl) handleCheckUrl();
-
-        const runId = crypto.randomUUID();
-        const newRecord: RunRecord = {
-            id: runId,
-            date: new Date().toISOString(),
-            status: 'running',
-            targetUrl,
-            platform: targetUrl.includes('shopee') ? 'shopee' : 'mercari',
-            mode,
-            stats: { total: 0, success: 0, failed: 0, excluded: 0 },
-            logs: [],
-            failureReasons: [],
-            failedUrls: []
-        };
-
-        addRecord(newRecord);
-        setIsRunning(true);
-        setLogs([]);
-        setStats({ total: 0, success: 0, failed: 0, excluded: 0 });
-        setProgress(0);
-
-        // API Call to Start Run
-        try {
-            const res = await fetch('/api/run/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    runId,
-                    mode,
-                    targetUrl,
-                    config: {
-                        stopLimit: 20, // Test run fixed limit
-                        excludeShops,
-                        excludeKeywords
-                    }
-                })
-            });
-
-            if (!res.ok) throw new Error('Failed to start run');
-
-            // Setup SSE
-            const eventSource = new EventSource(`/api/run/stream?runId=${runId}`);
-
-            eventSource.addEventListener('log', (e) => {
-                const data = JSON.parse(e.data);
-                addLog(data.message, data.level);
-            });
-
-            eventSource.addEventListener('stats', (e) => {
-                const data = JSON.parse(e.data);
-                setStats(prev => ({ ...prev, ...data }));
-            });
-
-            eventSource.addEventListener('progress', (e) => {
-                const data = JSON.parse(e.data);
-                setProgress(data.percentage);
-            });
-
-            eventSource.addEventListener('done', (e) => {
-                const data = JSON.parse(e.data);
-                setIsRunning(false);
-                eventSource.close();
-
-                if (data.success) {
-                    addLog('実行完了 (Success)', 'success');
-                    updateRecord(runId, { status: 'completed', stats: data.summary });
-                } else {
-                    addLog(`実行失敗: ${data.error}`, 'error');
-                    updateRecord(runId, { status: 'failed' });
-                }
-            });
-
-            eventSource.onerror = (e) => {
-                console.error('SSE Error', e);
-            };
-
-        } catch (e) {
-            console.error(e);
-            addLog(`起動エラー: ${(e as Error).message}`, 'error');
-            setIsRunning(false);
-        }
-    };
-
-    const handleStop = async () => {
-        if (!isRunning) return;
-        try {
-            await fetch('/api/run/stop', { method: 'POST' });
-            addLog('停止リクエストを送信しました...', 'warn');
-        } catch (e) {
-            console.error(e);
-            addLog('停止リクエスト失敗', 'error');
-        }
+    const deleteJob = (id: string) => {
+        setJobs(prev => prev.filter(j => j.id !== id));
     };
 
     return (
-        <div className="flex flex-col h-full relative bg-app-base text-white">
-            <div className="flex-1 overflow-y-auto p-4 md:p-8">
-                <div className="max-w-[1200px] mx-auto flex flex-col gap-6">
+        <div className="flex flex-col h-full bg-app-base text-white font-sans p-6 overflow-y-auto">
+            <div className="max-w-5xl mx-auto w-full flex flex-col gap-8">
 
-                    {/* [Phase 6] Latest Run Status */}
-                    <LatestRunStatus />
-
-                    {/* 1. Presets */}
-                    <div className="flex gap-4 overflow-x-auto pb-2">
-                        <button onClick={() => setMode('onetime')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${mode === 'onetime' ? 'bg-primary text-white' : 'bg-app-element hover:bg-primary/10 hover:text-primary text-app-text-muted'}`}>
-                            <span className="material-symbols-outlined text-base">star</span>
-                            初心者向けプリセット
-                        </button>
-                        <button onClick={() => setMode('watch')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${mode === 'watch' ? 'bg-primary text-white' : 'bg-app-element hover:bg-primary/10 hover:text-primary text-app-text-muted'}`}>
-                            <span className="material-symbols-outlined text-base">visibility</span>
-                            Watchモード (新着監視)
-                        </button>
-                        <button disabled title="準備中" className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap bg-app-element text-app-text-muted cursor-not-allowed opacity-60">
-                            <span className="material-symbols-outlined text-base">layers</span>
-                            一括大量抽出 (準備中)
-                        </button>
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-black text-white flex items-center gap-3">
+                            <Activity className="w-8 h-8 text-primary" />
+                            在庫監視マネージャー
+                        </h1>
+                        <p className="text-app-text-muted mt-2">
+                            メルカリの検索条件を登録し、売り切れ・新着・再出品を自動でチェックします。
+                        </p>
                     </div>
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        className="px-6 py-3 bg-primary hover:bg-blue-600 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all"
+                    >
+                        <Plus className="w-5 h-5" />
+                        監視ジョブを作成
+                    </button>
+                </div>
 
-                    {/* 2. Target URL */}
-                    <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm flex flex-col gap-4">
-                        <label className="text-sm font-bold text-white flex items-center gap-2">
-                            <span className="material-symbols-outlined text-primary">link</span>
-                            ターゲットURL (検索結果ページ)
-                        </label>
-                        <div className="flex gap-2">
-                            <div className="relative flex-1">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-app-text-muted">search</span>
-                                <input
-                                    type="text"
-                                    value={targetUrl}
-                                    onChange={(e) => setTargetUrl(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-app-border bg-app-element text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-app-text-muted"
-                                    placeholder="https://jp.mercari.com/search?..."
-                                />
-                                {isValidUrl === true && (
-                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 flex items-center gap-1 text-xs font-bold bg-green-900/20 px-2 py-1 rounded">
-                                        <span className="material-symbols-outlined text-sm">check_circle</span> OK
-                                    </span>
-                                )}
+                {/* Dashboard Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-app-surface border border-app-border rounded-xl p-5 flex items-center gap-4">
+                        <div className="p-3 rounded-full bg-green-500/10 text-green-500">
+                            <Activity className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs text-app-text-muted font-bold uppercase">稼働中のジョブ</p>
+                            <p className="text-2xl font-black text-white">{jobs.filter(j => j.isEnabled).length} <span className="text-sm font-normal text-app-text-muted">/ {jobs.length}</span></p>
+                        </div>
+                    </div>
+                    <div className="bg-app-surface border border-app-border rounded-xl p-5 flex items-center gap-4">
+                        <div className="p-3 rounded-full bg-blue-500/10 text-blue-500">
+                            <CheckCircle className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs text-app-text-muted font-bold uppercase">本日の検知数</p>
+                            <p className="text-2xl font-black text-white">0 <span className="text-sm font-normal text-app-text-muted">件</span></p>
+                        </div>
+                    </div>
+                    <div className="bg-app-surface border border-app-border rounded-xl p-5 flex items-center gap-4">
+                        <div className="p-3 rounded-full bg-orange-500/10 text-orange-500">
+                            <AlertCircle className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <p className="text-xs text-app-text-muted font-bold uppercase">アラート (注意)</p>
+                            <p className="text-2xl font-black text-white">0 <span className="text-sm font-normal text-app-text-muted">件</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Job List */}
+                <div className="space-y-4">
+                    <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                        <span className="w-1 h-6 bg-primary rounded-full"></span>
+                        監視ジョブ一覧
+                    </h2>
+
+                    {jobs.length === 0 ? (
+                        <div className="bg-app-surface border-2 border-dashed border-app-border rounded-xl p-12 text-center">
+                            <div className="w-16 h-16 bg-app-element rounded-full flex items-center justify-center mx-auto mb-4 text-app-text-muted">
+                                <Activity className="w-8 h-8" />
                             </div>
+                            <h3 className="text-lg font-bold text-white mb-2">ジョブがありません</h3>
+                            <p className="text-app-text-muted mb-6 max-w-md mx-auto">
+                                監視したい商品の検索URLを登録してください。定期的に巡回して新着を通知します。
+                            </p>
                             <button
-                                onClick={handleCheckUrl}
-                                disabled={isValidating}
-                                className="px-6 py-2 bg-app-element text-white rounded-lg font-bold hover:bg-app-border transition-colors disabled:opacity-50 min-w-[100px] flex items-center justify-center border border-app-border"
+                                onClick={() => setShowCreateModal(true)}
+                                className="px-6 py-2 bg-app-element hover:bg-app-border text-white rounded-lg font-bold transition-colors"
                             >
-                                {isValidating ? <span className="material-symbols-outlined animate-spin">sync</span> : '確認'}
+                                最初のジョブを作成
                             </button>
                         </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* 3. Config (Left Column) */}
-                        <div className="lg:col-span-2 flex flex-col gap-6">
-                            {/* Filters & Mode */}
-                            <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm">
-                                <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-app-text-muted">tune</span>
-                                    抽出・フィルタ設定
-                                </h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div className="flex flex-col gap-3">
-                                        <label className="text-sm font-medium text-app-text-muted">実行モード設定</label>
-                                        <div className="flex flex-col gap-2">
-                                            <div className={`p-3 rounded-lg border cursor-pointer transition-all ${mode === 'onetime' ? 'border-primary bg-primary/5' : 'border-app-border bg-app-element'}`} onClick={() => setMode('onetime')}>
-                                                <div className="flex items-center gap-2 font-bold text-sm text-white">
-                                                    <span className="material-symbols-outlined text-sm">bolt</span> 通常実行 (1回)
-                                                </div>
-                                            </div>
-                                            <div className={`p-3 rounded-lg border cursor-pointer transition-all ${mode === 'watch' ? 'border-primary bg-primary/5' : 'border-app-border bg-app-element'}`} onClick={() => setMode('watch')}>
-                                                <div className="flex items-center gap-2 font-bold text-sm text-white">
-                                                    <span className="material-symbols-outlined text-sm">schedule</span> Watchモード (新着監視)
-                                                </div>
-                                                {mode === 'watch' && (
-                                                    <div className="mt-2">
-                                                        <select
-                                                            value={watchInterval}
-                                                            onChange={(e) => setWatchInterval(Number(e.target.value))}
-                                                            className="w-full text-sm rounded border-app-border bg-app-base p-2 text-white"
-                                                            disabled={!!activeJob}
-                                                        >
-                                                            <option value={10}>10分ごとにチェック</option>
-                                                            <option value={25}>25分ごとにチェック</option>
-                                                            <option value={30}>30分ごとにチェック</option>
-                                                            <option value={60}>60分ごとにチェック</option>
-                                                        </select>
-                                                        {activeJob && (
-                                                            <p className="text-xs text-green-500 mt-1">※ 稼働中のため変更不可 (再作成してください)</p>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-3">
-                                        <label className="text-sm font-medium text-app-text-muted">フィルタ条件</label>
-                                        <div className="flex flex-col gap-2">
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input type="checkbox" checked={excludeShops} onChange={(e) => setExcludeShops(e.target.checked)} className="rounded border-app-border text-primary focus:ring-primary bg-app-element" />
-                                                <span className="text-sm text-app-text-muted">ショップを除外 (個人以外)</span>
-                                            </label>
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input type="checkbox" className="rounded border-app-border text-primary focus:ring-primary bg-app-element" />
-                                                <span className="text-sm text-app-text-muted">送料込みのみ</span>
-                                            </label>
-                                            <button onClick={() => setShowNgModal(true)} className="mt-1 text-sm text-red-500 font-bold hover:underline py-1 text-left flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-sm">block</span>
-                                                NGワード設定...
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 4. Output & Execution (Right Column) */}
-                        <div className="flex flex-col gap-6">
-                            {mode === 'watch' ? (
-                                <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm flex flex-col gap-4 sticky top-24">
-                                    <h3 className="text-base font-bold text-white mb-2 flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-primary">campaign</span>
-                                        Watch監視コントロール
-                                    </h3>
-
-                                    {activeJob ? (
-                                        <div className="p-4 bg-app-element rounded-lg border border-app-border">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className="text-sm font-bold text-white">ステータス</span>
-                                                <span className={`px-2 py-0.5 rounded text-xs font-bold ${activeJob.isEnabled ? 'bg-green-900/20 text-green-500' : 'bg-app-base text-app-text-muted'}`}>
-                                                    {activeJob.isEnabled ? '稼働中' : '停止中'}
+                    ) : (
+                        <div className="grid grid-cols-1 gap-4">
+                            {jobs.map(job => (
+                                <div key={job.id} className={`bg-app-surface border ${job.isEnabled ? 'border-app-border' : 'border-app-border opacity-60'} rounded-xl p-6 transition-all hover:border-primary/30 relative group`}>
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${job.isEnabled ? 'bg-green-500/20 text-green-400' : 'bg-app-element text-app-text-muted'}`}>
+                                                    {job.isEnabled ? 'ACTIVE' : 'STOPPED'}
                                                 </span>
+                                                <div className="flex items-center gap-1 text-xs text-app-text-muted">
+                                                    <Clock className="w-3 h-3" />
+                                                    <span>{job.intervalMinutes}分ごとにチェック</span>
+                                                </div>
                                             </div>
-                                            <p className="text-xs text-app-text-muted mb-1">次回: {new Date(activeJob.nextRunAt || '').toLocaleTimeString()}</p>
-                                            <p className="text-xs text-app-text-muted mb-4">実行回数: {activeJob.stats.totalRuns}回</p>
-
-                                            {activeJob.isEnabled ? (
-                                                <button onClick={handleStopWatch} className="w-full py-2 bg-red-900/20 text-red-500 rounded-lg text-sm font-bold hover:bg-red-900/40 transition-colors">
-                                                    監視を停止
-                                                </button>
-                                            ) : (
-                                                <button onClick={handleStartWatch} className="w-full py-2 bg-green-900/20 text-green-500 rounded-lg text-sm font-bold hover:bg-green-900/40 transition-colors">
-                                                    監視を再開
-                                                </button>
-                                            )}
+                                            <h3 className="text-base font-bold text-white truncate font-mono mb-1 text-ellipsis overflow-hidden">
+                                                {job.targetUrl}
+                                            </h3>
+                                            <div className="flex items-center gap-4 text-xs text-app-text-muted">
+                                                <span>実行回数: {job.stats.totalRuns}</span>
+                                                <span>検知アイテム: {job.stats.totalItemsFound}</span>
+                                                <span>次回: {new Date(job.nextRunAt || '').toLocaleTimeString()}</span>
+                                            </div>
                                         </div>
-                                    ) : (
-                                        <div className="p-4 bg-blue-900/10 border border-blue-500/20 rounded-lg text-center">
-                                            <p className="text-sm text-blue-300 mb-3">このURLの監視ジョブはまだありません</p>
-                                            <button onClick={handleStartWatch} className="w-full py-3 bg-primary text-white rounded-lg font-bold shadow-lg shadow-blue-500/20 hover:bg-blue-600 transition-all">
-                                                <span className="material-symbols-outlined align-middle mr-1">play_circle</span>
-                                                監視ジョブを作成して開始
+
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                onClick={() => toggleJob(job.id)}
+                                                className={`p-2 rounded-lg border transition-colors ${job.isEnabled ? 'border-green-500/30 text-green-500 hover:bg-green-500/10' : 'border-app-border text-app-text-muted hover:text-white hover:bg-app-element'}`}
+                                                title={job.isEnabled ? "停止する" : "再開する"}
+                                            >
+                                                {job.isEnabled ? <Square className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current" />}
+                                            </button>
+                                            <button
+                                                className="p-2 rounded-lg border border-app-border text-app-text-muted hover:text-white hover:bg-app-element transition-colors"
+                                                title="編集"
+                                            >
+                                                <Edit className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                onClick={() => deleteJob(job.id)}
+                                                className="p-2 rounded-lg border border-app-border text-app-text-muted hover:text-red-500 hover:border-red-500/30 hover:bg-red-500/10 transition-colors"
+                                                title="削除"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
                                             </button>
                                         </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm flex flex-col gap-4 sticky top-24">
-                                    <div className="p-4 bg-yellow-900/20 border border-yellow-800 rounded-lg">
-                                        <p className="text-xs text-yellow-400 font-bold mb-1">
-                                            <span className="material-symbols-outlined text-sm align-bottom mr-1">info</span>
-                                            実行前の確認
-                                        </p>
-                                        <p className="text-xs text-yellow-500 leading-relaxed">
-                                            大量のアクセスが発生します。まずは「テスト実行」で動作を確認してから本番実行してください。
-                                        </p>
-                                    </div>
-                                    <button
-                                        onClick={startTestRun}
-                                        disabled={isRunning}
-                                        className="w-full py-3 bg-app-element hover:bg-app-border text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-app-border"
-                                    >
-                                        <span className="material-symbols-outlined">play_circle</span>
-                                        テスト実行 (20件)
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* 5. In-Progress Panel */}
-                    {(isRunning || logs.length > 0) && (
-                        <div className="fixed bottom-0 left-0 right-0 z-40 bg-app-surface border-t border-app-border shadow-[0_-4px_20px_rgba(0,0,0,0.5)] p-4 md:px-8 max-h-[40vh] flex flex-col">
-                            <div className="max-w-[1200px] w-full mx-auto flex flex-col h-full gap-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`size-3 rounded-full ${isRunning ? 'bg-green-500 animate-pulse' : 'bg-app-text-muted'}`}></div>
-                                        <span className="font-bold text-white">{isRunning ? '実行中...' : '待機中 / 完了'}</span>
-                                        <div className="h-4 w-px bg-app-border mx-2"></div>
-                                        <div className="flex gap-4 text-sm">
-                                            <span className="text-green-400 font-mono">成功: {stats.success}</span>
-                                            <span className="text-red-500 font-mono">失敗: {stats.failed}</span>
-                                            <span className="text-app-text-muted font-mono">除外: {stats.excluded}</span>
-                                            <span className="font-bold text-white font-mono">合計: {stats.total} / {stopLimit}</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        {isRunning && (
-                                            <button onClick={handleStop} className="flex items-center gap-1 px-3 py-1 bg-red-900/30 text-red-400 rounded hover:bg-red-900/50 transition-colors text-xs font-bold">
-                                                <span className="material-symbols-outlined text-sm">stop_circle</span>
-                                                停止
-                                            </button>
-                                        )}
-                                        <button onClick={() => setLogs([])} disabled={isRunning} className="text-app-text-muted hover:text-white disabled:opacity-30">
-                                            <span className="material-symbols-outlined">close</span>
-                                        </button>
                                     </div>
                                 </div>
-                                {/* Progress Bar */}
-                                <div className="w-full h-1 bg-app-element rounded-full overflow-hidden">
-                                    <div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }}></div>
-                                </div>
-                                {/* Logs Area */}
-                                <div className="flex-1 overflow-y-auto font-mono text-xs bg-app-base p-4 rounded-lg border border-app-border min-h-[120px]">
-                                    {logs.map((log, index) => (
-                                        <div key={index} className="mb-1 flex gap-2">
-                                            <span className="text-app-text-muted">[{log.timestamp}]</span>
-                                            <span className={`font-bold ${log.level === 'info' ? 'text-blue-500' : log.level === 'warn' ? 'text-yellow-500' : log.level === 'error' ? 'text-red-500' : 'text-green-500'}`}>{log.level.toUpperCase()}</span>
-                                            <span className="text-slate-300">{log.message}</span>
-                                        </div>
-                                    ))}
-                                    <div ref={logEndRef} />
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     )}
                 </div>
+
+                {/* Log Timeline Placeholder */}
+                <div className="space-y-4">
+                    <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                        <span className="w-1 h-6 bg-app-border rounded-full"></span>
+                        検知ログ (タイムライン)
+                    </h2>
+                    <div className="bg-app-surface border border-app-border rounded-xl p-6 min-h-[150px] flex items-center justify-center text-app-text-muted text-sm">
+                        まだ検知されたイベントはありません
+                    </div>
+                </div>
+
             </div>
 
-            {/* NG Words Modal */}
-            {showNgModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <div className="bg-app-surface p-6 rounded-xl shadow-xl w-full max-w-md border border-app-border">
-                        <h3 className="text-lg font-bold text-white mb-4">NGワード設定</h3>
-                        <textarea
-                            className="w-full h-32 p-3 rounded-lg border border-app-border bg-app-element text-white text-sm"
-                            placeholder="除外したいキーワードをカンマ区切りで入力..."
-                            value={excludeKeywords}
-                            onChange={(e) => setExcludeKeywords(e.target.value)}
-                        ></textarea>
-                        <div className="flex justify-end gap-2 mt-4">
-                            <button onClick={() => setShowNgModal(false)} className="px-4 py-2 text-app-text-muted hover:bg-app-element rounded-lg text-sm font-bold">キャンセル</button>
-                            <button onClick={() => setShowNgModal(false)} className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold">保存</button>
+            {/* Create Job Modal */}
+            {showCreateModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="bg-app-surface border border-app-border rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-6 border-b border-app-border">
+                            <h3 className="text-lg font-bold text-white">新規監視ジョブを作成</h3>
+                        </div>
+                        <div className="p-6 space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-app-text-muted">ターゲットURL (メルカリ検索結果)</label>
+                                <input
+                                    type="text"
+                                    className="w-full bg-app-element border border-app-border rounded-lg p-3 text-white focus:border-primary outline-none transition-colors"
+                                    placeholder="https://jp.mercari.com/search?..."
+                                    value={urlInput}
+                                    onChange={(e) => setUrlInput(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold text-app-text-muted">巡回間隔</label>
+                                <select
+                                    className="w-full bg-app-element border border-app-border rounded-lg p-3 text-white focus:border-primary outline-none transition-colors"
+                                    value={intervalInput}
+                                    onChange={(e) => setIntervalInput(Number(e.target.value))}
+                                >
+                                    <option value={10}>10分 (高負荷)</option>
+                                    <option value={30}>30分 (推奨)</option>
+                                    <option value={60}>1時間</option>
+                                    <option value={180}>3時間</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="p-4 bg-app-base border-t border-app-border flex justify-end gap-3">
+                            <button
+                                onClick={() => setShowCreateModal(false)}
+                                className="px-4 py-2 text-app-text-muted hover:text-white font-bold transition-colors"
+                            >
+                                キャンセル
+                            </button>
+                            <button
+                                onClick={handleCreateJob}
+                                disabled={!urlInput}
+                                className="px-6 py-2 bg-primary hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-bold transition-colors"
+                            >
+                                保存して開始
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -603,4 +267,4 @@ export default function Scraper() {
     );
 }
 
-Scraper.getLayout = (page: React.ReactElement) => <AppShell>{page}</AppShell>;
+InventoryMonitor.getLayout = (page: React.ReactElement) => <AppShell>{page}</AppShell>;

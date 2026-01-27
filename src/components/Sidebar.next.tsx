@@ -62,7 +62,7 @@ export const Sidebar = () => {
                     </Link>
                     <Link href="/scraper" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive('/scraper') ? 'bg-primary/20 text-primary border border-primary/10' : 'text-[#9da8b9] hover:bg-[#282f39] hover:text-white'}`}>
                         <span className="material-symbols-outlined">bolt</span>
-                        <p className="text-sm font-medium leading-normal">スクレイパー状況</p>
+                        <p className="text-sm font-medium leading-normal">在庫監視状況</p>
                     </Link>
                     <Link href="/settings" className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive('/settings') ? 'bg-primary/20 text-primary border border-primary/10' : 'text-[#9da8b9] hover:bg-[#282f39] hover:text-white'}`}>
                         <span className="material-symbols-outlined">settings</span>
