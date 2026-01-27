@@ -1,7 +1,7 @@
 {
   "name": "merfox",
   "productName": "MerFox",
-  "version": "0.1.83",
+  "version": "0.1.84",
   "description": "Mercari Automation Tool",
   "main": "dist-electron/main-process/main.js",
   "scripts": {
