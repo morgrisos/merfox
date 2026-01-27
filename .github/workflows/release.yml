@@ -37,7 +37,7 @@ jobs:
         run: npm run build:ci
 
       - name: Compile Main Process (TS)
-        run: npx tsc -p src/electron/tsconfig.json
+        run: npx tsc -p src/main-process/tsconfig.json
 
       - name: Configure Builder Args
         id: build-config
