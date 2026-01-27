@@ -1,6 +1,7 @@
 import React from 'react';
+import { AppShell } from '@/components/layout/AppShell';
 
-import { AppLayout } from '@/components/layout/AppLayout';
+
 
 export default function Mapping() {
     const [data, setData] = React.useState<any>(null);
@@ -87,23 +88,23 @@ export default function Mapping() {
     }) || [];
 
     return (
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#0d1117] text-white">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-app-base text-white">
             <header className="flex flex-col gap-4 mb-6">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-black leading-tight tracking-[-0.033em] text-white">マッピング</h1>
-                        <p className="text-[#9da8b9] text-base font-normal leading-normal mt-2">
+                        <p className="text-app-text-muted text-base font-normal leading-normal mt-2">
                             Mapping CSV (Latest Run)
                         </p>
                     </div>
                     {(data?.meta?.total ?? 0) > 0 && (
                         <div className="flex gap-4">
-                            <div className="bg-[#1a2027] px-4 py-2 rounded-lg border border-[#282f39]">
-                                <span className="text-[#9da8b9] text-xs uppercase tracking-wider font-bold">Total</span>
+                            <div className="bg-app-element px-4 py-2 rounded-lg border border-app-border">
+                                <span className="text-app-text-muted text-xs uppercase tracking-wider font-bold">Total</span>
                                 <div className="text-xl font-bold font-mono">{data.meta.total}</div>
                             </div>
-                            <div className="bg-[#1a2027] px-4 py-2 rounded-lg border border-[#282f39]">
-                                <span className="text-[#9da8b9] text-xs uppercase tracking-wider font-bold">Pending</span>
+                            <div className="bg-app-element px-4 py-2 rounded-lg border border-app-border">
+                                <span className="text-app-text-muted text-xs uppercase tracking-wider font-bold">Pending</span>
                                 <div className={`text-xl font-bold font-mono ${data.meta.pending > 0 ? 'text-red-500' : 'text-green-500'}`}>
                                     {data.meta.pending}
                                 </div>
@@ -114,16 +115,16 @@ export default function Mapping() {
             </header>
 
             {loading ? (
-                <div className="text-center py-20 text-[#9da8b9]">読み込み中...</div>
+                <div className="text-center py-20 text-app-text-muted">読み込み中...</div>
             ) : !data ? (
-                <div className="text-center py-20 text-[#9da8b9]">データが見つかりません</div>
+                <div className="text-center py-20 text-app-text-muted">データが見つかりません</div>
             ) : (
                 <div className="flex flex-col gap-4">
                     {/* Toolbar */}
-                    <div className="flex items-center justify-between bg-[#111418] p-4 rounded-xl border border-[#282f39]">
+                    <div className="flex items-center justify-between bg-app-surface p-4 rounded-xl border border-app-border">
                         <div className="flex items-center gap-4">
                             <label className="flex items-center gap-2 cursor-pointer select-none">
-                                <div className={`w-10 h-6 rounded-full p-1 transition-colors ${filterPending ? 'bg-primary' : 'bg-[#282f39]'}`} onClick={() => setFilterPending(!filterPending)}>
+                                <div className={`w-10 h-6 rounded-full p-1 transition-colors ${filterPending ? 'bg-primary' : 'bg-app-border'}`} onClick={() => setFilterPending(!filterPending)}>
                                     <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${filterPending ? 'translate-x-4' : ''}`} />
                                 </div>
                                 <span className="text-sm font-medium text-white">未設定のみ表示</span>
@@ -140,7 +141,7 @@ export default function Mapping() {
                             onClick={handleSave}
                             className={`px-6 py-2 rounded-lg font-bold transition-all flex items-center gap-2 ${hasChanges
                                 ? 'bg-primary text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20'
-                                : 'bg-[#282f39] text-[#5b6471] cursor-not-allowed'
+                                : 'bg-app-border text-app-text-muted cursor-not-allowed'
                                 }`}
                         >
                             {saving ? '保存中...' : '保存'}
@@ -148,20 +149,20 @@ export default function Mapping() {
                     </div>
 
                     {/* Table */}
-                    <div className="bg-[#111418] rounded-xl border border-[#282f39] overflow-hidden shadow-sm">
+                    <div className="bg-app-surface rounded-xl border border-app-border overflow-hidden shadow-sm">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm whitespace-nowrap">
-                                <thead className="bg-[#1a2027] text-[#9da8b9] border-b border-[#282f39]">
+                                <thead className="bg-app-element text-app-text-muted border-b border-app-border">
                                     <tr>
                                         <th className="px-6 py-4 font-bold w-[100px]">ID</th>
                                         <th className="px-6 py-4 font-bold">商品情報 (Title / URL)</th>
                                         <th className="px-6 py-4 font-bold w-[200px]">ASIN (Amazon ID)</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-[#282f39] text-white">
+                                <tbody className="divide-y divide-app-border text-white">
                                     {displayRows.length === 0 ? (
                                         <tr>
-                                            <td colSpan={3} className="px-6 py-12 text-center text-[#9da8b9]">
+                                            <td colSpan={3} className="px-6 py-12 text-center text-app-text-muted">
                                                 {filterPending ? '未設定の項目はありません' : '項目がありません'}
                                             </td>
                                         </tr>
@@ -169,8 +170,8 @@ export default function Mapping() {
                                         displayRows.map((row: any) => {
                                             const val = localChanges[row.rowKey] !== undefined ? localChanges[row.rowKey] : row.asin;
                                             return (
-                                                <tr key={row.rowKey} className="hover:bg-[#202b3a] transition-colors">
-                                                    <td className="px-6 py-4 font-mono text-xs text-[#9da8b9]">
+                                                <tr key={row.rowKey} className="hover:bg-app-element transition-colors">
+                                                    <td className="px-6 py-4 font-mono text-xs text-app-text-muted">
                                                         {row.id}
                                                     </td>
                                                     <td className="px-6 py-4">
@@ -186,7 +187,7 @@ export default function Mapping() {
                                                             onChange={(e) => handleAsinChange(row.rowKey, e.target.value)}
                                                             disabled={data.meta.asinCol === 'MISSING'}
                                                             placeholder="B0..."
-                                                            className={`bg-[#0d1117] border border-[#282f39] rounded px-3 py-2 text-white w-full focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary ${!val ? 'border-red-500/50 bg-red-500/5' : ''
+                                                            className={`bg-app-base border border-app-border rounded px-3 py-2 text-white w-full focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary ${!val ? 'border-red-500/50 bg-red-900/10' : ''
                                                                 }`}
                                                         />
                                                     </td>
@@ -204,4 +205,4 @@ export default function Mapping() {
     );
 }
 
-Mapping.getLayout = (page: React.ReactElement) => <AppLayout>{page}</AppLayout>;
+Mapping.getLayout = (page: React.ReactElement) => <AppShell>{page}</AppShell>;

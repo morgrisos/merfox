@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/hooks/useSettings';
 import { Play, AlertCircle, HelpCircle } from 'lucide-react';
-import { WizardLayout } from '@/components/layout/WizardLayout';
+import { AppShell } from '@/components/layout/AppShell';
 
 export default function Step1_Url() {
     const router = useRouter();
@@ -98,12 +98,15 @@ export default function Step1_Url() {
                     </Button>
 
                     {/* 3B-2: Sub Actions */}
-                    <div className="flex justify-between items-center text-xs text-[#9da8b9] px-2 pt-2">
+                    <div className="flex justify-between items-center text-xs text-app-text-muted px-2 pt-2">
                         <button className="hover:text-white transition-colors flex items-center gap-1">
                             <HelpCircle className="w-3 h-3" /> このツールの使い方（1分）
                         </button>
-                        <button className="hover:text-white transition-colors">
-                            Runsを開く
+                        <button
+                            onClick={() => router.push('/dashboard')}
+                            className="hover:text-white transition-colors flex items-center gap-1 text-app-text-muted"
+                        >
+                            <span className="material-symbols-outlined text-[14px]">close</span> キャンセル (ホームへ)
                         </button>
                     </div>
                 </div>
@@ -112,4 +115,4 @@ export default function Step1_Url() {
     );
 }
 
-Step1_Url.getLayout = (page: React.ReactElement) => <WizardLayout>{page}</WizardLayout>;
+Step1_Url.getLayout = (page: React.ReactElement) => <AppShell variant="wizard">{page}</AppShell>;

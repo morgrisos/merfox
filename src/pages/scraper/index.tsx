@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { AppLayout } from '@/components/layout/AppLayout';
+import { AppShell } from '@/components/layout/AppShell';
 import { useRunHistory } from '../../hooks/useRunHistory';
 import { RunRecord, LogEntry } from '../../types';
 
@@ -55,32 +55,32 @@ function LatestRunStatus() {
         });
     };
 
-    if (loading) return <div className="animate-pulse h-32 bg-slate-100 dark:bg-slate-800 rounded-xl" />;
+    if (loading) return <div className="animate-pulse h-32 bg-app-surface rounded-xl" />;
     if (!data || !data.latestRunId) return null;
 
     const isRunning = data.status === 'running';
     const isFailed = data.files.failed > 0 || data.status === 'failed';
 
     return (
-        <div className="bg-surface-light dark:bg-[#1a2430] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+        <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm relative overflow-hidden">
             <div className="flex items-center justify-between mb-4 relative z-10">
                 <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg ${isRunning ? 'bg-blue-500/10 text-blue-500' : isFailed ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
                         <span className="material-symbols-outlined">{isRunning ? 'sync' : isFailed ? 'error' : 'check_circle'}</span>
                     </div>
                     <div>
-                        <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <h3 className="text-base font-bold text-white flex items-center gap-2">
                             最新の実行 ({data.latestRunId.slice(0, 10)}...)
                             {isRunning && <span className="animate-pulse text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full">RUNNING</span>}
                         </h3>
-                        <p className="text-xs text-slate-500 font-mono">{data.latestRunId}</p>
+                        <p className="text-xs text-app-text-muted font-mono">{data.latestRunId}</p>
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={() => handleReveal()} className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded text-xs font-bold transition-colors">
+                    <button onClick={() => handleReveal()} className="flex items-center gap-1 px-3 py-1.5 bg-app-element hover:bg-app-border text-app-text-muted hover:text-white rounded text-xs font-bold transition-colors">
                         <span className="material-symbols-outlined text-sm">folder_open</span> フォルダ
                     </button>
-                    <button onClick={fetchStatus} className="text-slate-400 hover:text-primary">
+                    <button onClick={fetchStatus} className="text-app-text-muted hover:text-primary">
                         <span className="material-symbols-outlined">refresh</span>
                     </button>
                 </div>
@@ -90,33 +90,33 @@ function LatestRunStatus() {
                 {/* Stats & Actions */}
                 <div className="flex flex-col gap-4">
                     <div className="grid grid-cols-3 gap-2 text-center">
-                        <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
-                            <div className="text-xs text-slate-500 mb-1">候補数</div>
-                            <div className="font-bold font-mono text-lg">{data.summary.totalCandidates ?? '-'}</div>
+                        <div className="p-3 rounded-lg bg-app-element border border-app-border">
+                            <div className="text-xs text-app-text-muted mb-1">候補数</div>
+                            <div className="font-bold font-mono text-lg text-white">{data.summary.totalCandidates ?? '-'}</div>
                         </div>
-                        <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
-                            <div className="text-xs text-slate-500 mb-1">成功</div>
+                        <div className="p-3 rounded-lg bg-app-element border border-app-border">
+                            <div className="text-xs text-app-text-muted mb-1">成功</div>
                             <div className="font-bold font-mono text-lg text-green-500">{data.summary.scraped ?? '-'}</div>
                         </div>
-                        <div className={`p-3 rounded-lg border dark:border-slate-700 ${data.files.failed > 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : 'bg-slate-50 dark:bg-slate-900/50 border-slate-200'}`}>
-                            <div className="text-xs text-slate-500 mb-1">失敗</div>
-                            <div className={`font-bold font-mono text-lg ${data.files.failed > 0 ? 'text-red-500' : ''}`}>{data.files.failed}</div>
+                        <div className={`p-3 rounded-lg border border-app-border ${data.files.failed > 0 ? 'bg-red-900/20 border-red-800' : 'bg-app-element'}`}>
+                            <div className="text-xs text-app-text-muted mb-1">失敗</div>
+                            <div className={`font-bold font-mono text-lg ${data.files.failed > 0 ? 'text-red-500' : 'text-white'}`}>{data.files.failed}</div>
                         </div>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
                         {data.files.raw && (
-                            <button onClick={() => handleReveal('raw.csv')} className="flex-1 py-2 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded text-xs font-bold flex items-center justify-center gap-1">
+                            <button onClick={() => handleReveal('raw.csv')} className="flex-1 py-2 px-3 bg-app-element hover:bg-app-border text-app-text-muted hover:text-white rounded text-xs font-bold flex items-center justify-center gap-1">
                                 <span className="material-symbols-outlined text-sm">description</span> raw.csv
                             </button>
                         )}
                         {data.files.mapping && (
-                            <button onClick={() => handleReveal('mapping.csv')} className="flex-1 py-2 px-3 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 text-blue-700 dark:text-blue-300 rounded text-xs font-bold flex items-center justify-center gap-1">
+                            <button onClick={() => handleReveal('mapping.csv')} className="flex-1 py-2 px-3 bg-blue-900/20 hover:bg-blue-900/40 text-blue-300 rounded text-xs font-bold flex items-center justify-center gap-1">
                                 <span className="material-symbols-outlined text-sm">edit_document</span> mapping
                             </button>
                         )}
                         {data.files.amazon && (
-                            <button onClick={() => handleReveal('amazon.tsv')} className="flex-1 py-2 px-3 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 text-green-700 dark:text-green-300 rounded text-xs font-bold flex items-center justify-center gap-1">
+                            <button onClick={() => handleReveal('amazon.tsv')} className="flex-1 py-2 px-3 bg-green-900/20 hover:bg-green-900/40 text-green-300 rounded text-xs font-bold flex items-center justify-center gap-1">
                                 <span className="material-symbols-outlined text-sm">download</span> amazon.tsv
                             </button>
                         )}
@@ -132,10 +132,10 @@ function LatestRunStatus() {
 
                 {/* Log Tail */}
                 <div className="flex flex-col h-40">
-                    <div className="flex items-center justify-between text-xs text-slate-500 mb-1 px-1">
+                    <div className="flex items-center justify-between text-xs text-app-text-muted mb-1 px-1">
                         <span>ログ: {data.log.file || 'N/A'} (末尾)</span>
                     </div>
-                    <div className="flex-1 bg-[#0d1117] rounded-lg p-3 overflow-y-auto font-mono text-[10px] text-slate-300 border border-slate-700 shadow-inner">
+                    <div className="flex-1 bg-app-base rounded-lg p-3 overflow-y-auto font-mono text-[10px] text-app-text-muted border border-app-border shadow-inner">
                         {data.log.tail.length > 0 ? (
                             data.log.tail.map((line, i) => (
                                 <div key={i} className="whitespace-pre-wrap leading-tight opacity-90 hover:opacity-100">{line}</div>
@@ -349,57 +349,47 @@ export default function Scraper() {
     };
 
     return (
-        <div className="flex flex-col h-full relative">
-            <header className="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-slate-200 dark:border-slate-800 bg-surface-light/80 dark:bg-[#111418]/90 backdrop-blur-md px-4 sm:px-10 py-3 flex-shrink-0">
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">
-                        <span className="material-symbols-outlined text-xl">bolt</span>
-                    </div>
-                    <h2 className="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">スクレイパー (抽出実行)</h2>
-                </div>
-            </header>
-
+        <div className="flex flex-col h-full relative bg-app-base text-white">
             <div className="flex-1 overflow-y-auto p-4 md:p-8">
                 <div className="max-w-[1200px] mx-auto flex flex-col gap-6">
-
 
                     {/* [Phase 6] Latest Run Status */}
                     <LatestRunStatus />
 
                     {/* 1. Presets */}
                     <div className="flex gap-4 overflow-x-auto pb-2">
-                        <button onClick={() => setMode('onetime')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${mode === 'onetime' ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary'}`}>
+                        <button onClick={() => setMode('onetime')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${mode === 'onetime' ? 'bg-primary text-white' : 'bg-app-element hover:bg-primary/10 hover:text-primary text-app-text-muted'}`}>
                             <span className="material-symbols-outlined text-base">star</span>
                             初心者向けプリセット
                         </button>
-                        <button onClick={() => setMode('watch')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${mode === 'watch' ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary'}`}>
+                        <button onClick={() => setMode('watch')} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${mode === 'watch' ? 'bg-primary text-white' : 'bg-app-element hover:bg-primary/10 hover:text-primary text-app-text-muted'}`}>
                             <span className="material-symbols-outlined text-base">visibility</span>
                             Watchモード (新着監視)
                         </button>
-                        <button disabled title="準備中" className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed opacity-60">
+                        <button disabled title="準備中" className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap bg-app-element text-app-text-muted cursor-not-allowed opacity-60">
                             <span className="material-symbols-outlined text-base">layers</span>
                             一括大量抽出 (準備中)
                         </button>
                     </div>
 
                     {/* 2. Target URL */}
-                    <div className="bg-surface-light dark:bg-[#1a2430] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4">
-                        <label className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm flex flex-col gap-4">
+                        <label className="text-sm font-bold text-white flex items-center gap-2">
                             <span className="material-symbols-outlined text-primary">link</span>
                             ターゲットURL (検索結果ページ)
                         </label>
                         <div className="flex gap-2">
                             <div className="relative flex-1">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">search</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-app-text-muted">search</span>
                                 <input
                                     type="text"
                                     value={targetUrl}
                                     onChange={(e) => setTargetUrl(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-[#101822] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-3 rounded-lg border border-app-border bg-app-element text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-app-text-muted"
                                     placeholder="https://jp.mercari.com/search?..."
                                 />
                                 {isValidUrl === true && (
-                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 flex items-center gap-1 text-xs font-bold bg-green-500/10 px-2 py-1 rounded">
+                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 flex items-center gap-1 text-xs font-bold bg-green-900/20 px-2 py-1 rounded">
                                         <span className="material-symbols-outlined text-sm">check_circle</span> OK
                                     </span>
                                 )}
@@ -407,7 +397,7 @@ export default function Scraper() {
                             <button
                                 onClick={handleCheckUrl}
                                 disabled={isValidating}
-                                className="px-6 py-2 bg-slate-800 dark:bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-700 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 min-w-[100px] flex items-center justify-center"
+                                className="px-6 py-2 bg-app-element text-white rounded-lg font-bold hover:bg-app-border transition-colors disabled:opacity-50 min-w-[100px] flex items-center justify-center border border-app-border"
                             >
                                 {isValidating ? <span className="material-symbols-outlined animate-spin">sync</span> : '確認'}
                             </button>
@@ -418,22 +408,22 @@ export default function Scraper() {
                         {/* 3. Config (Left Column) */}
                         <div className="lg:col-span-2 flex flex-col gap-6">
                             {/* Filters & Mode */}
-                            <div className="bg-surface-light dark:bg-[#1a2430] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-slate-400">tune</span>
+                            <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm">
+                                <h3 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-app-text-muted">tune</span>
                                     抽出・フィルタ設定
                                 </h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="flex flex-col gap-3">
-                                        <label className="text-sm font-medium text-slate-600 dark:text-slate-400">実行モード設定</label>
+                                        <label className="text-sm font-medium text-app-text-muted">実行モード設定</label>
                                         <div className="flex flex-col gap-2">
-                                            <div className={`p-3 rounded-lg border cursor-pointer transition-all ${mode === 'onetime' ? 'border-primary bg-primary/5' : 'border-slate-200 dark:border-slate-700'}`} onClick={() => setMode('onetime')}>
-                                                <div className="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-white">
+                                            <div className={`p-3 rounded-lg border cursor-pointer transition-all ${mode === 'onetime' ? 'border-primary bg-primary/5' : 'border-app-border bg-app-element'}`} onClick={() => setMode('onetime')}>
+                                                <div className="flex items-center gap-2 font-bold text-sm text-white">
                                                     <span className="material-symbols-outlined text-sm">bolt</span> 通常実行 (1回)
                                                 </div>
                                             </div>
-                                            <div className={`p-3 rounded-lg border cursor-pointer transition-all ${mode === 'watch' ? 'border-primary bg-primary/5' : 'border-slate-200 dark:border-slate-700'}`} onClick={() => setMode('watch')}>
-                                                <div className="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-white">
+                                            <div className={`p-3 rounded-lg border cursor-pointer transition-all ${mode === 'watch' ? 'border-primary bg-primary/5' : 'border-app-border bg-app-element'}`} onClick={() => setMode('watch')}>
+                                                <div className="flex items-center gap-2 font-bold text-sm text-white">
                                                     <span className="material-symbols-outlined text-sm">schedule</span> Watchモード (新着監視)
                                                 </div>
                                                 {mode === 'watch' && (
@@ -441,7 +431,7 @@ export default function Scraper() {
                                                         <select
                                                             value={watchInterval}
                                                             onChange={(e) => setWatchInterval(Number(e.target.value))}
-                                                            className="w-full text-sm rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#101822] p-2 text-slate-900 dark:text-white"
+                                                            className="w-full text-sm rounded border-app-border bg-app-base p-2 text-white"
                                                             disabled={!!activeJob}
                                                         >
                                                             <option value={10}>10分ごとにチェック</option>
@@ -450,7 +440,7 @@ export default function Scraper() {
                                                             <option value={60}>60分ごとにチェック</option>
                                                         </select>
                                                         {activeJob && (
-                                                            <p className="text-xs text-green-600 mt-1">※ 稼働中のため変更不可 (再作成してください)</p>
+                                                            <p className="text-xs text-green-500 mt-1">※ 稼働中のため変更不可 (再作成してください)</p>
                                                         )}
                                                     </div>
                                                 )}
@@ -458,15 +448,15 @@ export default function Scraper() {
                                         </div>
                                     </div>
                                     <div className="flex flex-col gap-3">
-                                        <label className="text-sm font-medium text-slate-600 dark:text-slate-400">フィルタ条件</label>
+                                        <label className="text-sm font-medium text-app-text-muted">フィルタ条件</label>
                                         <div className="flex flex-col gap-2">
                                             <label className="flex items-center gap-2 cursor-pointer">
-                                                <input type="checkbox" checked={excludeShops} onChange={(e) => setExcludeShops(e.target.checked)} className="rounded border-slate-300 text-primary focus:ring-primary" />
-                                                <span className="text-sm text-slate-700 dark:text-slate-300">ショップを除外 (個人以外)</span>
+                                                <input type="checkbox" checked={excludeShops} onChange={(e) => setExcludeShops(e.target.checked)} className="rounded border-app-border text-primary focus:ring-primary bg-app-element" />
+                                                <span className="text-sm text-app-text-muted">ショップを除外 (個人以外)</span>
                                             </label>
                                             <label className="flex items-center gap-2 cursor-pointer">
-                                                <input type="checkbox" className="rounded border-slate-300 text-primary focus:ring-primary" />
-                                                <span className="text-sm text-slate-700 dark:text-slate-300">送料込みのみ</span>
+                                                <input type="checkbox" className="rounded border-app-border text-primary focus:ring-primary bg-app-element" />
+                                                <span className="text-sm text-app-text-muted">送料込みのみ</span>
                                             </label>
                                             <button onClick={() => setShowNgModal(true)} className="mt-1 text-sm text-red-500 font-bold hover:underline py-1 text-left flex items-center gap-1">
                                                 <span className="material-symbols-outlined text-sm">block</span>
@@ -481,36 +471,36 @@ export default function Scraper() {
                         {/* 4. Output & Execution (Right Column) */}
                         <div className="flex flex-col gap-6">
                             {mode === 'watch' ? (
-                                <div className="bg-surface-light dark:bg-[#1a2430] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4 sticky top-24">
-                                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                                <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm flex flex-col gap-4 sticky top-24">
+                                    <h3 className="text-base font-bold text-white mb-2 flex items-center gap-2">
                                         <span className="material-symbols-outlined text-primary">campaign</span>
                                         Watch監視コントロール
                                     </h3>
 
                                     {activeJob ? (
-                                        <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <div className="p-4 bg-app-element rounded-lg border border-app-border">
                                             <div className="flex items-center justify-between mb-2">
-                                                <span className="text-sm font-bold">ステータス</span>
-                                                <span className={`px-2 py-0.5 rounded text-xs font-bold ${activeJob.isEnabled ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-600'}`}>
+                                                <span className="text-sm font-bold text-white">ステータス</span>
+                                                <span className={`px-2 py-0.5 rounded text-xs font-bold ${activeJob.isEnabled ? 'bg-green-900/20 text-green-500' : 'bg-app-base text-app-text-muted'}`}>
                                                     {activeJob.isEnabled ? '稼働中' : '停止中'}
                                                 </span>
                                             </div>
-                                            <p className="text-xs text-slate-500 mb-1">次回: {new Date(activeJob.nextRunAt || '').toLocaleTimeString()}</p>
-                                            <p className="text-xs text-slate-500 mb-4">実行回数: {activeJob.stats.totalRuns}回</p>
+                                            <p className="text-xs text-app-text-muted mb-1">次回: {new Date(activeJob.nextRunAt || '').toLocaleTimeString()}</p>
+                                            <p className="text-xs text-app-text-muted mb-4">実行回数: {activeJob.stats.totalRuns}回</p>
 
                                             {activeJob.isEnabled ? (
-                                                <button onClick={handleStopWatch} className="w-full py-2 bg-red-100 text-red-600 rounded-lg text-sm font-bold hover:bg-red-200 transition-colors">
+                                                <button onClick={handleStopWatch} className="w-full py-2 bg-red-900/20 text-red-500 rounded-lg text-sm font-bold hover:bg-red-900/40 transition-colors">
                                                     監視を停止
                                                 </button>
                                             ) : (
-                                                <button onClick={handleStartWatch} className="w-full py-2 bg-green-100 text-green-600 rounded-lg text-sm font-bold hover:bg-green-200 transition-colors">
+                                                <button onClick={handleStartWatch} className="w-full py-2 bg-green-900/20 text-green-500 rounded-lg text-sm font-bold hover:bg-green-900/40 transition-colors">
                                                     監視を再開
                                                 </button>
                                             )}
                                         </div>
                                     ) : (
-                                        <div className="p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg text-center">
-                                            <p className="text-sm text-blue-800 dark:text-blue-300 mb-3">このURLの監視ジョブはまだありません</p>
+                                        <div className="p-4 bg-blue-900/10 border border-blue-500/20 rounded-lg text-center">
+                                            <p className="text-sm text-blue-300 mb-3">このURLの監視ジョブはまだありません</p>
                                             <button onClick={handleStartWatch} className="w-full py-3 bg-primary text-white rounded-lg font-bold shadow-lg shadow-blue-500/20 hover:bg-blue-600 transition-all">
                                                 <span className="material-symbols-outlined align-middle mr-1">play_circle</span>
                                                 監視ジョブを作成して開始
@@ -519,20 +509,20 @@ export default function Scraper() {
                                     )}
                                 </div>
                             ) : (
-                                <div className="bg-surface-light dark:bg-[#1a2430] p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-4 sticky top-24">
-                                    <div className="p-4 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                                        <p className="text-xs text-yellow-700 dark:text-yellow-400 font-bold mb-1">
+                                <div className="bg-app-surface p-6 rounded-xl border border-app-border shadow-sm flex flex-col gap-4 sticky top-24">
+                                    <div className="p-4 bg-yellow-900/20 border border-yellow-800 rounded-lg">
+                                        <p className="text-xs text-yellow-400 font-bold mb-1">
                                             <span className="material-symbols-outlined text-sm align-bottom mr-1">info</span>
                                             実行前の確認
                                         </p>
-                                        <p className="text-xs text-yellow-600 dark:text-yellow-500 leading-relaxed">
+                                        <p className="text-xs text-yellow-500 leading-relaxed">
                                             大量のアクセスが発生します。まずは「テスト実行」で動作を確認してから本番実行してください。
                                         </p>
                                     </div>
                                     <button
                                         onClick={startTestRun}
                                         disabled={isRunning}
-                                        className="w-full py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full py-3 bg-app-element hover:bg-app-border text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-app-border"
                                     >
                                         <span className="material-symbols-outlined">play_circle</span>
                                         テスト実行 (20件)
@@ -544,43 +534,43 @@ export default function Scraper() {
 
                     {/* 5. In-Progress Panel */}
                     {(isRunning || logs.length > 0) && (
-                        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-[#0d1117] border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] p-4 md:px-8 max-h-[40vh] flex flex-col">
+                        <div className="fixed bottom-0 left-0 right-0 z-40 bg-app-surface border-t border-app-border shadow-[0_-4px_20px_rgba(0,0,0,0.5)] p-4 md:px-8 max-h-[40vh] flex flex-col">
                             <div className="max-w-[1200px] w-full mx-auto flex flex-col h-full gap-4">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-4">
-                                        <div className={`size-3 rounded-full ${isRunning ? 'bg-green-500 animate-pulse' : 'bg-slate-400'}`}></div>
-                                        <span className="font-bold text-slate-900 dark:text-white">{isRunning ? '実行中...' : '待機中 / 完了'}</span>
-                                        <div className="h-4 w-px bg-slate-300 dark:bg-slate-700 mx-2"></div>
+                                        <div className={`size-3 rounded-full ${isRunning ? 'bg-green-500 animate-pulse' : 'bg-app-text-muted'}`}></div>
+                                        <span className="font-bold text-white">{isRunning ? '実行中...' : '待機中 / 完了'}</span>
+                                        <div className="h-4 w-px bg-app-border mx-2"></div>
                                         <div className="flex gap-4 text-sm">
-                                            <span className="text-green-600 dark:text-green-400 font-mono">成功: {stats.success}</span>
+                                            <span className="text-green-400 font-mono">成功: {stats.success}</span>
                                             <span className="text-red-500 font-mono">失敗: {stats.failed}</span>
-                                            <span className="text-slate-500 font-mono">除外: {stats.excluded}</span>
-                                            <span className="font-bold text-slate-900 dark:text-white font-mono">合計: {stats.total} / {stopLimit}</span>
+                                            <span className="text-app-text-muted font-mono">除外: {stats.excluded}</span>
+                                            <span className="font-bold text-white font-mono">合計: {stats.total} / {stopLimit}</span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {isRunning && (
-                                            <button onClick={handleStop} className="flex items-center gap-1 px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors text-xs font-bold">
+                                            <button onClick={handleStop} className="flex items-center gap-1 px-3 py-1 bg-red-900/30 text-red-400 rounded hover:bg-red-900/50 transition-colors text-xs font-bold">
                                                 <span className="material-symbols-outlined text-sm">stop_circle</span>
                                                 停止
                                             </button>
                                         )}
-                                        <button onClick={() => setLogs([])} disabled={isRunning} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white disabled:opacity-30">
+                                        <button onClick={() => setLogs([])} disabled={isRunning} className="text-app-text-muted hover:text-white disabled:opacity-30">
                                             <span className="material-symbols-outlined">close</span>
                                         </button>
                                     </div>
                                 </div>
                                 {/* Progress Bar */}
-                                <div className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <div className="w-full h-1 bg-app-element rounded-full overflow-hidden">
                                     <div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }}></div>
                                 </div>
                                 {/* Logs Area */}
-                                <div className="flex-1 overflow-y-auto font-mono text-xs bg-slate-50 dark:bg-[#161b22] p-4 rounded-lg border border-slate-200 dark:border-slate-700 min-h-[120px]">
+                                <div className="flex-1 overflow-y-auto font-mono text-xs bg-app-base p-4 rounded-lg border border-app-border min-h-[120px]">
                                     {logs.map((log, index) => (
                                         <div key={index} className="mb-1 flex gap-2">
-                                            <span className="text-slate-400">[{log.timestamp}]</span>
+                                            <span className="text-app-text-muted">[{log.timestamp}]</span>
                                             <span className={`font-bold ${log.level === 'info' ? 'text-blue-500' : log.level === 'warn' ? 'text-yellow-500' : log.level === 'error' ? 'text-red-500' : 'text-green-500'}`}>{log.level.toUpperCase()}</span>
-                                            <span className="text-slate-700 dark:text-slate-300">{log.message}</span>
+                                            <span className="text-slate-300">{log.message}</span>
                                         </div>
                                     ))}
                                     <div ref={logEndRef} />
@@ -594,16 +584,16 @@ export default function Scraper() {
             {/* NG Words Modal */}
             {showNgModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-[#1e2329] p-6 rounded-xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-700">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">NGワード設定</h3>
+                    <div className="bg-app-surface p-6 rounded-xl shadow-xl w-full max-w-md border border-app-border">
+                        <h3 className="text-lg font-bold text-white mb-4">NGワード設定</h3>
                         <textarea
-                            className="w-full h-32 p-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-[#101822] text-slate-900 dark:text-white text-sm"
+                            className="w-full h-32 p-3 rounded-lg border border-app-border bg-app-element text-white text-sm"
                             placeholder="除外したいキーワードをカンマ区切りで入力..."
                             value={excludeKeywords}
                             onChange={(e) => setExcludeKeywords(e.target.value)}
                         ></textarea>
                         <div className="flex justify-end gap-2 mt-4">
-                            <button onClick={() => setShowNgModal(false)} className="px-4 py-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-sm font-bold">キャンセル</button>
+                            <button onClick={() => setShowNgModal(false)} className="px-4 py-2 text-app-text-muted hover:bg-app-element rounded-lg text-sm font-bold">キャンセル</button>
                             <button onClick={() => setShowNgModal(false)} className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold">保存</button>
                         </div>
                     </div>
@@ -613,4 +603,4 @@ export default function Scraper() {
     );
 }
 
-Scraper.getLayout = (page: React.ReactElement) => <AppLayout>{page}</AppLayout>;
+Scraper.getLayout = (page: React.ReactElement) => <AppShell>{page}</AppShell>;

@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { AppLayout } from '@/components/layout/AppLayout';
+import { AppShell } from '@/components/layout/AppShell';
 import { useRunHistory } from '@/hooks/useRunHistory';
 
 import { PlayCircle, FileText, FolderOpen, AlertTriangle, CheckCircle, ArrowRight, Activity, TrendingUp, AlertCircle, Search } from 'lucide-react';
@@ -20,11 +20,11 @@ type CardProps = {
 const SummaryCard = ({ title, count, sub, icon, colorClass, onClick }: CardProps) => (
     <div
         onClick={onClick}
-        className="bg-[#111418] border border-[#282f39] rounded-xl p-5 relative overflow-hidden group cursor-pointer hover:border-primary/30 transition-all"
+        className="bg-app-surface border border-app-border rounded-xl p-5 relative overflow-hidden group cursor-pointer hover:border-primary/30 transition-all"
     >
         <div className="flex justify-between items-start z-10 relative">
-            <span className="text-[#9da8b9] text-xs font-bold uppercase tracking-wider">{title}</span>
-            <div className={`p-2 rounded-lg bg-[#1a2027] text-[#9da8b9] group-hover:text-white transition-colors`}>
+            <span className="text-app-text-muted text-xs font-bold uppercase tracking-wider">{title}</span>
+            <div className={`p-2 rounded-lg bg-app-element text-app-text-muted group-hover:text-white transition-colors`}>
                 {icon}
             </div>
         </div>
@@ -166,24 +166,14 @@ export default function Dashboard() {
     const dangerList = summaryData.dangers.length > 0 ? summaryData.dangers : [];
 
     return (
-        <div className="flex-1 overflow-y-auto p-6 bg-[#0d1117] text-white font-sans">
+        <div className="flex-1 overflow-y-auto p-6 bg-app-base text-app-text-main font-sans">
             {/* 1. Header */}
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-3xl font-black text-white tracking-tight">今日の成果</h1>
-                    <p className="text-[#9da8b9] text-sm mt-1">今日の実行結果をまとめました。次にやることを確認しましょう。</p>
+                    <p className="text-app-text-muted text-sm mt-1">今日の実行結果をまとめました。次にやることを確認しましょう。</p>
                 </div>
-                <div className="flex gap-2">
-                    <button onClick={() => router.push('/wizard/step1')} className="flex items-center gap-2 px-3 py-2 bg-[#1a2027] hover:bg-[#282f39] border border-[#282f39] rounded-lg text-xs font-bold text-white transition-colors">
-                        <PlayCircle className="w-4 h-4 text-primary" /> スタート
-                    </button>
-                    <button onClick={() => router.push('/runs')} className="flex items-center gap-2 px-3 py-2 bg-[#1a2027] hover:bg-[#282f39] border border-[#282f39] rounded-lg text-xs font-bold text-white transition-colors">
-                        <Activity className="w-4 h-4 text-[#9da8b9]" /> Runs
-                    </button>
-                    <button className="flex items-center gap-2 px-3 py-2 bg-[#1a2027] hover:bg-[#282f39] border border-[#282f39] rounded-lg text-xs font-bold text-white transition-colors">
-                        <FileText className="w-4 h-4 text-green-500" /> 最終TSV
-                    </button>
-                </div>
+                {/* Header Actions - Removed to prevent duplication with Sidebar & Nav */}
             </header>
 
             {/* 2. Summary Cards */}
@@ -224,7 +214,7 @@ export default function Dashboard() {
                 <div className="lg:col-span-2 flex flex-col gap-6">
 
                     {/* 3. Main CTA */}
-                    <div className="bg-[#111418] border border-[#282f39] rounded-xl p-6 relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div className="bg-app-surface border border-app-border rounded-xl p-6 relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6">
                         <div className="flex items-start gap-4 z-10">
                             <div className={`p-4 rounded-full ${mainCTA.color} bg-opacity-20 text-white shrink-0`}>
                                 {mainCTA.icon}
@@ -232,7 +222,7 @@ export default function Dashboard() {
                             <div>
                                 <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-1">Next Action</h3>
                                 <h2 className="text-xl font-bold text-white">{mainCTA.title}</h2>
-                                <p className="text-[#9da8b9] text-sm mt-1 max-w-md">{mainCTA.desc}</p>
+                                <p className="text-app-text-muted text-sm mt-1 max-w-md">{mainCTA.desc}</p>
                             </div>
                         </div>
                         <button
@@ -246,17 +236,17 @@ export default function Dashboard() {
                     </div>
 
                     {/* 4. Priorities Table */}
-                    <div className="bg-[#111418] border border-[#282f39] rounded-xl overflow-hidden">
-                        <div className="px-6 py-4 border-b border-[#282f39] flex justify-between items-center">
+                    <div className="bg-app-surface border border-app-border rounded-xl overflow-hidden">
+                        <div className="px-6 py-4 border-b border-app-border flex justify-between items-center">
                             <h3 className="font-bold text-white flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5 text-yellow-500" />
                                 優先して見るべき 10件
                             </h3>
-                            <span className="text-xs text-[#9da8b9]">利益予測に基づく</span>
+                            <span className="text-xs text-app-text-muted">利益予測に基づく</span>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left bg-[#111418]">
-                                <thead className="bg-[#1a2027] text-[#9da8b9] text-xs font-bold uppercase">
+                            <table className="w-full text-left bg-app-surface">
+                                <thead className="bg-[#1a2027] text-app-text-muted text-xs font-bold uppercase">
                                     <tr>
                                         <th className="px-4 py-3">優先度</th>
                                         <th className="px-4 py-3">状態</th>
@@ -269,7 +259,7 @@ export default function Dashboard() {
                                 <tbody>
                                     {priorityCandidates.length === 0 ? (
                                         <tr>
-                                            <td colSpan={6} className="px-4 py-8 text-center text-[#9da8b9]">
+                                            <td colSpan={6} className="px-4 py-8 text-center text-app-text-muted">
                                                 データがありません
                                             </td>
                                         </tr>
@@ -288,8 +278,8 @@ export default function Dashboard() {
                                 </tbody>
                             </table>
                         </div>
-                        <div className="px-6 py-3 bg-[#1a2027] border-t border-[#282f39] text-center">
-                            <button className="text-xs font-bold text-[#9da8b9] hover:text-white transition-colors">全件表示</button>
+                        <div className="px-6 py-3 bg-[#1a2027] border-t border-app-border text-center">
+                            <button className="text-xs font-bold text-app-text-muted hover:text-white transition-colors">全件表示</button>
                         </div>
                     </div>
                 </div>
@@ -298,14 +288,14 @@ export default function Dashboard() {
                 <div className="flex flex-col gap-6">
 
                     {/* 5. Danger/Warning */}
-                    <div className="bg-[#111418] border border-[#282f39] rounded-xl p-5">
+                    <div className="bg-app-surface border border-app-border rounded-xl p-5">
                         <h3 className="font-bold text-white mb-4 flex items-center gap-2">
                             <AlertTriangle className="w-5 h-5 text-red-500" />
                             危険 / 注意一覧
                         </h3>
                         <div className="space-y-3">
                             {dangerList.length === 0 ? (
-                                <div className="text-center text-[#9da8b9] text-xs py-4">問題なし</div>
+                                <div className="text-center text-app-text-muted text-xs py-4">問題なし</div>
                             ) : (
                                 dangerList.map((item: any, idx: number) => (
                                     <div key={idx} className="flex items-center justify-between text-sm p-3 bg-red-500/5 border border-red-500/10 rounded-lg">
@@ -315,20 +305,20 @@ export default function Dashboard() {
                                 ))
                             )}
                         </div>
-                        <button className="w-full mt-4 py-2 text-xs font-bold text-[#9da8b9] border border-[#282f39] rounded-lg hover:bg-[#282f39] hover:text-white transition-colors">
+                        <button className="w-full mt-4 py-2 text-xs font-bold text-app-text-muted border border-app-border rounded-lg hover:bg-app-border hover:text-white transition-colors">
                             詳細リストを確認
                         </button>
                     </div>
 
                     {/* 6. Recent Runs */}
-                    <div className="bg-[#111418] border border-[#282f39] rounded-xl overflow-hidden flex-1">
-                        <div className="px-5 py-4 border-b border-[#282f39] flex justify-between items-center bg-[#1a2027]">
+                    <div className="bg-app-surface border border-app-border rounded-xl overflow-hidden flex-1">
+                        <div className="px-5 py-4 border-b border-app-border flex justify-between items-center bg-[#1a2027]">
                             <h3 className="font-bold text-white text-sm">最近のRun</h3>
                             <Link href="/runs" className="text-xs text-primary hover:text-blue-400 font-bold">すべて見る</Link>
                         </div>
-                        <div className="divide-y divide-[#282f39]">
+                        <div className="divide-y divide-app-border">
                             {history.length === 0 ? (
-                                <div className="p-8 text-center text-[#9da8b9] text-sm">履歴なし</div>
+                                <div className="p-8 text-center text-app-text-muted text-sm">履歴なし</div>
                             ) : (
                                 history.slice(0, 5).map(run => (
                                     <div key={run.id} className="p-4 hover:bg-[#202b3a] transition-colors">
@@ -342,7 +332,7 @@ export default function Dashboard() {
                                                 {run.status}
                                             </span>
                                         </div>
-                                        <div className="flex justify-between items-center text-xs text-[#9da8b9]">
+                                        <div className="flex justify-between items-center text-xs text-app-text-muted">
                                             <span>{new Date(run.date).toLocaleDateString()}</span>
                                             <span>{run.stats.success} 件取得</span>
                                         </div>
@@ -353,12 +343,12 @@ export default function Dashboard() {
                     </div>
 
                     {/* 7. Automation Promo */}
-                    <div className="bg-gradient-to-br from-blue-900/20 to-[#111418] border border-blue-500/20 rounded-xl p-5 text-center">
+                    <div className="bg-gradient-to-br from-blue-900/20 to-app-surface border border-blue-500/20 rounded-xl p-5 text-center">
                         <div className="size-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-blue-400">
                             <span className="material-symbols-outlined">smart_toy</span>
                         </div>
                         <h3 className="font-bold text-white mb-1">運用を自動化</h3>
-                        <p className="text-xs text-[#9da8b9] mb-4">
+                        <p className="text-xs text-app-text-muted mb-4">
                             毎日決まった時間に自動で抽出を実行し、通知を受け取れます。
                         </p>
                         <Link href="/automation" className="block w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors">
@@ -372,4 +362,4 @@ export default function Dashboard() {
     );
 }
 
-Dashboard.getLayout = (page: React.ReactElement) => <AppLayout>{page}</AppLayout>;
+Dashboard.getLayout = (page: React.ReactElement) => <AppShell>{page}</AppShell>;
