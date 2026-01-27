@@ -17,6 +17,17 @@ module.exports = {
         },
         extend: {
             colors: {
+                // Semantic App Tokens (Dark Mode First)
+                app: {
+                    base: "#0d1117",      // Main Background (GitHub Dark Dimmed Base)
+                    surface: "#161b22",   // Card/Sidebar Background (GitHub Dark Dimmed Surface)
+                    element: "#21262d",   // Interactive Elements (Buttons/Inputs)
+                    border: "#30363d",    // Borders
+                    text: {
+                        main: "#c9d1d9",  // Primary Text
+                        muted: "#8b949e", // Secondary Text
+                    }
+                },
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
                 ring: "hsl(var(--ring))",

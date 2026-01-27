@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { useOutcome } from '@/contexts/OutcomeContext';
 import { Loader2, ArrowRight, AlertCircle, CheckCircle, FileJson } from 'lucide-react';
 import axios from 'axios';
-import { WizardLayout } from '@/components/layout/WizardLayout';
+import { AppShell } from '@/components/layout/AppShell';
 
 export default function Step5_Convert() {
     const router = useRouter();
@@ -41,22 +41,22 @@ export default function Step5_Convert() {
 
     return (
         <div className="flex flex-col items-center justify-center py-6">
-            <Card className="max-w-xl w-full border border-[#282f39] bg-[#111418] shadow-none flex flex-col items-center justify-center space-y-8 p-8 text-white rounded-xl">
+            <Card className="max-w-xl w-full border border-app-border bg-app-surface shadow-none flex flex-col items-center justify-center space-y-8 p-8 text-white rounded-xl">
                 {/* 3B-6 Header */}
                 <div className="text-center space-y-2">
                     <h1 className="text-2xl font-bold text-white">Amazon用TSVに変換します</h1>
-                    <p className="text-[#9da8b9] text-sm">
+                    <p className="text-app-text-muted text-sm">
                         このRunのデータとmappingを使って変換します。<br />
                         （ファイル選択は不要です）
                     </p>
                 </div>
 
                 {/* 3B-6 Input Visualization (Read-only) */}
-                <div className="flex items-center gap-4 text-xs text-[#9da8b9] bg-[#1a2027] p-3 rounded-lg border border-[#282f39]">
+                <div className="flex items-center gap-4 text-xs text-app-text-muted bg-app-element p-3 rounded-lg border border-app-border">
                     <div className="flex items-center gap-2">
                         <FileJson className="w-4 h-4" /> raw.json (自動)
                     </div>
-                    <span className="text-[#282f39]">|</span>
+                    <span className="text-app-border">|</span>
                     <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined text-sm">table_chart</span> mapping.csv (自動)
                     </div>
@@ -65,10 +65,10 @@ export default function Step5_Convert() {
                 {/* Status Visualization */}
                 <div className="relative inline-flex items-center justify-center py-4">
                     <div className={`absolute w-40 h-40 rounded-full ${status === 'running' ? 'bg-purple-500/20 animate-ping' : 'bg-transparent'}`} />
-                    <div className={`relative w-32 h-32 rounded-full flex items-center justify-center border-4 shadow-xl transition-all ${status === 'running' ? 'border-purple-500 bg-[#161b22]' :
-                            status === 'success' ? 'border-green-500 bg-[#161b22]' :
-                                status === 'error' ? 'border-red-500 bg-[#161b22]' :
-                                    'border-[#282f39] bg-[#161b22]'
+                    <div className={`relative w-32 h-32 rounded-full flex items-center justify-center border-4 shadow-xl transition-all ${status === 'running' ? 'border-purple-500 bg-app-base' :
+                        status === 'success' ? 'border-green-500 bg-app-base' :
+                            status === 'error' ? 'border-red-500 bg-app-base' :
+                                'border-app-border bg-app-base'
                         }`}>
                         {status === 'running' ? <Loader2 className="w-12 h-12 text-purple-500 animate-spin" /> :
                             status === 'success' ? <CheckCircle className="w-12 h-12 text-green-500" /> :
@@ -91,7 +91,7 @@ export default function Step5_Convert() {
                     )}
 
                     {status === 'running' && (
-                        <p className="text-center text-[#9da8b9] animate-pulse">
+                        <p className="text-center text-app-text-muted animate-pulse">
                             変換処理を実行中...
                         </p>
                     )}
@@ -118,11 +118,11 @@ export default function Step5_Convert() {
                             <div className="grid grid-cols-2 gap-4 text-center">
                                 <div>
                                     <p className="text-3xl font-bold text-green-500">{result.amazon_rows ?? 0}</p>
-                                    <p className="text-xs text-[#9da8b9]">変換成功</p>
+                                    <p className="text-xs text-app-text-muted">変換成功</p>
                                 </div>
                                 <div>
                                     <p className="text-3xl font-bold text-gray-400">{result.failed_rows ?? 0}</p>
-                                    <p className="text-xs text-[#9da8b9]">対象外/失敗</p>
+                                    <p className="text-xs text-app-text-muted">対象外/失敗</p>
                                 </div>
                             </div>
 
@@ -149,4 +149,4 @@ export default function Step5_Convert() {
     );
 }
 
-Step5_Convert.getLayout = (page: React.ReactElement) => <WizardLayout>{page}</WizardLayout>;
+Step5_Convert.getLayout = (page: React.ReactElement) => <AppShell variant="wizard">{page}</AppShell>;

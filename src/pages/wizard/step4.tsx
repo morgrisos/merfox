@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { useOutcome } from '@/contexts/OutcomeContext';
 import { FileSpreadsheet, ArrowRight, RefreshCw } from 'lucide-react';
 import axios from 'axios';
-import { WizardLayout } from '@/components/layout/WizardLayout';
+import { AppShell } from '@/components/layout/AppShell';
 
 export default function Step4_Mapping() {
     const router = useRouter();
@@ -46,33 +46,33 @@ export default function Step4_Mapping() {
 
     return (
         <div className="flex flex-col items-center justify-center py-6">
-            <Card className="max-w-2xl w-full border border-[#282f39] bg-[#111418] shadow-none space-y-6 p-6 text-white rounded-lg">
+            <Card className="max-w-2xl w-full border border-app-border bg-app-surface shadow-none space-y-6 p-6 text-white rounded-lg">
                 <div className="text-center space-y-2">
                     <h1 className="text-2xl font-bold text-white">カテゴリーマッピング</h1>
-                    <p className="text-[#9da8b9] text-sm">メルカリのカテゴリーをAmazonのASINコードに関連付けます。</p>
+                    <p className="text-app-text-muted text-sm">メルカリのカテゴリーをAmazonのASINコードに関連付けます。</p>
                 </div>
 
                 <div className="grid gap-6">
                     {/* Status Card */}
-                    <Card className="border border-[#282f39] bg-[#161b22] shadow-sm rounded-lg">
+                    <Card className="border border-app-border bg-app-element shadow-sm rounded-lg">
                         <CardHeader className="flex flex-row items-center justify-between pb-2 py-4 px-6">
                             <CardTitle className="text-base font-medium text-white">
                                 mapping.csv ステータス
                             </CardTitle>
-                            {loading ? <RefreshCw className="animate-spin h-4 w-4 text-[#9da8b9]" /> :
+                            {loading ? <RefreshCw className="animate-spin h-4 w-4 text-app-text-muted" /> :
                                 mappingStatus?.status === 'custom' ? <FileSpreadsheet className="text-green-500 h-5 w-5" /> :
                                     mappingStatus?.status === 'standard' ? <FileSpreadsheet className="text-blue-500 h-5 w-5" /> :
                                         <FileSpreadsheet className="text-gray-500 h-5 w-5" />}
                         </CardHeader>
                         <CardContent className="px-6 pb-4">
                             {loading ? (
-                                <p className="text-[#9da8b9] text-sm">確認中...</p>
+                                <p className="text-app-text-muted text-sm">確認中...</p>
                             ) : mappingStatus?.status === 'custom' ? (
                                 <div className="space-y-1">
                                     <p className="text-green-500 font-bold flex items-center text-sm">
                                         カスタムマッピング中
                                     </p>
-                                    <p className="text-xs text-[#9da8b9]">
+                                    <p className="text-xs text-app-text-muted">
                                         {mappingStatus.rows ? `${mappingStatus.rows} カテゴリが登録済みです。` : 'カスタム設定が検出されました。'}
                                         専用の変換ルールが適用されます。
                                     </p>
@@ -82,7 +82,7 @@ export default function Step4_Mapping() {
                                     <p className="text-blue-500 font-bold flex items-center text-sm">
                                         標準Amazonマッピングを使用
                                     </p>
-                                    <p className="text-xs text-[#9da8b9]">
+                                    <p className="text-xs text-app-text-muted">
                                         デフォルトのテンプレートが適用されます。自動変換を実行します。
                                     </p>
                                 </div>
@@ -91,7 +91,7 @@ export default function Step4_Mapping() {
                                     <div className="bg-yellow-900/10 border border-yellow-900/30 p-3 rounded text-xs text-yellow-200">
                                         マッピングファイル未検出 (None)
                                     </div>
-                                    <p className="text-xs text-[#9da8b9]">
+                                    <p className="text-xs text-app-text-muted">
                                         システムは自動的に標準テンプレートを生成するか、グローバル設定を使用します。
                                     </p>
                                 </div>
@@ -112,4 +112,4 @@ export default function Step4_Mapping() {
     );
 }
 
-Step4_Mapping.getLayout = (page: React.ReactElement) => <WizardLayout>{page}</WizardLayout>;
+Step4_Mapping.getLayout = (page: React.ReactElement) => <AppShell variant="wizard">{page}</AppShell>;
