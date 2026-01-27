@@ -1,7 +1,7 @@
 {
   "name": "merfox",
   "productName": "MerFox",
-  "version": "0.1.84",
+  "version": "0.1.85",
   "description": "Mercari Automation Tool",
   "main": "dist-electron/main-process/main.js",
   "scripts": {
@@ -104,6 +104,7 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true
     },
-    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "afterPack": "./scripts/afterPack.js"
   }
 }

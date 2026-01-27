@@ -125,7 +125,45 @@ jobs:
           # Ignore 'resource envelope is obsolete' warning if it's just a warning, but we requested strict...
           # Actually, ad-hoc signing on recent macos might trigger some notes. 
           # We use `--deep --strict` as requested. 
-          codesign --verify --deep --strict --verbose=2 dist/mac-*/MerFox.app || echo "::warning::Signature Check Failed (Ad-hoc signing often warns)"
+      # C4. STRICT Code Signature Verification (Re-verify DIST)
+      - name: Verify Code Signature (Strict)
+        if: runner.os != 'Windows'
+        run: |
+          echo "Verifying Code Signature of dist app..."
+          APP_PATH=$(find dist/mac-arm64 -name "*.app" | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "::error::App bundle not found in dist/mac-arm64"
+            exit 1
+          fi
+          
+          echo "Checking signature for: $APP_PATH"
+          codesign --verify --deep --strict --verbose=4 "$APP_PATH"
+          
+          echo "Checking spctl assessment..."
+          spctl -a -vv "$APP_PATH" || echo "::warning::Gatekeeper assessment failed (expected for ad-hoc)"
+
+      # C5. DMG Verification (if exists)
+      - name: Verify DMG Code Signature
+        if: runner.os != 'Windows'
+        run: |
+          DMG_PATH=$(find dist -name "*.dmg" | head -n 1)
+          if [ -f "$DMG_PATH" ]; then
+             echo "Mounting DMG to verify internal app signature..."
+             hdiutil attach "$DMG_PATH" -nobrowse -mountpoint /Volumes/VerifyDMG
+             APP_IN_DMG=$(find /Volumes/VerifyDMG -maxdepth 2 -name "*.app" | head -n 1)
+             
+             if [ -d "$APP_IN_DMG" ]; then
+                echo "Verifying App inside DMG: $APP_IN_DMG"
+                codesign --verify --deep --strict --verbose=4 "$APP_IN_DMG"
+             else
+                echo "::error::App not found inside DMG"
+                exit 1
+             fi
+             
+             hdiutil detach /Volumes/VerifyDMG
+          else
+             echo "DMG not found, skipping DMG verification."
+          fi
 
       # windows
       - name: Build Electron App (electron-builder) [win]
