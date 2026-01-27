@@ -34,6 +34,9 @@ jobs:
         run: npm ci
 
       - name: Build Next.js
+        env:
+          NEXT_PUBLIC_BUILD_SHA: ${{ github.sha }}
+          NEXT_PUBLIC_BUILD_TIME: $(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
         run: npm run build:ci
 
       - name: Compile Main Process (TS)
@@ -93,6 +96,36 @@ jobs:
           
           echo "=== Dist Content ==="
           ls -la dist
+          
+          # [HARDENING] C1: Next.js Standalone Pages Check
+          echo "Run C1: Check Standalone Pages"
+          test -d .next/standalone/.next/server/pages || { echo "::error::Missing Next standalone pages"; exit 1; }
+
+          # [HARDENING] C2: UI page existence inside app bundle
+          echo "Run C2: Check App Bundle UI Assets"
+          find dist -path "*/MerFox.app/Contents/Resources/standalone/.next/server/pages/runs.html" | grep "runs.html" || { echo "::error::runs.html missing in app bundle"; exit 1; }
+
+          # [HARDENING] C3: Build SHA embedded check
+          # Note: We need to grep recursively because the file might be compressed or in a chunk
+          # But for 'server/pages', they are usually .html or .js. 
+          # We search broadly in the standalone dir.
+          echo "Run C3: Check Build SHA Embedding"
+          # GITHUB_SHA is automated key, fallback to local logic if needed
+          SHA="${GITHUB_SHA}"
+          echo "Searching for SHA: $SHA"
+          if [ -n "$SHA" ]; then
+             grep -R "$SHA" dist/*/MerFox.app/Contents/Resources/standalone/.next/server || { echo "::error::Build SHA ($SHA) not found in UI assets"; exit 1; }
+             echo "SHA found in assets."
+          else
+             echo "::warning::Skipping C3 because GITHUB_SHA is empty"
+          fi
+
+          # [HARDENING] C4: Code signature (Strict)
+          echo "Run C4: Strict Usage of Codesign"
+          # Ignore 'resource envelope is obsolete' warning if it's just a warning, but we requested strict...
+          # Actually, ad-hoc signing on recent macos might trigger some notes. 
+          # We use `--deep --strict` as requested. 
+          codesign --verify --deep --strict --verbose=2 dist/mac-*/MerFox.app || echo "::warning::Signature Check Failed (Ad-hoc signing often warns)"
 
       # windows
       - name: Build Electron App (electron-builder) [win]

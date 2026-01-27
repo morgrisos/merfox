@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
 import { useScraper } from '@/hooks/useScraper';
-import { Loader2, StopCircle, CheckCircle, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Loader2, StopCircle, CheckCircle, AlertTriangle, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { useOutcome } from '@/contexts/OutcomeContext';
 import { AppShell } from '@/components/layout/AppShell';
 
@@ -12,6 +12,7 @@ export default function Step2_Extract() {
     const { status, stats, startScraping, stopScraping, logs, isTestComplete } = useScraper();
     const { setOutcome } = useOutcome();
     const [hasStarted, setHasStarted] = useState(false);
+    const [showConditions, setShowConditions] = useState(false);
 
     // Auto-start
     useEffect(() => {
@@ -26,13 +27,12 @@ export default function Step2_Extract() {
         if (isTestComplete || status === 'COMPLETED' || status === 'ERROR') {
             setOutcome({
                 success: status !== 'ERROR' && stats.newItems > 0,
-                // Cast to any to inject latestRunId if missing from type definition, or remove if not needed yet
-                latestRunId: '4b221f9c-9f80-4be3-99dc-58545e6ae503',
+                latestRunId: '4b221f9c-9f80-4be3-99dc-58545e6ae503', // Mock ID
                 itemsCount: stats.newItems,
                 failedCount: stats.failed
             } as any);
 
-            // 3B-3: Auto-transition if 0 items or Error
+            // Auto-transition on Error or 0 items
             if (status === 'ERROR' || stats.newItems === 0) {
                 setTimeout(() => {
                     router.push('/wizard/step3?mode=diagnosis');
@@ -46,85 +46,126 @@ export default function Step2_Extract() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center py-6">
-            <div className="h-full grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full mx-auto">
-                {/* 3B-3 Left Column: Settings (Minimal) */}
-                <Card className="col-span-1 border border-app-border bg-app-surface shadow-sm h-fit text-white rounded-lg">
-                    <CardHeader className="py-4">
-                        <CardTitle className="text-base font-bold text-white">設定 (20件)</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4 text-sm pb-6">
-                        <div className="space-y-4">
-                            <div>
-                                <div className="text-app-text-muted text-xs mb-1">基本フィルタ</div>
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex items-center gap-2 text-xs text-white">
-                                        <CheckCircle className="w-3 h-3 text-green-500" /> ショップ除外
-                                    </div>
-                                    <div className="flex items-center gap-2 text-xs text-app-text-muted">
-                                        <div className="w-3 h-3 border border-app-text-muted rounded-sm"></div> 送料込みのみ (未指定)
-                                    </div>
+        <div className="flex flex-col items-center justify-center py-10">
+            <div className="max-w-3xl mx-auto w-full space-y-6">
+
+                {/* Main Completion Card */}
+                <Card className="border border-app-border bg-app-surface text-white overflow-hidden shadow-lg">
+                    <CardContent className="p-8 flex flex-col items-center space-y-8">
+
+                        {/* 1. Header & Status */}
+                        <div className="flex flex-col items-center space-y-4">
+                            <div className="relative inline-flex items-center justify-center">
+                                <div className={`absolute w-24 h-24 rounded-full ${status === 'RUNNING' ? 'bg-blue-500/20 animate-ping' : 'bg-transparent'}`} />
+                                <div className={`relative w-20 h-20 rounded-full flex items-center justify-center border-4 shadow-xl ${status === 'RUNNING' ? 'border-blue-500 bg-app-base' :
+                                        status === 'COMPLETED' || isTestComplete ? 'border-green-500 bg-green-500/10' :
+                                            'border-red-500 bg-red-500/10'
+                                    }`}>
+                                    {status === 'RUNNING' ? <Loader2 className="w-8 h-8 text-blue-500 animate-spin" /> :
+                                        status === 'COMPLETED' || isTestComplete ? <CheckCircle className="w-8 h-8 text-green-500" /> :
+                                            <AlertTriangle className="w-8 h-8 text-red-500" />}
                                 </div>
                             </div>
-                            <div className="p-3 bg-blue-900/10 border border-blue-500/20 rounded text-xs text-blue-300">
-                                安心文: まずは20件で確認してから本番がおすすめです。
+
+                            <div className="text-center">
+                                <h2 className="text-2xl font-bold text-white mb-2">
+                                    {status === 'RUNNING' ? '抽出しています...' : (stats.newItems > 0 ? '抽出完了' : '抽出終了')}
+                                </h2>
+                                <p className="text-app-text-muted text-sm">
+                                    {status === 'RUNNING' ? '対象ページを解析し、商品データを収集しています' :
+                                        stats.newItems > 0 ? '正常に商品データが取得されました' : '条件に一致する商品が見つかりませんでした'}
+                                </p>
                             </div>
                         </div>
+
+                        {/* 2. Stats */}
+                        <div className="grid grid-cols-2 gap-8 w-full max-w-md mx-auto text-center border-t border-b border-app-border py-6">
+                            <div>
+                                <p className="text-xs text-app-text-muted uppercase font-bold tracking-wider mb-1">検出アイテム</p>
+                                <span className="text-2xl font-mono text-white">{stats.totalItems || 0}</span>
+                            </div>
+                            <div>
+                                <p className="text-xs text-app-text-muted uppercase font-bold tracking-wider mb-1">取得件数</p>
+                                <span className={`text-3xl font-mono font-bold ${stats.newItems > 0 ? 'text-blue-400' : 'text-app-text-muted'}`}>
+                                    {stats.newItems} <span className="text-base font-normal text-app-text-muted">件</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* 3. CTA Buttons */}
+                        <div className="w-full max-w-sm pt-2">
+                            {status === 'RUNNING' ? (
+                                <Button size="lg" variant="danger" className="w-full h-12 text-base font-bold shadow-lg bg-red-500 hover:bg-red-600 border-none" onClick={stopScraping}>
+                                    <StopCircle className="mr-2 h-5 w-5" /> 停止する
+                                </Button>
+                            ) : (stats.newItems > 0) ? (
+                                <Button size="lg" className="w-full h-14 text-lg font-bold bg-green-600 hover:bg-green-500 text-white shadow-xl transform transition-transform hover:scale-[1.02]" onClick={handleNext}>
+                                    次へ（確認） <ArrowRight className="ml-2 h-5 w-5" />
+                                </Button>
+                            ) : (
+                                <div className="text-center text-sm text-app-text-muted animate-pulse py-2">
+                                    診断画面へ移動中...
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 4. Conditions Summary (Collapsible) */}
+                        <div className="w-full max-w-lg mt-4">
+                            <button
+                                onClick={() => setShowConditions(!showConditions)}
+                                className="w-full flex items-center justify-center gap-2 text-xs text-app-text-muted hover:text-white transition-colors py-2"
+                            >
+                                {showConditions ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                                <span>使用した条件 ({showConditions ? '閉じる' : '詳細を表示'})</span>
+                            </button>
+
+                            {showConditions && (
+                                <div className="mt-4 p-4 rounded-lg bg-app-element border border-app-border text-left w-full animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <div className="text-xs font-bold text-app-text-muted mb-3 uppercase tracking-wider">設定 (20件)</div>
+                                    <div className="space-y-3">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex items-center gap-2 text-sm text-white">
+                                                <CheckCircle className="w-4 h-4 text-green-500" /> <span>ショップ除外: <span className="font-bold">ON</span></span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm text-app-text-muted">
+                                                <div className="w-4 h-4 border border-app-text-muted rounded-sm"></div> <span>送料込みのみ: <span className="font-mono">未指定</span></span>
+                                            </div>
+                                        </div>
+                                        <div className="text-xs text-blue-300 mt-2 pt-2 border-t border-white/5">
+                                            ※ テスト実行: 最大20件で制限中
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                     </CardContent>
                 </Card>
 
-                {/* 3B-3 Right Column: Progress */}
-                <Card className="col-span-2 border-none shadow-none bg-transparent flex flex-col items-center justify-center space-y-8 text-white">
-                    {/* Status Icon */}
-                    <div className="relative inline-flex items-center justify-center">
-                        <div className={`absolute w-32 h-32 rounded-full ${status === 'RUNNING' ? 'bg-blue-500/20 animate-ping' : 'bg-app-base'}`} />
-                        <div className="relative w-28 h-28 bg-app-base rounded-full flex items-center justify-center border-4 border-blue-500 shadow-xl">
-                            {status === 'RUNNING' ? <Loader2 className="w-10 h-10 text-blue-500 animate-spin" /> :
-                                status === 'COMPLETED' || isTestComplete ? <CheckCircle className="w-10 h-10 text-green-500" /> :
-                                    <AlertTriangle className="w-10 h-10 text-red-500" />}
+                {/* Logs Area (Outside Card) */}
+                <div className="w-full">
+                    <div className="flex items-center justify-between px-2 mb-2">
+                        <span className="text-xs font-bold text-app-text-muted uppercase tracking-wider">実行ログ</span>
+                        <span className="text-xs text-app-text-muted font-mono">{logs.length} events</span>
+                    </div>
+                    <div className="bg-black/40 border border-app-border rounded-lg overflow-hidden backdrop-blur-sm">
+                        <div className="h-48 overflow-auto p-4 font-mono text-xs space-y-1.5 custom-scrollbar">
+                            {logs && logs.length > 0 ? (
+                                logs.slice().reverse().map((log, i) => (
+                                    <div key={i} className="flex gap-3 text-app-text-muted hover:text-white/90 transition-colors">
+                                        <span className="opacity-50 shrink-0 select-none">[{log.timestamp}]</span>
+                                        <span className={log.message.includes('Error') ? 'text-red-400' : log.message.includes('Success') || log.message.includes('Found') ? 'text-green-400' : ''}>
+                                            {log.message}
+                                        </span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-app-text-muted opacity-50 italic px-2">ログ待機中...</div>
+                            )}
                         </div>
                     </div>
+                </div>
 
-                    {/* Text Status */}
-                    <div className="text-center space-y-2">
-                        <h2 className="text-2xl font-bold text-white">
-                            {status === 'RUNNING' ? '抽出しています...' : (stats.newItems > 0 ? '抽出完了' : '抽出終了')}
-                        </h2>
-                        <div className="text-base text-app-text-muted space-y-1">
-                            {/* Fixed: stats.totalPages -> stats.totalItems */}
-                            <p>検出アイテム: <span className="text-white font-mono">{stats.totalItems || 0}</span></p>
-                            <p>取得件数: <span className="text-blue-400 font-bold font-mono text-xl">{stats.newItems}</span> 件</p>
-                        </div>
-                    </div>
-
-                    {/* 3B-3 Buttons (State based) */}
-                    <div className="w-full max-w-sm">
-                        {status === 'RUNNING' ? (
-                            <Button size="lg" variant="danger" className="w-full h-12 text-base font-bold shadow-lg" onClick={stopScraping}>
-                                <StopCircle className="mr-2 h-5 w-5" /> 停止する
-                            </Button>
-                        ) : (stats.newItems > 0) ? (
-                            <div className="space-y-3">
-                                <Button size="lg" className="w-full h-12 text-base font-bold bg-green-600 hover:bg-green-500 text-white shadow-lg" onClick={handleNext}>
-                                    次へ（確認） <ArrowRight className="ml-2 h-5 w-5" />
-                                </Button>
-                            </div>
-                        ) : (
-                            <div className="text-center text-sm text-app-text-muted animate-pulse">
-                                診断へ移動中...
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Logs */}
-                    <div className="w-full h-40 bg-app-base border border-app-border text-green-400 font-mono text-xs p-4 rounded-lg overflow-hidden shadow-inner opacity-80">
-                        <div className="flex flex-col-reverse h-full overflow-auto custom-scrollbar">
-                            {logs?.slice(-10).map((log, i) => (
-                                <div key={i} className="border-b border-app-border/50 py-1">{log.timestamp} {log.message}</div>
-                            )) || "ログ待機中..."}
-                        </div>
-                    </div>
-                </Card>
             </div>
         </div>
     );

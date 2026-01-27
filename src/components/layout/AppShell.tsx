@@ -11,6 +11,11 @@ interface AppShellProps {
 export const AppShell = ({ children, variant = 'default', className }: AppShellProps) => {
     return (
         <div className="flex h-screen bg-app-base text-app-text-main overflow-hidden font-sans" data-variant={variant}>
+            {/* CI VERIFICATION TAG - DO NOT REMOVE */}
+            <div style={{ display: 'none' }} data-merfox-build-sha={process.env.NEXT_PUBLIC_BUILD_SHA}>
+                {`MERFOX_BUILD_SHA:${process.env.NEXT_PUBLIC_BUILD_SHA}`}
+            </div>
+
             {/* Persistent Sidebar */}
             <AppSidebar />
 

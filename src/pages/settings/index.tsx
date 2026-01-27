@@ -21,6 +21,48 @@ export default function Settings() {
                 </p>
             </div>
 
+            {/* APP INFO & UPDATE */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="p-6 bg-app-surface border-app-border">
+                    <h3 className="text-lg font-bold text-white mb-4">バージョン情報</h3>
+                    <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                            <span className="text-app-text-muted">Version</span>
+                            <span className="text-white font-mono">v0.1.83</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-app-text-muted">Build SHA</span>
+                            <span className="text-white font-mono" title={process.env.NEXT_PUBLIC_BUILD_SHA}>
+                                {(process.env.NEXT_PUBLIC_BUILD_SHA || 'dev').substring(0, 7)}
+                            </span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-app-text-muted">Built At</span>
+                            <span className="text-white font-mono">
+                                {process.env.NEXT_PUBLIC_BUILD_TIME ? new Date(process.env.NEXT_PUBLIC_BUILD_TIME).toLocaleString() : 'Dev'}
+                            </span>
+                        </div>
+                    </div>
+                </Card>
+
+                <Card className="p-6 bg-app-surface border-app-border">
+                    <h3 className="text-lg font-bold text-white mb-4">アップデート</h3>
+                    <div className="space-y-4">
+                        <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded text-yellow-200 text-sm">
+                            <span className="font-bold">手動更新モード:</span> TLS/SSL制限回避のため、自動更新は無効化されています。
+                        </div>
+                        <Link
+                            href="https://github.com/morgrisos/merfox/releases"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block w-full py-2 px-4 bg-app-element hover:bg-app-element/80 text-white text-center rounded border border-app-border transition-colors text-sm font-medium"
+                        >
+                            GitHub Releases で最新版を確認
+                        </Link>
+                    </div>
+                </Card>
+            </div>
+
             <hr className="border-app-border" />
 
             {/* Coming Soon Area */}
