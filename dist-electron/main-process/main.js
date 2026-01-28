@@ -211,7 +211,9 @@ const startServer = async () => {
                 ...process.env,
                 NODE_ENV: 'production',
                 PORT: `${SERVER_PORT}`,
-                ELECTRON_RUN_AS_NODE: '1'
+                ELECTRON_RUN_AS_NODE: '1',
+                MERFOX_USER_DATA: electron_1.app.getPath('userData'),
+                MERFOX_RUNS_DIR: path_1.default.join(electron_1.app.getPath('userData'), 'MerFox/runs')
             },
             stdio: ['ignore', outStream || 'ignore', errStream || 'ignore']
         });

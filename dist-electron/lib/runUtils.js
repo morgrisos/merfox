@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getRunsDir = getRunsDir;
+exports.getConfigPath = getConfigPath;
 exports.getGlobalMappingPath = getGlobalMappingPath;
 exports.getRunDir = getRunDir;
 const promises_1 = __importDefault(require("fs/promises"));
@@ -17,6 +18,11 @@ function getRunsDir() {
     if (process.env.NODE_ENV === 'development')
         return path_1.default.join(process.cwd(), 'runs_dev');
     return path_1.default.join(os_1.default.homedir(), 'Library/Application Support/merfox/MerFox/runs');
+}
+function getConfigPath() {
+    // Config should be adjacent to runs, e.g. .../MerFox/merfox.automation.json
+    const runsDir = getRunsDir();
+    return path_1.default.join(path_1.default.dirname(runsDir), 'merfox.automation.json');
 }
 function getGlobalMappingPath() {
     const runsDir = getRunsDir();

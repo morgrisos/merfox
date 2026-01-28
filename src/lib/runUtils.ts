@@ -9,6 +9,12 @@ export function getRunsDir() {
     return path.join(os.homedir(), 'Library/Application Support/merfox/MerFox/runs');
 }
 
+export function getConfigPath() {
+    // Config should be adjacent to runs, e.g. .../MerFox/merfox.automation.json
+    const runsDir = getRunsDir();
+    return path.join(path.dirname(runsDir), 'merfox.automation.json');
+}
+
 export function getGlobalMappingPath() {
     const runsDir = getRunsDir();
     return path.join(path.dirname(runsDir), 'mapping.csv'); // .../MerFox/mapping.csv
