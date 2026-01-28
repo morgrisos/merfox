@@ -1,45 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 127.0.0.1:13337...
-* Connected to 127.0.0.1 (127.0.0.1) port 13337
-> GET /api/runs?limit=1 HTTP/1.1
-> Host: 127.0.0.1:13337
-> User-Agent: curl/8.6.0
-> Accept: */*
-> 
-< HTTP/1.1 200 OK
-< Content-Type: application/json; charset=utf-8
-< ETag: "o0efp39l2eci"
-< Content-Length: 450
-< Vary: Accept-Encoding
-< Date: Wed, 21 Jan 2026 05:59:35 GMT
-< Connection: keep-alive
-< Keep-Alive: timeout=5
-< 
-{ [450 bytes data]
-100   450  100   450    0     0  11877      0 --:--:-- --:--:-- --:--:-- 12162
-* Connection #0 to host 127.0.0.1 left intact
-{"data":[{"id":"4b221f9c-9f80-4be3-99dc-58545e6ae503","name":"4b221f9c-9f80-4be3-99dc-58545e6ae503","date":"2026-01-21","path":"/Users/yuga/VSCode/V4/merfox/runs_dev/4b221f9c-9f80-4be3-99dc-58545e6ae503","stats":{"totalScanned":2,"success":2,"failed":0},"failureReasons":[],"failedUrls":[],"artifacts":{"hasGoogle":false,"hasAmazon":false,"hasProfit":false,"hasAsin":false,"hasRaw":true}}],"meta":{"scanPath":"/Users/yuga/VSCode/V4/merfox/runs_dev"}}
----
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 127.0.0.1:13337...
-* Connected to 127.0.0.1 (127.0.0.1) port 13337
-> POST /api/runs/4b221f9c-9f80-4be3-99dc-58545e6ae503/convert HTTP/1.1
-> Host: 127.0.0.1:13337
-> User-Agent: curl/8.6.0
-> Accept: */*
-> 
-< HTTP/1.1 200 OK
-< Content-Type: application/json; charset=utf-8
-< ETag: "11f3urr6phv63"
-< Content-Length: 219
-< Vary: Accept-Encoding
-< Date: Wed, 21 Jan 2026 05:59:35 GMT
-< Connection: keep-alive
-< Keep-Alive: timeout=5
-< 
-{ [219 bytes data]
-100   219  100   219    0     0   1618      0 --:--:-- --:--:-- --:--:--  1622
-* Connection #0 to host 127.0.0.1 left intact
-{"success":true,"run_id":"4b221f9c-9f80-4be3-99dc-58545e6ae503","run_dir":"/Users/yuga/VSCode/V4/merfox/runs_dev/4b221f9c-9f80-4be3-99dc-58545e6ae503","mapping_status":"created_template","amazon_rows":0,"failed_rows":2}

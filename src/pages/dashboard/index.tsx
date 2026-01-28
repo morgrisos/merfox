@@ -338,11 +338,11 @@ export default function Dashboard() {
                     {/* 7. Automation Promo */}
                     <div className="bg-gradient-to-br from-blue-900/20 to-app-surface border border-blue-500/20 rounded-xl p-5 text-center">
                         <div className="size-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-blue-400">
-                            <span className="material-symbols-outlined">smart_toy</span>
+                            <Activity className="w-8 h-8" />
                         </div>
-                        <h3 className="font-bold text-white mb-1">在庫監視（Watch）</h3>
+                        <h3 className="font-bold text-white mb-1">在庫監視</h3>
                         <p className="text-xs text-app-text-muted mb-4">
-                            売り切れや新着を自動で検知します。
+                            売り切れ・再出品・価格変動を自動で検知します
                         </p>
                         <Link href="/scraper" className="block w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors">
                             在庫監視を設定する

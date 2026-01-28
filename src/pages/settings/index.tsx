@@ -4,6 +4,8 @@ import { AppShell } from '@/components/layout/AppShell';
 import { ComingSoon } from '@/components/ui/ComingSoon';
 import { Card } from '@/components/ui/card';
 
+import { LicenseSection } from '@/components/settings/LicenseSection';
+
 export default function Settings() {
     return (
         <div className="flex flex-col h-full bg-app-base text-app-text-main p-6 gap-6">
@@ -11,15 +13,16 @@ export default function Settings() {
                 <nav className="flex flex-wrap gap-2 text-sm">
                     <Link href="/" className="text-app-text-muted font-medium hover:text-white transition-colors">ダッシュボード</Link>
                     <span className="text-app-text-muted font-medium">/</span>
-                    <span className="text-app-text-muted font-medium">在庫監視</span>
-                    <span className="text-app-text-muted font-medium">/</span>
                     <span className="text-white font-medium">設定</span>
                 </nav>
-                <h1 className="text-3xl font-bold text-white">抽出設定</h1>
+                <h1 className="text-3xl font-bold text-white">設定</h1>
                 <p className="text-app-text-muted text-base max-w-2xl">
-                    スクレイピングエンジンのターゲットURLと実行パラメータを構成します。
+                    アプリケーションの全般設定とライセンス管理を行います。
                 </p>
             </div>
+
+            {/* License Management */}
+            <LicenseSection />
 
             {/* APP INFO & UPDATE */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

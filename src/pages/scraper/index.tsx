@@ -267,4 +267,10 @@ export default function InventoryMonitor() {
     );
 }
 
-InventoryMonitor.getLayout = (page: React.ReactElement) => <AppShell>{page}</AppShell>;
+import { LicenseGate } from '@/components/license/LicenseGate';
+
+InventoryMonitor.getLayout = (page: React.ReactElement) => (
+    <AppShell>
+        <LicenseGate>{page}</LicenseGate>
+    </AppShell>
+);

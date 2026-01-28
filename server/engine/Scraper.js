@@ -60,8 +60,10 @@ class Scraper extends EventEmitter {
     async gotoWithRetry(page, url, retries = 3) {
         for (let i = 0; i < retries; i++) {
             try {
-                await page.goto(url, { timeout: 30000, waitUntil: 'domcontentloaded' });
-                return;
+                const response = await page.goto(url, { timeout: 30000, waitUntil: 'domcontentloaded' });
+                const status = response ? response.status() : 'unknown';
+                this.log(`Navigated to ${url} (Status: ${status})`, 'info');
+                return response;
             } catch (e) {
                 if (i === retries - 1) throw e;
                 this.log(`Retrying navigation (${i + 1}/${retries})...`, 'warn');
@@ -115,18 +117,18 @@ class Scraper extends EventEmitter {
                 this.log(`RAW CSVを保存しました: ${outputPath}`, 'success');
 
                 // [P4 Restoration] Call services
-                this.log('Amazon TSVへの変換を開始します...', 'info');
+                // this.log('Amazon TSVへの変換を開始します...', 'info');
 
                 // P4.2 ASIN
-                const asinResult = await AsinService.run(this.runDir, this.items);
-                this.stats = { ...this.stats, ...asinResult }; // Merge asinStats
+                // const asinResult = await AsinService.run(this.runDir, this.items);
+                // this.stats = { ...this.stats, ...asinResult }; // Merge asinStats
 
                 // P4.1 Profit & Export
                 // Pass config options if any
-                const exportResult = await ExportService.run(this.runDir, this.items, this.config);
-                this.stats = { ...this.stats, ...exportResult }; // Merge profitStats, exportStats
+                // const exportResult = await ExportService.run(this.runDir, this.items, this.config);
+                // this.stats = { ...this.stats, ...exportResult }; // Merge profitStats, exportStats
 
-                this.log(`変換完了: Success=${this.stats.exportStats.tsv_rows} Failed=${this.stats.exportStats.failed_rows}`, 'success');
+                // this.log(`変換完了: Success=${this.stats.exportStats.tsv_rows} Failed=${this.stats.exportStats.failed_rows}`, 'success');
 
                 this.logSummary(); // Write detailed summary to log
 
@@ -258,6 +260,15 @@ class Scraper extends EventEmitter {
                     this.log('新しい商品は見つかりませんでした (All known).', 'success'); // Not error
                 } else {
                     this.log('商品リンクが1つも見つかりませんでした。', 'warn');
+                    // [Diagnosis] Log reasons for 0 items
+                    const title = await page.title();
+                    const bodySnippet = await page.evaluate(() => document.body.innerText.slice(0, 300).replace(/\n/g, ' '));
+                    const listSelector = '[data-testid="item-list"], #item-grid, a[href*="/item/m"]';
+                    const hasList = await page.evaluate((sel) => !!document.querySelector(sel), listSelector);
+
+                    this.log(`[Diagnosis] Title: ${title}`);
+                    this.log(`[Diagnosis] Selector '${listSelector}' found: ${hasList}`);
+                    this.log(`[Diagnosis] Body Snippet: ${bodySnippet}`);
                 }
             } else {
                 this.log(`新規収集対象: ${foundLinks.length}件。詳細取得を開始します。`, 'info');

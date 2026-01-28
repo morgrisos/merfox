@@ -59,13 +59,13 @@ export const PresetBlock = () => {
                                         className={clsx("flex-1 text-xs font-bold py-1.5 rounded transition-colors", collectionMode === 'bulk' ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700")}
                                         onClick={() => updateSettings({ collectionMode: 'bulk' })}
                                     >
-                                        Bulk (大量収集)
+                                        大量収集
                                     </button>
                                     <button
                                         className={clsx("flex-1 text-xs font-bold py-1.5 rounded transition-colors", collectionMode === 'watch' ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700")}
                                         onClick={() => updateSettings({ collectionMode: 'watch' })}
                                     >
-                                        Watch (新着監視)
+                                        在庫監視
                                     </button>
                                 </div>
                                 {collectionMode === 'watch' && (
