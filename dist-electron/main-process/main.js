@@ -5,17 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path_1 = __importDefault(require("path"));
-// [HARDENING] Prevent Zombie Processes (v0.1.83)
-if (process.env.ELECTRON_RUN_AS_NODE === "1") {
-    // We cannot use 'dialog' before app ready in some contexts, 
-    // but for 'main' entrypoint, it might work if we are careful.
-    // However, console.error + exit is safer if dialog fails.
-    console.error("[FATAL] ELECTRON_RUN_AS_NODE=1 detected. MerFox cannot run in this mode.");
-    // Attempt dialog if possible (best effort), but force exit.
-    // We need to wait for app 'ready' to reliably show dialog? 
-    // Actually, simple panic log + exit is the most robust prevention.
-    process.exit(1);
-}
+// [HARDENING] Prevent Zombie Processes (v0.1.83) - REMOVED
+// Reason: spawn() for Next.js server utilizes ELECTRON_RUN_AS_NODE, causing this guard to kill the backend.
+// if (process.env.ELECTRON_RUN_AS_NODE === "1") { ... }
 const child_process_1 = require("child_process");
 const net_1 = __importDefault(require("net"));
 const electron_log_1 = __importDefault(require("electron-log"));

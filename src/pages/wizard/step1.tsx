@@ -118,4 +118,10 @@ export default function Step1_Url() {
     );
 }
 
-Step1_Url.getLayout = (page: React.ReactElement) => <AppShell variant="wizard">{page}</AppShell>;
+import { LicenseGate } from '@/components/license/LicenseGate';
+
+Step1_Url.getLayout = (page: React.ReactElement) => (
+    <AppShell variant="wizard">
+        <LicenseGate>{page}</LicenseGate>
+    </AppShell>
+);

@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app';
+import { LicenseProvider } from '@/contexts/LicenseContext';
 import { NextPage } from 'next';
 import { ScraperProvider } from '@/hooks/useScraper';
 import { SettingsProvider } from '@/hooks/useSettings';
@@ -19,12 +20,14 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     const getLayout = Component.getLayout ?? ((page) => page);
 
     return (
-        <SettingsProvider>
-            <ScraperProvider>
-                <OutcomeProvider>
-                    {getLayout(<Component {...pageProps} />)}
-                </OutcomeProvider>
-            </ScraperProvider>
-        </SettingsProvider>
+        <LicenseProvider>
+            <SettingsProvider>
+                <ScraperProvider>
+                    <OutcomeProvider>
+                        {getLayout(<Component {...pageProps} />)}
+                    </OutcomeProvider>
+                </ScraperProvider>
+            </SettingsProvider>
+        </LicenseProvider>
     );
 }

@@ -41,3 +41,15 @@ jobs_*.json
 release_public_v*.json
 release_create_v*.json
 checks_*.json
+
+# --- MerFox: generated / heavy artifacts ---
+output-asar/
+dist/
+dist-electron/
+.next/
+runs_dev/
+*.log
+*.zip
+*.pid
+tsconfig.tsbuildinfo
+evidence.log

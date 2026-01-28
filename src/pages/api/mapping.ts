@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
 import { stringify } from 'csv-stringify/sync'; // Using sync for simplicity/safety in this MVP
-import { getRunsDir } from '../../lib/runUtils';
+import { getRunsDir, getGlobalMappingPath } from '../../lib/runUtils';
 
 // Helper: Normalize string for header comparison
 function normalizeHeader(h: string): string {
@@ -43,12 +43,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(404).json({ error: 'No runs found' });
         }
 
-        const mappingPath = path.join(latestRunDir, 'mapping.csv');
+        let mappingPath = getGlobalMappingPath();
         let csvContent = '';
+
         try {
             csvContent = await fs.readFile(mappingPath, 'utf8');
         } catch {
-            return res.status(404).json({ error: 'mapping.csv not found in latest run' });
+            // If Global Mapping missing, try LATEST RUN raw.csv to seed
+            try {
+                const rawPath = path.join(latestRunDir, 'raw.csv');
+                csvContent = await fs.readFile(rawPath, 'utf8');
+            } catch (e2) {
+                return res.status(404).json({ error: 'mapping.csv (Global) not found and raw.csv (Local) missing.' });
+            }
         }
 
         // BOM safe
@@ -170,7 +177,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 quoted_string: true // Safer for URLs/Titles containing commas
             });
 
-            await fs.writeFile(mappingPath, stringifier, 'utf8');
+            // If we fell back to raw.csv, we are now SAVING as mapping.csv (Global).
+            // Always save to Global Path.
+            await fs.writeFile(getGlobalMappingPath(), stringifier, 'utf8');
 
             return res.status(200).json({ success: true, updatedCount });
         }

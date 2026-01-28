@@ -3,6 +3,11 @@ import fs from 'fs/promises';
 import path from 'path';
 
 import { getRunsDir, getConfigPath } from '../../../lib/runUtils';
+import { AmazonConverter } from '../../../lib/converter';
+
+// @ts-ignore
+// Fix path: src/pages/api/automation -> 4 levels up to root
+const { Scraper } = require('../../../../server/engine/Scraper.js');
 
 const CONFIG_PATH = getConfigPath();
 
@@ -13,15 +18,13 @@ type AutomationConfig = {
     lastTriggeredAt?: string;
 };
 
-// Simple lock check (check latest run status)
+// ... isRunning check ...
 async function isRunning(): Promise<boolean> {
     const runsDir = getRunsDir();
     try {
         const dirs = await fs.readdir(runsDir);
         const activeRuns = dirs.filter(d => /^\d{4}-\d{2}-\d{2}_run\d{3}$/.test(d) || d.includes('run999')).sort().reverse();
         if (activeRuns.length === 0) return false;
-
-        // Check the latest run only
         const latestRun = activeRuns[0];
         try {
             const summaryPath = path.join(runsDir, latestRun, 'summary.json');
@@ -39,37 +42,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        // 1. Load or Create Config
+        // 1. Config Load
         let config: AutomationConfig;
         try {
             const data = await fs.readFile(CONFIG_PATH, 'utf8');
             config = JSON.parse(data);
         } catch {
-            // Auto-create default config if missing (Fix for manual setup requirement)
-            console.log('[Automation] Config missing, creating default at:', CONFIG_PATH);
-            const defaultConfig: AutomationConfig = {
+            console.log('[Automation] Config missing, creating default.');
+            config = {
                 enabled: true,
                 schedule: { kind: 'daily', hour: 12, minute: 0 },
-                targetUrl: 'https://jp.mercari.com/search?keyword=test', // Default safe target
+                targetUrl: 'https://jp.mercari.com/search?keyword=test', // Safest default
                 lastTriggeredAt: ''
             };
             await fs.mkdir(path.dirname(CONFIG_PATH), { recursive: true });
-            await fs.writeFile(CONFIG_PATH, JSON.stringify(defaultConfig, null, 2));
-            config = defaultConfig;
+            await fs.writeFile(CONFIG_PATH, JSON.stringify(config, null, 2));
         }
 
-        // 2. Check Enabled
-        if (!config.enabled) {
-            return res.status(200).json({ skipped: true, reason: 'disabled' });
-        }
+        if (!config.enabled) return res.status(200).json({ skipped: true, reason: 'disabled' });
 
-        // 3. Check Last Triggered (Daily prevention)
-        // Note: For manual triggers (via curl), we might want to bypass this?
-        // But the requirement says "prevent double run". 
-        // We'll treat POST as "Try to run per schedule". 
-        // If query param ?force=true is present, bypass time check.
         const force = req.query.force === 'true';
-
         if (!force && config.lastTriggeredAt) {
             const last = new Date(config.lastTriggeredAt);
             const now = new Date();
@@ -78,47 +70,86 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         }
 
-        // 4. Check Exclusive Lock
-        if (await isRunning()) {
-            return res.status(200).json({ skipped: true, reason: 'already_running' });
-        }
+        if (await isRunning()) return res.status(200).json({ skipped: true, reason: 'already_running' });
 
-        // 5. Start Scraper (MVP: Create Artifacts Manually to guarantee success)
-        console.log('[Automation] Triggering Scraper Run (MVP)...');
-
-        // Update lastTriggeredAt
+        // 2. Start Scraper
+        console.log('[Automation] Starting Real Scraper Run...');
         config.lastTriggeredAt = new Date().toISOString();
-        const now = new Date();
-        const dateStr = now.toISOString().split('T')[0];
-        const runId = `${dateStr}_run999`; // Force high number to appear top
+        const dateStr = new Date().toISOString().split('T')[0];
+        const runId = `run999`; // Keep consistent with user observation
 
-        const runsDir = getRunsDir();
-        const runPath = path.join(runsDir, runId);
+        // Pass environment for Scraper to find dirs
+        process.env.MERFOX_RUNS_DIR = getRunsDir();
 
-        try {
-            await fs.mkdir(runsDir, { recursive: true });
-            await fs.mkdir(runPath, { recursive: true });
+        // Instantiate Scraper
+        const scraper = new Scraper(runId, 'automation', config.targetUrl, {
+            stopLimit: 50,
+            excludeKeywords: '' // Get from config if exists
+        });
 
-            const summary = {
-                status: 'running',
-                startTime: now.toISOString(),
-                totalCandidates: 0,
-                scraped: 0,
-                config: { targetUrl: config.targetUrl, mode: 'automation' }
-            };
-            await fs.writeFile(path.join(runPath, 'summary.json'), JSON.stringify(summary, null, 2));
-            // [HARDENING] Requirement B: raw.csv must not be 0B
-            const csvHeader = 'id,name,price,status,url,image_url,seller_name,description,category,brand,size,condition,shipping_payer,shipping_method,shipping_origin,shipping_duration\n';
-            await fs.writeFile(path.join(runPath, 'raw.csv'), csvHeader);
-            await fs.writeFile(path.join(runPath, 'run.log'), '[Automation] Run started via Schedule MVP.\n');
+        // Run async (fire and forget for API response, OR wait?)
+        // Automation is usually background. But for "Run Now" debug, waiting is better to see errors.
+        // Given this is an internal API called by scheduler/curl, let's WAIT for critical parts.
+        // Actually, Vercel/Next.js function timeouts are short. Background is safer.
+        // But for Electron Standalone, no timeout limit usually. 
+        // We'll Execute logic, but maybe return early?
+        // User wants "reason" in log. If we return early, user sees "started".
+        // Let's run it inline.
 
-            await fs.writeFile(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
+        await scraper.start(); // This runs the whole scrape (Playwright)
 
-            return res.status(200).json({ success: true, triggeredAt: config.lastTriggeredAt, runId });
-        } catch (e) {
-            console.error('[Automation] Failed to create run artifacts:', e);
-            throw e;
+        // 3. Post-Scrape: Converter
+        const stats = scraper.stats;
+        let convertResult: { converted: number, failed: number, failedNoId: number, error?: string } = { converted: 0, failed: 0, failedNoId: 0, error: '' };
+
+        if (stats.success > 0) {
+            console.log('[Automation] Scrape success. running converter...');
+            const runPath = scraper.runDir; // Scraper sets this
+
+            // Generate mapping.csv if needed? 
+            // Automation assumes mapping exists or we skip?
+            // User requirement: "0 valid rows -> NO TSV".
+            // AmazonConverter will handle it.
+
+            // We need to pass config (minPrice/maxPrice) if exists.
+            convertResult = await AmazonConverter.convert(runPath, {});
+
+            // Update Summary with convert stats
+            const summaryPath = path.join(runPath, 'summary.json');
+            try {
+                const summary = JSON.parse(await fs.readFile(summaryPath, 'utf8').catch(() => '{}'));
+                summary.convert = convertResult;
+                summary.status = 'completed';
+                await fs.writeFile(summaryPath, JSON.stringify(summary, null, 2));
+            } catch (e) { }
+
+        } else {
+            console.log('[Automation] 0 candidates found. Skipping converter.');
+            // Update status to 'completed' (or 'failed' if error) inside Scraper?
+            // Scraper.js updates summary? No it emits 'done'.
+            // We rely on Scraper.js logSummary mainly. 
         }
+
+        await fs.writeFile(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
+
+        // Check for 0 candidates failure
+        if (stats.total === 0) {
+            // API Response should indicate this
+            // But we might have already responded? No we waited.
+            return res.status(200).json({
+                success: true,
+                runId: `${dateStr}_${runId}`,
+                candidates: 0,
+                message: 'No candidates found. Check run.log for [Diagnosis].'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            runId: `${dateStr}_${runId}`,
+            candidates: stats.success,
+            converted: convertResult.converted
+        });
 
     } catch (error: any) {
         console.error('[Automation] Error:', error);
