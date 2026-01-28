@@ -220,7 +220,7 @@ export default function Dashboard() {
                         </div>
                         <button
                             onClick={mainCTA.action}
-                            className={`z-10 px-6 py-3 rounded-lg font-bold text-white shadow-lg flex items-center gap-2 transition-transform hover:scale-105 ${mainCTA.color}`}
+                            className={`z-10 px-6 py-3 rounded-lg font-bold text-white shadow-lg flex items-center gap-2 transition-transform hover:scale-105 whitespace-nowrap ${mainCTA.color}`}
                         >
                             {mainCTA.btnText} <ArrowRight className="w-4 h-4" />
                         </button>

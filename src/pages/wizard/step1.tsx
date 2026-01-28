@@ -99,7 +99,10 @@ export default function Step1_Url() {
 
                     {/* 3B-2: Sub Actions */}
                     <div className="flex justify-between items-center text-xs text-app-text-muted px-2 pt-2">
-                        <button className="hover:text-white transition-colors flex items-center gap-1">
+                        <button
+                            className="hover:text-white transition-colors flex items-center gap-1"
+                            onClick={() => window.open('https://github.com/morgrisos/merfox#readme', '_blank')}
+                        >
                             <HelpCircle className="w-3 h-3" /> このツールの使い方（1分）
                         </button>
                         <button
