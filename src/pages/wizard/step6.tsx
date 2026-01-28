@@ -12,8 +12,16 @@ export default function Step6_Final() {
     const runId = outcome.latestRunId || '4b221f9c-9f80-4be3-99dc-58545e6ae503';
     const [showDetails, setShowDetails] = useState(false);
 
-    const handleDownload = (filename: string) => {
-        window.open(`/api/runs/${runId}/files/${filename}`, '_blank');
+    const handleDownload = (type: string) => {
+        window.open(`/api/runs/${runId}/files/${type}`, '_blank');
+    };
+
+    const handleOpenFolder = async () => {
+        try {
+            await fetch(`/api/runs/${runId}/reveal`, { method: 'POST' });
+        } catch (e) {
+            console.error('Failed to reveal folder', e);
+        }
     };
 
     return (
@@ -40,7 +48,7 @@ export default function Step6_Final() {
                     <Button
                         size="lg"
                         className="w-full h-14 text-lg font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-lg shadow-blue-900/40"
-                        onClick={() => handleDownload('amazon_upload.tsv')}
+                        onClick={() => handleDownload('amazon')}
                     >
                         <Download className="mr-2 h-6 w-6" /> 最終TSVを開く (これを使う)
                     </Button>
@@ -48,7 +56,7 @@ export default function Step6_Final() {
 
                 {/* 3B-7 Sub Actions */}
                 <div className="grid grid-cols-2 gap-4">
-                    <button className="text-app-text-muted hover:text-white text-sm py-2 flex items-center justify-center gap-2 border border-app-border rounded transition-colors bg-app-element" onClick={() => window.open(`/api/runs/${runId}`, '_blank')}>
+                    <button className="text-app-text-muted hover:text-white text-sm py-2 flex items-center justify-center gap-2 border border-app-border rounded transition-colors bg-app-element" onClick={handleOpenFolder}>
                         <Folder className="w-4 h-4" /> Runフォルダを開く
                     </button>
                     <button className="text-app-text-muted hover:text-white text-sm py-2 flex items-center justify-center gap-2 border border-app-border rounded transition-colors bg-app-element" onClick={() => router.push('/dashboard')}>
@@ -69,14 +77,14 @@ export default function Step6_Final() {
                     {showDetails && (
                         <div className="mt-4 space-y-2 animate-in slide-in-from-top-2">
                             <div
-                                onClick={() => handleDownload('amazon_convert_failed.csv')}
+                                onClick={() => handleDownload('failed')}
                                 className="flex items-center justify-between p-3 bg-app-element rounded border border-app-border cursor-pointer hover:bg-app-border transition-colors"
                             >
                                 <span className="text-sm text-gray-300">失敗一覧 (failed.csv)</span>
                                 <Download className="w-4 h-4 text-app-text-muted" />
                             </div>
                             <div
-                                onClick={() => handleDownload('run.log')}
+                                onClick={() => handleDownload('log')}
                                 className="flex items-center justify-between p-3 bg-app-element rounded border border-app-border cursor-pointer hover:bg-app-border transition-colors"
                             >
                                 <span className="text-sm text-gray-300">実行ログ (run.log)</span>
