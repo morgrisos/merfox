@@ -2,9 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs/promises';
 import path from 'path';
 
-import { getRunsDir } from '../../../lib/runUtils';
+import { getRunsDir, getConfigPath } from '../../../lib/runUtils';
 
-const CONFIG_PATH = path.join(process.cwd(), 'merfox.automation.json');
+const CONFIG_PATH = getConfigPath();
 
 type AutomationConfig = {
     enabled: boolean;
@@ -39,13 +39,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        // 1. Load Config
+        // 1. Load or Create Config
         let config: AutomationConfig;
         try {
             const data = await fs.readFile(CONFIG_PATH, 'utf8');
             config = JSON.parse(data);
         } catch {
-            return res.status(404).json({ error: 'Config not found' });
+            // Auto-create default config if missing (Fix for manual setup requirement)
+            console.log('[Automation] Config missing, creating default at:', CONFIG_PATH);
+            const defaultConfig: AutomationConfig = {
+                enabled: true,
+                schedule: { kind: 'daily', hour: 12, minute: 0 },
+                targetUrl: 'https://jp.mercari.com/search?keyword=test', // Default safe target
+                lastTriggeredAt: ''
+            };
+            await fs.mkdir(path.dirname(CONFIG_PATH), { recursive: true });
+            await fs.writeFile(CONFIG_PATH, JSON.stringify(defaultConfig, null, 2));
+            config = defaultConfig;
         }
 
         // 2. Check Enabled
@@ -97,7 +107,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 config: { targetUrl: config.targetUrl, mode: 'automation' }
             };
             await fs.writeFile(path.join(runPath, 'summary.json'), JSON.stringify(summary, null, 2));
-            await fs.writeFile(path.join(runPath, 'raw.csv'), '');
+            // [HARDENING] Requirement B: raw.csv must not be 0B
+            const csvHeader = 'id,name,price,status,url,image_url,seller_name,description,category,brand,size,condition,shipping_payer,shipping_method,shipping_origin,shipping_duration\n';
+            await fs.writeFile(path.join(runPath, 'raw.csv'), csvHeader);
             await fs.writeFile(path.join(runPath, 'run.log'), '[Automation] Run started via Schedule MVP.\n');
 
             await fs.writeFile(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
