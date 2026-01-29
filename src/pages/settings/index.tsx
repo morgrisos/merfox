@@ -7,6 +7,15 @@ import { Card } from '@/components/ui/card';
 import { LicenseSection } from '@/components/settings/LicenseSection';
 
 export default function Settings() {
+    const [versionInfo, setVersionInfo] = React.useState<string>('Loading...');
+
+    React.useEffect(() => {
+        fetch('/api/version')
+            .then(res => res.json())
+            .then(data => setVersionInfo(data.version))
+            .catch(() => setVersionInfo('Unknown'));
+    }, []);
+
     return (
         <div className="flex flex-col h-full bg-app-base text-app-text-main p-6 gap-6">
             <div className="flex flex-col gap-2">
@@ -31,7 +40,7 @@ export default function Settings() {
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                             <span className="text-app-text-muted">Version</span>
-                            <span className="text-white font-mono">v0.1.83</span>
+                            <span className="text-white font-mono">{versionInfo}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-app-text-muted">Build SHA</span>
