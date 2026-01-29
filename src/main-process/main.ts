@@ -138,7 +138,8 @@ const initLogs = () => {
         nextOut = path.join(logDir, 'merfox-next.stdout.log');
         nextErr = path.join(logDir, 'merfox-next.stderr.log');
 
-        fs.appendFileSync(bootLog, `\n[${new Date().toISOString()}] [GLOBAL] Main process loaded. PID: ${process.pid}\n`);
+        const pkg = require('../../package.json'); // CommonJS import for safely getting version
+        fs.appendFileSync(bootLog, `\n[${new Date().toISOString()}] [GLOBAL] Main process loaded. Version: ${pkg.version} PID: ${process.pid}\n`);
     } catch (e) {
         console.error('Failed to init logs:', e);
     }
