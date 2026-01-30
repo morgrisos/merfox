@@ -93,6 +93,16 @@ class Scraper extends EventEmitter {
                 fs.mkdirSync(this.runDir, { recursive: true });
             }
             this.logPath = path.join(this.runDir, 'run.log');
+
+            // [FIX] Initialize raw.csv immediately so Status API detects "running"
+            const rawPath = path.join(this.runDir, 'raw.csv');
+            try {
+                const headerData = stringify([], { header: true, bom: true, columns: CSV_COLUMNS });
+                fs.writeFileSync(rawPath, headerData);
+            } catch (e) {
+                console.error('Failed to init raw.csv:', e);
+            }
+
         } catch (e) {
             console.error('Failed to setup storage:', e);
             // Continue but logging might fail
@@ -104,7 +114,7 @@ class Scraper extends EventEmitter {
         try {
             await this.execute();
 
-            // Save CSV
+            // Save CSV (Final Overwrite for safety/sorting if needed, but incremental covers it)
             if (this.items.length > 0 && this.runDir) {
                 const outputPath = path.join(this.runDir, 'raw.csv');
                 // P1.6: Enforce column order
@@ -326,7 +336,7 @@ class Scraper extends EventEmitter {
 
                     // Success
                     this.stats.success++;
-                    this.items.push({
+                    const newItem = {
                         collected_at: new Date().toISOString(),
                         site: 'mercari',
                         item_id: itemId,
@@ -339,7 +349,20 @@ class Scraper extends EventEmitter {
                         first_image_url: '',
                         condition: '', // [NEW] P1.6 Schema Fix
                         description: description.slice(0, 100).replace(/\n/g, ' ')
-                    });
+                    };
+                    this.items.push(newItem);
+
+                    // [FIX] Append to raw.csv incrementally for Status API progress
+                    if (this.runDir) {
+                        try {
+                            const rawPath = path.join(this.runDir, 'raw.csv');
+                            const line = stringify([newItem], { header: false, bom: false, columns: CSV_COLUMNS });
+                            fs.appendFileSync(rawPath, line);
+                        } catch (e) {
+                            console.error('Failed to append to raw.csv:', e);
+                        }
+                    }
+
                     this.log(`取得成功: ${title.slice(0, 15)}... (${price}円)`, 'success');
 
                 } catch (e) {
