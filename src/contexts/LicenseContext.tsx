@@ -18,10 +18,27 @@ export function LicenseProvider({ children }: { children: ReactNode }) {
     const service = LicenseService.getInstance();
 
     const checkStatus = async () => {
-        // 1. Try refresh first if we have data
+        // [FIX] Single Source of Truth: LocalStorage
+        if (typeof window !== 'undefined') {
+            const savedStatus = localStorage.getItem('merfox_license_status');
+
+            console.log(`[LICENSE][CHECK] Checking Status. LocalStorage=${savedStatus}`);
+
+            if (savedStatus === 'ACTIVE') {
+                // Double check service, but don't overwrite with UNAUTHENTICATED if service is just empty
+                setStatus('ACTIVE');
+                return;
+            }
+        }
+
+        // 1. Try refresh first if we have data (Node context or properly init service)
         await service.refresh();
         // 2. Update status based on logic (Grace period etc)
-        setStatus(service.getStatus());
+        const s = service.getStatus();
+        console.log(`[LICENSE][CHECK] Service Status: ${s}`);
+        if (s !== 'UNAUTHENTICATED') {
+            setStatus(s);
+        }
     };
 
     useEffect(() => {
