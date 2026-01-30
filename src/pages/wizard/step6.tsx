@@ -14,6 +14,7 @@ export default function Step6_Final() {
     const [preview, setPreview] = useState<string[]>([]);
     const [exists, setExists] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [failureInfo, setFailureInfo] = useState({ reason: '', detail: '' });
 
     useEffect(() => {
         if (!runId) return;
@@ -22,6 +23,7 @@ export default function Step6_Final() {
             .then(data => {
                 setExists(data.exists);
                 setPreview(data.preview || []);
+                setFailureInfo({ reason: data.reason || '', detail: data.detail || '' });
                 setLoading(false);
             })
             .catch(() => setLoading(false));
@@ -56,14 +58,23 @@ export default function Step6_Final() {
                 /* [REQ 2] Error State */
                 <Card className="w-full bg-red-500/10 border border-red-500/50 p-8 text-center rounded-xl space-y-4">
                     <AlertTriangle className="w-16 h-16 text-red-500 mx-auto" />
-                    <h2 className="text-xl font-bold text-white">TSV生成に失敗、または有効なデータがありません</h2>
-                    <p className="text-red-200">
-                        「マッピング不足」あるいは「除外フィルタ」により、出力できる商品が0件でした。<br />
-                        <span className="font-bold underline cursor-pointer" onClick={() => handleDownload('failed')}>
-                            失敗リスト(failed.csv)を確認
-                        </span>
-                        してください。
-                    </p>
+                    <h2 className="text-xl font-bold text-white">TSV生成に失敗しました</h2>
+                    <div className="text-red-200 bg-red-900/30 p-4 rounded border border-red-500/30">
+                        <p className="font-bold mb-2">原因: {failureInfo.reason || '不明なエラー'}</p>
+                        <p className="text-sm">
+                            {failureInfo.reason === 'RAW_EMPTY' && '抽出された商品が0件です。検索結果ページを確認してください。'}
+                            {failureInfo.reason === 'MAPPING_MISSING' && 'マッピング設定(mapping.csv)が見つかりません。'}
+                            {failureInfo.reason === 'CONVERT_FAILED' && `変換対象外の商品ばかりです。${failureInfo.detail ? `(${failureInfo.detail})` : ''}`}
+                            {failureInfo.reason === 'UNKNOWN' && 'ログやマッピング設定を確認してください。'}
+                        </p>
+                    </div>
+                    {failureInfo.reason === 'CONVERT_FAILED' && (
+                        <p className="text-red-200 text-sm">
+                            <span className="font-bold underline cursor-pointer hover:text-white" onClick={() => handleDownload('failed')}>
+                                失敗リスト(failed.csv)を確認
+                            </span>
+                        </p>
+                    )}
                     <div className="flex justify-center gap-4 mt-4">
                         <Button variant="outline" onClick={() => router.push('/scraper/mapping?auto=true')}>マッピング設定を開く</Button>
                         <Button variant="outline" onClick={() => router.push('/dashboard')}>終了</Button>
