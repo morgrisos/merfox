@@ -1,3 +1,15 @@
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+
+function appendDebug(line: string) {
+    try {
+        const home = os.homedir();
+        const p = path.join(home, 'Library/Application Support/merfox/merfox-license.debug.log');
+        fs.appendFileSync(p, line + '\n');
+    } catch (_) { }
+}
+
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 // In-memory "Database" for Mocking
@@ -7,6 +19,33 @@ const SUSPENDED_KEYS = new Set(['SUSPENDED_KEY', 'BAD_PAYMENT']);
 const DEVICE_MAP = new Map<string, Set<string>>(); // Key -> Set<DeviceId>
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+    appendDebug(JSON.stringify({
+        t: new Date().toISOString(),
+        method: req.method,
+        url: req.url,
+        action: req.query?.action,
+        body: req.body
+    }));
+
+    // [DEV GATE] Robust Check
+    const devKeyEnv = process.env.MERFOX_DEV_KEY || "";
+    // Check various possible key fields UI might send
+    const inputKey = (req.body?.key || req.body?.licenseKey || req.body?.license || "").toString();
+
+    const isDevBypass = devKeyEnv && inputKey && inputKey === devKeyEnv;
+
+    if (isDevBypass) {
+        const out = {
+            accessToken: 'dev_access_' + Date.now(),
+            refreshToken: 'dev_refresh_' + inputKey,
+            ok: true,
+            devBypass: true,
+            status: 'active' // Some UIs look for status
+        };
+        appendDebug(JSON.stringify({ t: new Date().toISOString(), resp: out }));
+        return res.status(200).json(out);
+    }
+
     const { action } = req.query;
 
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -15,17 +54,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     // --- ACTIVATE ---
     if (action === 'activate') {
+        // Old bypass removed in favor of top-level check
 
-        // [DEV GATE] Allow specific dev key for testing/verification
-        const devKeyEnv = process.env.MERFOX_DEV_KEY;
-        const isDevBypass = devKeyEnv && key === devKeyEnv && devKeyEnv === 'MER-DEV-0000';
-
-        if (isDevBypass) {
-            return res.status(200).json({
-                accessToken: 'dev_access_' + Date.now(),
-                refreshToken: 'dev_refresh_' + key
-            });
-        }
 
         if (!key || !deviceId) return res.status(400).json({ error: 'Missing key or deviceId' });
 
