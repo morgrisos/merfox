@@ -47,7 +47,8 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
         failed: 0
     });
     const [logs, setLogs] = useState<LogEntry[]>([]);
-    const [currentUrl, setCurrentUrl] = useState('');
+    // [FIX] Removed unused setCurrentUrl
+    const currentUrl = '';
     const [isTestMode, setIsTestMode] = useState(false);
     const [isTestComplete, setIsTestComplete] = useState(false);
     const [latestRunId, setLatestRunId] = useState<string>('');
