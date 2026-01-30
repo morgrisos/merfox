@@ -98,47 +98,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.log(`[StatusAPI] No raw.csv found in ${runPath}. Entries: ${runDirEntries.join(',')}`);
         }
 
-        const status = summary.status || 'unknown';
+        // [FIX: Lightweight Status Inference]
+        // Avoid reading run.log entirely to prevent API hangs during write contention.
+        // Use raw.csv mtime to guess 'running' vs 'completed'.
 
-        // 3. Read Log (Tail)
-        let logContent: string[] = [];
-        const logCandidates = ['run.log', 'scraper.log', 'server.log'];
-        for (const candidate of logCandidates) {
-            if (runDirEntries.includes(candidate)) {
-                files.logFile = candidate;
-                break;
+        if (!summary.status || summary.status === 'unknown') {
+            let isRunning = true;
+
+            if (files.raw && fallbackCount > 0) {
+                try {
+                    const rawPath = path.join(runPath, 'raw.csv');
+                    const stats = await fs.stat(rawPath);
+                    const now = Date.now();
+                    const ageMs = now - stats.mtime.getTime();
+
+                    // If raw.csv hasn't been touched in 15 seconds, assume finished.
+                    if (ageMs > 15000) {
+                        isRunning = false;
+                    }
+                } catch { }
+
+                summary.status = isRunning ? 'running' : 'completed';
+            } else {
+                // No raw file yet, must be starting
+                summary.status = 'running';
             }
         }
-        // Fallback: any .log file
-        if (!files.logFile) {
-            const anyLog = runDirEntries.find(f => f.endsWith('.log'));
-            if (anyLog) files.logFile = anyLog;
-        }
 
-        if (files.logFile) {
-            try {
-                const logFullPath = path.join(runPath, files.logFile);
-                const stats = await fs.stat(logFullPath);
-                const size = stats.size;
-                const bufferSize = Math.min(size, 50 * 1024); // Read last 50KB
+        const status = summary.status || 'running';
 
-                const handle = await fs.open(logFullPath, 'r');
-                const buffer = Buffer.alloc(bufferSize);
-                await handle.read(buffer, 0, bufferSize, size - bufferSize);
-                await handle.close();
-
-                const text = buffer.toString('utf8');
-                // Split lines, handle partial line at start
-                let lines = text.split('\n');
-                if (size > bufferSize) lines.shift(); // remove partial first line
-
-                // Get last 200 lines
-                if (lines.length > 200) lines = lines.slice(-200);
-                logContent = lines;
-            } catch (e) {
-                logContent = [`[Error reading log: ${String(e)}]`];
-            }
-        }
+        // 3. Log Reading Disabled (Prevent Freeze)
+        // We do NOT read run.log here anymore.
+        let logContent: string[] = ["[System] Log tail disabled to prevent API freeze/deadlock during scraping."];
 
         return res.status(200).json({
             latestRunId,
