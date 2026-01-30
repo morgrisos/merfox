@@ -77,25 +77,25 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
             }
 
             // Update Status/Stats
+            const scanned = data.counts?.scanned || data.summary?.stats?.scanned || data.summary?.itemsCount || data.summary?.total || 0;
+            const success = data.counts?.success || data.summary?.stats?.newItems || data.summary?.itemsCount || data.summary?.success || 0;
+            const failed = data.summary?.stats?.failed || data.summary?.failed || 0;
+
             if (data.status === 'completed' || data.status === 'success') {
                 setStatus('COMPLETED');
-                if (data.summary) {
-                    setStats(prev => ({
-                        ...prev,
-                        totalItems: data.summary.total || 0,
-                        newItems: data.summary.success || 0,
-                        failed: data.summary.failed || 0
-                    }));
-                }
+                setStats(prev => ({
+                    ...prev,
+                    totalItems: scanned,
+                    newItems: success,
+                    failed: failed
+                }));
             } else if (data.status === 'running') {
                 setStatus('RUNNING');
-                if (data.summary) {
-                    setStats(prev => ({
-                        ...prev,
-                        totalItems: data.summary.total || 0,
-                        newItems: data.summary.success || 0
-                    }));
-                }
+                setStats(prev => ({
+                    ...prev,
+                    totalItems: scanned,
+                    newItems: success
+                }));
             } else if (data.status === 'error') {
                 setStatus('ERROR');
             }

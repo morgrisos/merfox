@@ -76,6 +76,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             } catch { }
         }
 
+        // [FIX] Fallback: Count raw.csv lines if summary is missing/stale
+        let fallbackCount = 0;
+        if (files.raw) {
+            try {
+                const rawPath = path.join(runPath, 'raw.csv');
+                const rawContent = await fs.readFile(rawPath, 'utf8');
+                // Simple line count (minus header)
+                const lines = rawContent.trim().split('\n');
+                fallbackCount = lines.length > 0 ? lines.length - 1 : 0;
+
+                if (!summary.stats) summary.stats = {};
+                summary.stats.scanned = fallbackCount;
+                summary.itemsCount = fallbackCount;
+                summary.stats.newItems = fallbackCount;
+                console.log(`[StatusAPI] Fallback Count Success: ${fallbackCount}. Path: ${rawPath}`);
+            } catch (e) {
+                console.error('[StatusAPI] Fallback Count Failed', e);
+            }
+        } else {
+            console.log(`[StatusAPI] No raw.csv found in ${runPath}. Entries: ${runDirEntries.join(',')}`);
+        }
+
         const status = summary.status || 'unknown';
 
         // 3. Read Log (Tail)
@@ -123,6 +145,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             status,
             summary,
             files,
+            counts: {
+                scanned: summary.stats?.scanned || fallbackCount || 0,
+                success: summary.stats?.newItems || fallbackCount || 0
+            },
             log: { file: files.logFile, tail: logContent }
         });
 
