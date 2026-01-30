@@ -25,7 +25,7 @@ type ScraperContextType = {
     status: ScraperStatus;
     stats: ScraperStats;
     logs: LogEntry[];
-    currentUrl: string; // Mock current url being processed
+    currentUrl: string; // Mock current url being processed (or real if available)
     isTestMode: boolean; // Running 20 items test
     isTestComplete: boolean; // Test finished successfully
     startScraping: (testMode?: boolean) => void;
@@ -33,6 +33,7 @@ type ScraperContextType = {
     pauseScraping: () => void;
     resumeScraping: () => void;
     resetScraper: () => void;
+    latestRunId: string; // [FIX] Exposed for Step 2
 };
 
 const ScraperContext = createContext<ScraperContextType | undefined>(undefined);
@@ -49,6 +50,7 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const [currentUrl, setCurrentUrl] = useState('');
     const [isTestMode, setIsTestMode] = useState(false);
     const [isTestComplete, setIsTestComplete] = useState(false);
+    const [latestRunId, setLatestRunId] = useState<string>('');
 
     const intervalRef = useRef<number | null>(null);
 
@@ -57,56 +59,54 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setLogs(prev => [...prev.slice(-99), { timestamp, level, message }]); // Keep last 100
     };
 
-    const runMockCycle = () => {
-        // Mock scraping logic
-        const actions = [
-            () => {
-                const id = Math.floor(Math.random() * 900000) + 100000;
-                setCurrentUrl(`https://jp.mercari.com/item/m${id}`);
-                addLog('INFO', `ページ m${id} を解析中...`);
-            },
-            () => {
-                // Determine outcome
-                const rand = Math.random();
-                if (rand < 0.1) {
-                    addLog('WARN', 'Shops出品のため除外しました');
-                    setStats(prev => ({ ...prev, totalItems: prev.totalItems + 1, excluded: { ...prev.excluded, shops: prev.excluded.shops + 1 } }));
-                } else if (rand < 0.2) {
-                    addLog('WARN', '送料着払いのため除外しました');
-                    setStats(prev => ({ ...prev, totalItems: prev.totalItems + 1, excluded: { ...prev.excluded, shipping: prev.excluded.shipping + 1 } }));
-                } else if (rand < 0.8) {
-                    addLog('SUCCESS', 'データを抽出完了。Raw CSVに保存しました。');
-                    setStats(prev => ({ ...prev, totalItems: prev.totalItems + 1, newItems: prev.newItems + 1 }));
-                } else {
-                    addLog('ERROR', '解析エラー: Dom structure mismatch');
-                    setStats(prev => ({ ...prev, failed: prev.failed + 1 }));
-                }
-            }
-        ];
+    const pollStatus = async () => {
+        try {
+            const res = await fetch('/api/scraper/status');
+            const data = await res.json();
 
-        const action = actions[Math.floor(Math.random() * actions.length)];
-        action();
+            if (data.latestRunId) setLatestRunId(data.latestRunId);
+
+            // Update Logs
+            if (data.log && data.log.tail) {
+                const newLogs = data.log.tail.map((line: string) => {
+                    return { timestamp: new Date().toLocaleTimeString(), level: 'INFO', message: line } as LogEntry;
+                });
+                // Replace logs (assuming tail gives latest context)
+                setLogs(newLogs.reverse());
+            }
+
+            // Update Status/Stats
+            if (data.status === 'completed' || data.status === 'success') {
+                setStatus('COMPLETED');
+                if (data.summary) {
+                    setStats(prev => ({
+                        ...prev,
+                        totalItems: data.summary.total || 0,
+                        newItems: data.summary.success || 0,
+                        failed: data.summary.failed || 0
+                    }));
+                }
+            } else if (data.status === 'running') {
+                setStatus('RUNNING');
+                if (data.summary) {
+                    setStats(prev => ({
+                        ...prev,
+                        totalItems: data.summary.total || 0,
+                        newItems: data.summary.success || 0
+                    }));
+                }
+            } else if (data.status === 'error') {
+                setStatus('ERROR');
+            }
+
+        } catch (e) {
+            console.error('Poll Error', e);
+        }
     };
 
     useEffect(() => {
         if (status === 'RUNNING') {
-            intervalRef.current = window.setInterval(() => {
-                runMockCycle();
-
-                // Test Mode Limit
-                if (isTestMode) {
-                    setStats(currentStats => {
-                        if (currentStats.newItems >= 20) {
-                            pauseScraping(); // Pause internally but logically complete
-                            setStatus('IDLE'); // Actually stop
-                            setIsTestComplete(true);
-                            addLog('SUCCESS', 'テスト実行完了 (20件)。本番実行が可能です。');
-                            return currentStats;
-                        }
-                        return currentStats;
-                    });
-                }
-            }, 800); // Fast mock
+            intervalRef.current = window.setInterval(pollStatus, 2000);
         } else {
             if (intervalRef.current) {
                 window.clearInterval(intervalRef.current);
@@ -116,39 +116,64 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return () => {
             if (intervalRef.current) window.clearInterval(intervalRef.current);
         };
-    }, [status, isTestMode]);
+    }, [status]);
 
-    const startScraping = (test = false) => {
+    const startScraping = async (test = false) => {
+        // [REAL API CALL]
+        // Reset state first
+        resetScraper();
         if (test) {
-            resetScraper(); // Reset for test
             setIsTestMode(true);
             setIsTestComplete(false);
-            addLog('INFO', 'テスト実行を開始します (目標: 20件)...');
         } else {
-            if (!isTestComplete && stats.newItems === 0) { // Simple guard
-                // In real app, we check confirmation. Here we just assume "Real Run"
-                setIsTestMode(false);
-                addLog('INFO', '本番実行を開始します...');
-            } else {
-                addLog('INFO', '実行を再開します...');
-            }
+            setIsTestMode(false);
         }
-        setStatus('RUNNING');
+
+        try {
+            let targetUrl = 'https://jp.mercari.com/search?keyword=test';
+            if (typeof window !== 'undefined') {
+                const stored = localStorage.getItem('merfox_settings');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (parsed.target?.url) targetUrl = parsed.target.url;
+                }
+            }
+
+            const res = await fetch('/api/scraper/run', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: targetUrl, limit: test ? 20 : 100 })
+            });
+            const json = await res.json();
+
+            if (json.success) {
+                setLatestRunId(json.runId);
+                setStatus('RUNNING');
+                addLog('INFO', 'Scraping started (Real API)...');
+            } else {
+                addLog('ERROR', 'Failed to start: ' + json.error);
+                setStatus('ERROR');
+            }
+        } catch (e) {
+            addLog('ERROR', 'Network Error');
+            setStatus('ERROR');
+        }
     };
 
     const stopScraping = () => {
+        // Stop polling
         setStatus('IDLE');
-        addLog('WARN', 'ユーザーにより停止されました。');
+        addLog('WARN', 'Stopped by user.');
     };
 
     const pauseScraping = () => {
         setStatus('PAUSED');
-        addLog('WARN', '一時停止しました。');
+        addLog('WARN', 'Paused.');
     };
 
     const resumeScraping = () => {
         setStatus('RUNNING');
-        addLog('INFO', '再開しました。');
+        addLog('INFO', 'Resumed.');
     };
 
     const resetScraper = () => {
@@ -157,12 +182,14 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setLogs([]);
         setIsTestComplete(false);
         setIsTestMode(false);
+        setLatestRunId('');
     };
 
     return (
         <ScraperContext.Provider value={{
             status, stats, logs, currentUrl, isTestMode, isTestComplete,
-            startScraping, stopScraping, pauseScraping, resumeScraping, resetScraper
+            startScraping, stopScraping, pauseScraping, resumeScraping, resetScraper,
+            latestRunId
         }}>
             {children}
         </ScraperContext.Provider>
