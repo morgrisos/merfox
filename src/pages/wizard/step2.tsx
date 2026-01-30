@@ -9,7 +9,7 @@ import { AppShell } from '@/components/layout/AppShell';
 
 export default function Step2_Extract() {
     const router = useRouter();
-    const { status, stats, startScraping, stopScraping, logs, isTestComplete } = useScraper();
+    const { status, stats, startScraping, stopScraping, logs, isTestComplete, latestRunId } = useScraper();
     const { setOutcome } = useOutcome();
     const [hasStarted, setHasStarted] = useState(false);
     const [showConditions, setShowConditions] = useState(false);
@@ -27,7 +27,8 @@ export default function Step2_Extract() {
         if (isTestComplete || status === 'COMPLETED' || status === 'ERROR') {
             setOutcome({
                 success: status !== 'ERROR' && stats.newItems > 0,
-                latestRunId: '4b221f9c-9f80-4be3-99dc-58545e6ae503', // Mock ID
+                // [FIX] Use Real Run ID from Hook (Backend Generated)
+                latestRunId: latestRunId || 'latest',
                 itemsCount: stats.newItems,
                 failedCount: stats.failed
             } as any);
@@ -58,8 +59,8 @@ export default function Step2_Extract() {
                             <div className="relative inline-flex items-center justify-center">
                                 <div className={`absolute w-24 h-24 rounded-full ${status === 'RUNNING' ? 'bg-blue-500/20 animate-ping' : 'bg-transparent'}`} />
                                 <div className={`relative w-20 h-20 rounded-full flex items-center justify-center border-4 shadow-xl ${status === 'RUNNING' ? 'border-blue-500 bg-app-base' :
-                                        status === 'COMPLETED' || isTestComplete ? 'border-green-500 bg-green-500/10' :
-                                            'border-red-500 bg-red-500/10'
+                                    status === 'COMPLETED' || isTestComplete ? 'border-green-500 bg-green-500/10' :
+                                        'border-red-500 bg-red-500/10'
                                     }`}>
                                     {status === 'RUNNING' ? <Loader2 className="w-8 h-8 text-blue-500 animate-spin" /> :
                                         status === 'COMPLETED' || isTestComplete ? <CheckCircle className="w-8 h-8 text-green-500" /> :
