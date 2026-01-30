@@ -67,37 +67,47 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
             if (data.latestRunId) setLatestRunId(data.latestRunId);
 
-            // Update Logs
-            if (data.log && data.log.tail) {
-                const newLogs = data.log.tail.map((line: string) => {
-                    return { timestamp: new Date().toLocaleTimeString(), level: 'INFO', message: line } as LogEntry;
-                });
-                // Replace logs (assuming tail gives latest context)
-                setLogs(newLogs.reverse());
+            // [FIX] Update Status/Stats from progress.json
+            const counts = data.counts || { scanned: 0, success: 0, failed: 0 };
+
+            setStats(prev => ({
+                ...prev,
+                totalItems: counts.scanned,
+                newItems: counts.success,
+                failed: counts.failed
+            }));
+
+            // [FIX] Status Transition via phase
+            // phase: 'search_list' | 'detail_fetch' | 'done' | 'stopped' | 'error'
+            const phase = data.phase || 'running';
+
+            if (phase === 'done') {
+                setStatus('COMPLETED');
+            } else if (phase === 'error') {
+                setStatus('ERROR');
+            } else if (phase === 'stopped') {
+                setStatus('IDLE'); // or COMPLETED with partial
+                addLog('WARN', 'Stopped on server.');
+            } else {
+                setStatus('RUNNING');
             }
 
-            // Update Status/Stats
-            const scanned = data.counts?.scanned || data.summary?.stats?.scanned || data.summary?.itemsCount || data.summary?.total || 0;
-            const success = data.counts?.success || data.summary?.stats?.newItems || data.summary?.itemsCount || data.summary?.success || 0;
-            const failed = data.summary?.stats?.failed || data.summary?.failed || 0;
+            // [FIX] Log from Message + Stable Timestamp
+            // We do NOT use new Date() here. We use data.updatedAt from server.
+            const serverTime = data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('ja-JP', { hour12: false }) : '';
+            const msg = data.message || `Phase: ${phase}`;
 
-            if (data.status === 'completed' || data.status === 'success') {
-                setStatus('COMPLETED');
-                setStats(prev => ({
-                    ...prev,
-                    totalItems: scanned,
-                    newItems: success,
-                    failed: failed
-                }));
-            } else if (data.status === 'running') {
-                setStatus('RUNNING');
-                setStats(prev => ({
-                    ...prev,
-                    totalItems: scanned,
-                    newItems: success
-                }));
-            } else if (data.status === 'error') {
-                setStatus('ERROR');
+            // Only update log if we have a message
+            if (msg) {
+                // We overwrite the logs with the latest server state + history if we kept it?
+                // Since we don't get history from server, we just show the latest "Status" as a log entry
+                // OR we append if it's different?
+                // For safety and "clock" fix, let's just show the LATEST valid status from server.
+                setLogs([{
+                    timestamp: serverTime,
+                    level: 'INFO',
+                    message: msg // e.g. "詳細情報を収集中"
+                }]);
             }
 
         } catch (e) {

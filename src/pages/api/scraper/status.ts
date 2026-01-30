@@ -44,7 +44,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const latestRunId = runDirs[0];
         const runPath = path.join(runsDir, latestRunId);
 
-        // 1. Read key files existence
+        // [FIX] Priority: progress.json > summary.json > raw.csv fallback
+        let progress: any = null;
+        try {
+            const pPath = path.join(runPath, 'progress.json');
+            const pData = await fs.readFile(pPath, 'utf8');
+            progress = JSON.parse(pData);
+        } catch { }
+
+        // 1. Files Check
         const files = {
             raw: false,
             mapping: false,
@@ -52,95 +60,75 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             failed: 0,
             logFile: ''
         };
-
-        let runDirEntries: string[] = [];
         try {
-            runDirEntries = await fs.readdir(runPath);
-        } catch {
-            return res.status(200).json({ latestRunId, status: 'unknown' });
-        }
+            const runDirEntries = await fs.readdir(runPath);
+            if (runDirEntries.includes('raw.csv')) files.raw = true;
+            if (runDirEntries.includes('mapping.csv')) files.mapping = true;
+            if (runDirEntries.includes('amazon_upload.tsv')) files.amazon = true; // Fixed name
+            const failedCsvs = runDirEntries.filter(f => f.endsWith('_failed.csv'));
+            files.failed = failedCsvs.length;
+        } catch { }
 
-        if (runDirEntries.includes('raw.csv')) files.raw = true;
-        if (runDirEntries.includes('mapping.csv')) files.mapping = true;
-        if (runDirEntries.includes('amazon.tsv')) files.amazon = true;
+        // 2. Construct Response from Progress
+        let status = 'running';
+        let phase = 'init';
+        let counts = { scanned: 0, success: 0, failed: 0 };
+        let message = '';
+        let updatedAt = new Date().toISOString();
 
-        const failedCsvs = runDirEntries.filter(f => f.endsWith('_failed.csv'));
-        files.failed = failedCsvs.length;
+        if (progress) {
+            // [Source: progress.json]
+            phase = progress.phase || 'running';
+            status = (phase === 'done' || phase === 'error' || phase === 'stopped') ? 'completed' : 'running';
+            if (phase === 'stopped') status = 'stopped'; // Optional granular status
 
-        // 2. Read Summary
-        let summary: any = {};
-        if (runDirEntries.includes('summary.json')) {
-            try {
-                const data = await fs.readFile(path.join(runPath, 'summary.json'), 'utf8');
-                summary = JSON.parse(data);
-            } catch { }
-        }
-
-        // [FIX] Fallback: Count raw.csv lines if summary is missing/stale
-        let fallbackCount = 0;
-        if (files.raw) {
-            try {
-                const rawPath = path.join(runPath, 'raw.csv');
-                const rawContent = await fs.readFile(rawPath, 'utf8');
-                // Simple line count (minus header)
-                const lines = rawContent.trim().split('\n');
-                fallbackCount = lines.length > 0 ? lines.length - 1 : 0;
-
-                if (!summary.stats) summary.stats = {};
-                summary.stats.scanned = fallbackCount;
-                summary.itemsCount = fallbackCount;
-                summary.stats.newItems = fallbackCount;
-                console.log(`[StatusAPI] Fallback Count Success: ${fallbackCount}. Path: ${rawPath}`);
-            } catch (e) {
-                console.error('[StatusAPI] Fallback Count Failed', e);
-            }
+            counts = progress.counts || { scanned: 0, success: 0, failed: 0 };
+            message = progress.message || '';
+            updatedAt = progress.updatedAt || updatedAt;
         } else {
-            console.log(`[StatusAPI] No raw.csv found in ${runPath}. Entries: ${runDirEntries.join(',')}`);
-        }
-
-        // [FIX: Lightweight Status Inference]
-        // Avoid reading run.log entirely to prevent API hangs during write contention.
-        // Use raw.csv mtime to guess 'running' vs 'completed'.
-
-        if (!summary.status || summary.status === 'unknown') {
-            let isRunning = true;
-
-            if (files.raw && fallbackCount > 0) {
+            // [Source: Legacy Fallback]
+            let fallbackCount = 0;
+            if (files.raw) {
                 try {
                     const rawPath = path.join(runPath, 'raw.csv');
-                    const stats = await fs.stat(rawPath);
-                    const now = Date.now();
-                    const ageMs = now - stats.mtime.getTime();
-
-                    // If raw.csv hasn't been touched in 15 seconds, assume finished.
-                    if (ageMs > 15000) {
-                        isRunning = false;
-                    }
+                    const rawContent = await fs.readFile(rawPath, 'utf8');
+                    const lines = rawContent.trim().split('\n');
+                    fallbackCount = lines.length > 0 ? lines.length - 1 : 0;
                 } catch { }
-
-                summary.status = isRunning ? 'running' : 'completed';
-            } else {
-                // No raw file yet, must be starting
-                summary.status = 'running';
             }
+
+            counts.scanned = fallbackCount;
+            counts.success = fallbackCount;
+
+            // Guess Status from Time
+            let isRunning = true;
+            if (files.raw) {
+                try {
+                    const stats = await fs.stat(path.join(runPath, 'raw.csv'));
+                    const ageMs = Date.now() - stats.mtime.getTime();
+                    if (ageMs > 15000) isRunning = false;
+                } catch { }
+            }
+            status = isRunning ? 'running' : 'completed';
+            phase = isRunning ? 'detail_fetch' : 'done';
+            message = isRunning ? '処理中 (Legacy)' : '完了 (Legacy)';
         }
 
-        const status = summary.status || 'running';
-
-        // 3. Log Reading Disabled (Prevent Freeze)
-        // We do NOT read run.log here anymore.
-        let logContent: string[] = ["[System] Log tail disabled to prevent API freeze/deadlock during scraping."];
+        // [Log] Disabled to prevent freeze
+        const log = {
+            file: '',
+            tail: [`[System] Phase: ${phase}`, `[System] Message: ${message}`, `[System] Updated: ${updatedAt}`]
+        };
 
         return res.status(200).json({
             latestRunId,
             status,
-            summary,
+            phase,
+            counts,
+            updatedAt,
+            message,
             files,
-            counts: {
-                scanned: summary.stats?.scanned || fallbackCount || 0,
-                success: summary.stats?.newItems || fallbackCount || 0
-            },
-            log: { file: files.logFile, tail: logContent }
+            log
         });
 
     } catch (e: any) {
