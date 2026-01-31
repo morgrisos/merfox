@@ -181,6 +181,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             // Always save to Global Path.
             await fs.writeFile(getGlobalMappingPath(), stringifier, 'utf8');
 
+            // [FIX] Also save to Run Local Path so Converter (which reads executionDir/mapping.csv)
+            // gets the UI updates.
+            if (latestRunDir) {
+                const localPath = path.join(latestRunDir, 'mapping.csv');
+                await fs.writeFile(localPath, stringifier, 'utf8');
+            }
+
             return res.status(200).json({ success: true, updatedCount });
         }
 
