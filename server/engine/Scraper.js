@@ -16,6 +16,14 @@ class Scraper extends EventEmitter {
         this.isRunning = false;
         this.isStopped = false;
 
+        // [v0.31.1] Store run config for reproducibility
+        this.runConfig = {
+            targetUrl: targetUrl,
+            stopLimit: config.stopLimit || 50,
+            excludeKeywords: config.excludeKeywords || [],
+            runType: config.runType || 'production'
+        };
+
         this.stats = {
             total: 0,
             success: 0,
@@ -55,6 +63,7 @@ class Scraper extends EventEmitter {
                     failed: this.stats.failed,
                     excluded: this.stats.excluded
                 },
+                config: this.runConfig, // [v0.31.1] Include run config for reproducibility
                 updatedAt: new Date().toISOString(),
                 message: message || `Processing... (${phase})`
             };
