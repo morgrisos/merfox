@@ -63,21 +63,7 @@ export const TargetBlock = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label>カテゴリ (任意)</Label>
-                                <select
-                                    className="block w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#101822] text-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm py-2.5 px-3"
-                                    value={target.category}
-                                    onChange={(e) => updateSettings({ target: { ...target, category: e.target.value } })}
-                                >
-                                    <option value="">指定なし</option>
-                                    <option value="レディース">レディース</option>
-                                    <option value="メンズ">メンズ</option>
-                                    <option value="ベビー・キッズ">ベビー・キッズ</option>
-                                    <option value="インテリア・住まい・小物">インテリア・住まい・小物</option>
-                                    <option value="本・音楽・ゲーム">本・音楽・ゲーム</option>
-                                    <option value="おもちゃ・ホビー・グッズ">おもちゃ・ホビー・グッズ</option>
-                                    <option value="家電・スマホ・カメラ">家電・スマホ・カメラ</option>
-                                </select>
+                                {/* Category removed per v0.31 Strict Spec */}
                             </div>
                             <div>
                                 <Label>並び順</Label>
