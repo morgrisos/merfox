@@ -292,7 +292,7 @@ export default function Step1_Setup() {
             <div className="flex justify-between items-center text-xs text-[#9da8b9] max-w-3xl w-full mt-4 px-2">
                 <div className="flex gap-4">
                     {/* Version INFO */}
-                    <span>v0.31 (Strict)</span>
+                    <span>v0.31.2</span>
                 </div>
             </div>
         </div>
