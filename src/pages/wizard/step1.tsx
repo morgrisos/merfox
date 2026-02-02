@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { useSettings } from '@/hooks/useSettings';
 import { Play, AlertCircle, Search, Link as LinkIcon } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
+import pkg from '../../../package.json';
 
 type ExtractionMode = 'test' | 'production';
 type InputType = 'keyword' | 'url';
@@ -292,7 +293,7 @@ export default function Step1_Setup() {
             <div className="flex justify-between items-center text-xs text-[#9da8b9] max-w-3xl w-full mt-4 px-2">
                 <div className="flex gap-4">
                     {/* Version INFO */}
-                    <span>v0.31.2</span>
+                    <span>v{pkg.version}</span>
                 </div>
             </div>
         </div>
