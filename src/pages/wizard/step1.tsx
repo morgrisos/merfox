@@ -224,7 +224,7 @@ export default function Step1_Setup() {
                                     {/* Limit Selection */}
                                     <div className="space-y-3">
                                         <label className="text-sm font-medium text-[#9da8b9] flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-sm">list</span> 取得件数 (Limit)
+                                            <span className="material-symbols-outlined text-sm">list</span> 取得件数
                                         </label>
                                         <div className="grid grid-cols-4 gap-2">
                                             {[20, 50, 100, 200].map((val) => (
@@ -273,32 +273,6 @@ export default function Step1_Setup() {
                         )}
                     </div>
 
-                    {/* [v0.31.1] Execution Summary (Production only) */}
-                    {mode === 'production' && (
-                        <div className="bg-blue-900/10 border border-blue-500/30 rounded-lg p-4">
-                            <h3 className="text-blue-400 text-sm font-bold mb-2 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-sm">info</span> 実行内容の確認
-                            </h3>
-                            <div className="space-y-1.5 text-xs text-slate-300">
-                                <div className="flex gap-2">
-                                    <span className="text-slate-400 w-16">対象:</span>
-                                    <span className="flex-1">{inputType === 'keyword' ? `検索 "${keyword}"` : url.slice(0, 60) + (url.length > 60 ? '...' : '')}</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    <span className="text-slate-400 w-16">件数:</span>
-                                    <span className="font-mono text-green-400">{limit}件</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    <span className="text-slate-400 w-16">NGワード:</span>
-                                    <span className="font-mono">
-                                        {ngEnabled && ngWords.trim() ?
-                                            `${ngWords.split(/[\n,、]+/).map(w => w.trim()).filter(Boolean).length}個` :
-                                            'なし'}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
 
                     {/* Start Button */}
                     <Button
