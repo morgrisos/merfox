@@ -365,13 +365,29 @@ class Scraper extends EventEmitter {
                     // 2. Shops check
                     // Mercari Shops items usually have specific class or label.
 
-                    // 3. NG Words
+                    // 3. NG Words (excludeKeywords)
                     const description = await page.textContent('[data-testid="description"]').catch(() => '');
-                    if (this.config.excludeKeywords) {
-                        const keywords = this.config.excludeKeywords.split(',').map(s => s.trim()).filter(Boolean);
-                        const isNg = keywords.some(kw => title.includes(kw) || description.includes(kw));
+
+                    let keywords = [];
+                    if (Array.isArray(this.config.excludeKeywords)) {
+                        keywords = this.config.excludeKeywords;
+                    } else if (typeof this.config.excludeKeywords === 'string') {
+                        keywords = this.config.excludeKeywords.split(',').map(s => s.trim()).filter(Boolean);
+                    }
+
+                    if (keywords.length > 0) {
+                        // Check Title only per v0.30 spec ("Title only for now")
+                        // v0.31 Fix: Case-insensitive partial match
+                        const titleLower = title.toLowerCase();
+                        const isNg = keywords.some(kw => {
+                            const k = kw.trim().toLowerCase();
+                            return k && titleLower.includes(k);
+                        });
+
                         if (isNg) {
-                            this.log(`除外: NGワード - ${itemId}`, 'warn');
+                            // Find matched keyword for logging
+                            const matchedKw = keywords.find(kw => titleLower.includes(kw.trim().toLowerCase()));
+                            this.log(`除外: NGワード - ${itemId} (KW: ${matchedKw})`, 'warn');
                             this.stats.excluded++;
                             this.stats.excludedBreakdown.ng++;
                             this.updateStats();

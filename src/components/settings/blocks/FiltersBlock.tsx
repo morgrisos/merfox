@@ -18,7 +18,7 @@ export const FiltersBlock = () => {
     const addNgWord = () => {
         if (!tempNag) return;
         if (ngMode === 'partial') {
-            updateSettings({ filters: { ...filters, ngWords: [...filters.ngWords, tempNag] } });
+            updateSettings({ filters: { ...filters, excludeKeywords: [...filters.excludeKeywords, tempNag] } });
         } else {
             updateSettings({ filters: { ...filters, ngRegex: [...filters.ngRegex, tempNag] } });
         }
@@ -27,9 +27,9 @@ export const FiltersBlock = () => {
 
     const removeNgWord = (index: number, mode: 'partial' | 'regex') => {
         if (mode === 'partial') {
-            const newWords = [...filters.ngWords];
+            const newWords = [...filters.excludeKeywords];
             newWords.splice(index, 1);
-            updateSettings({ filters: { ...filters, ngWords: newWords } });
+            updateSettings({ filters: { ...filters, excludeKeywords: newWords } });
         } else {
             const newRegex = [...filters.ngRegex];
             newRegex.splice(index, 1);
@@ -106,7 +106,7 @@ export const FiltersBlock = () => {
 
                             <div className="flex flex-wrap gap-2">
                                 {ngMode === 'partial' ? (
-                                    filters.ngWords.map((word, i) => (
+                                    filters.excludeKeywords.map((word, i) => (
                                         <span key={i} className="inline-flex items-center gap-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-1 rounded text-xs">
                                             {word}
                                             <button onClick={() => removeNgWord(i, 'partial')} className="hover:text-red-800"><span className="material-symbols-outlined text-[14px]">close</span></button>
@@ -120,7 +120,7 @@ export const FiltersBlock = () => {
                                         </span>
                                     ))
                                 )}
-                                {((ngMode === 'partial' && filters.ngWords.length === 0) || (ngMode === 'regex' && filters.ngRegex.length === 0)) && (
+                                {((ngMode === 'partial' && filters.excludeKeywords.length === 0) || (ngMode === 'regex' && filters.ngRegex.length === 0)) && (
                                     <span className="text-xs text-slate-400 italic">登録なし</span>
                                 )}
                             </div>
