@@ -55,33 +55,72 @@ export default function Step6_Final() {
             {loading ? (
                 <div className="text-app-text-muted">Loading preview...</div>
             ) : !exists ? (
-                /* [REQ 2] Error State */
-                <Card className="w-full bg-red-500/10 border border-red-500/50 p-8 text-center rounded-xl space-y-4">
-                    <AlertTriangle className="w-16 h-16 text-red-500 mx-auto" />
-                    <h2 className="text-xl font-bold text-white">TSV生成に失敗しました</h2>
-                    <div className="text-red-200 bg-red-900/30 p-4 rounded border border-red-500/30">
-                        <p className="font-bold mb-2">原因: {failureInfo.reason || '不明なエラー'}</p>
-                        <p className="text-sm">
-                            {failureInfo.reason === 'RAW_EMPTY' && '抽出された商品が0件です。検索結果ページを確認してください。'}
-                            {failureInfo.reason === 'MAPPING_MISSING' && 'マッピング設定(mapping.csv)が見つかりません。'}
-                            {failureInfo.reason === 'CONVERT_FAILED' && `変換対象外の商品ばかりです。${failureInfo.detail ? `(${failureInfo.detail})` : ''}`}
-                            {failureInfo.reason === 'UNKNOWN' && 'ログやマッピング設定を確認してください。'}
-                        </p>
-                    </div>
-                    {failureInfo.reason === 'CONVERT_FAILED' && (
-                        <p className="text-red-200 text-sm">
-                            <span className="font-bold underline cursor-pointer hover:text-white" onClick={() => handleDownload('failed')}>
-                                失敗リスト(failed.csv)を確認
-                            </span>
-                        </p>
-                    )}
-                    <div className="flex justify-center gap-4 mt-4">
-                        <Button variant="outline" onClick={() => router.push('/scraper/mapping?auto=true')}>マッピング設定を開く</Button>
-                        <Button variant="outline" onClick={() => router.push('/dashboard')}>終了</Button>
-                    </div>
-                </Card>
+                failureInfo.reason === 'CONVERT_FAILED' || failureInfo.reason === 'MAPPING_MISSING' ? (
+                    <Card className="w-full bg-blue-900/20 border border-blue-500/50 p-8 text-center rounded-xl space-y-6">
+                        <div className="w-16 h-16 mx-auto bg-blue-500/20 rounded-full flex items-center justify-center">
+                            <span className="text-3xl">📋</span>
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold text-white mb-2">あと1ステップ：ASIN/JANマッピングが必要です</h2>
+                            <p className="text-blue-100/80 text-sm leading-relaxed">
+                                変換対象の商品にASIN/JANが未設定のため、Amazon TSVを作成できません。<br />
+                                マッピングを1件以上登録してから再実行してください。
+                            </p>
+                        </div>
+
+                        {failureInfo.detail && (
+                            <div className="text-blue-200/70 bg-blue-900/30 p-3 rounded text-xs border border-blue-500/30">
+                                詳細: {failureInfo.detail}
+                            </div>
+                        )}
+
+                        <div className="flex flex-col gap-3">
+                            <Button
+                                size="lg"
+                                className="w-full h-12 text-base font-bold bg-blue-600 hover:bg-blue-500 text-white"
+                                onClick={() => router.push(`/mapping${runId ? `?runId=${runId}` : ''}`)}
+                            >
+                                マッピングへ
+                            </Button>
+                            <div className="flex gap-3">
+                                {failureInfo.reason === 'CONVERT_FAILED' && (
+                                    <Button
+                                        variant="outline"
+                                        className="flex-1"
+                                        onClick={() => handleDownload('failed')}
+                                    >
+                                        failed.csv を開く
+                                    </Button>
+                                )}
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={() => router.push('/dashboard')}
+                                >
+                                    終了
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                ) : (
+                    <Card className="w-full bg-red-500/10 border border-red-500/50 p-8 text-center rounded-xl space-y-4">
+                        <AlertTriangle className="w-16 h-16 text-red-500 mx-auto" />
+                        <h2 className="text-xl font-bold text-white">TSV生成に失敗しました</h2>
+                        <div className="text-red-200 bg-red-900/30 p-4 rounded border border-red-500/30">
+                            <p className="font-bold mb-2">原因: {failureInfo.reason || '不明なエラー'}</p>
+                            <p className="text-sm">
+                                {failureInfo.reason === 'RAW_EMPTY' && '抽出された商品が0件です。検索結果ページを確認してください。'}
+                                {failureInfo.reason === 'UNKNOWN' && 'ログやマッピング設定を確認してください。'}
+                                {failureInfo.detail}
+                            </p>
+                        </div>
+                        <div className="flex justify-center gap-4 mt-4">
+                            <Button variant="outline" onClick={() => router.push('/mapping')}>マッピング設定を開く</Button>
+                            <Button variant="outline" onClick={() => router.push('/dashboard')}>終了</Button>
+                        </div>
+                    </Card>
+                )
             ) : (
-                /* Success State */
                 <div className="w-full space-y-6">
                     <Card className="bg-app-surface border border-app-border p-8 text-center rounded-xl space-y-6">
                         <div className="flex flex-col items-center">
@@ -98,7 +137,6 @@ export default function Step6_Final() {
                         </Button>
                     </Card>
 
-                    {/* [REQ 3] Preview Table */}
                     <div className="bg-app-surface border border-app-border rounded-xl overflow-hidden">
                         <div className="px-4 py-3 bg-[#1a2027] border-b border-app-border flex items-center gap-2">
                             <Eye className="w-4 h-4 text-app-text-muted" />
