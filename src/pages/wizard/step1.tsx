@@ -139,7 +139,7 @@ export default function Step1_Setup() {
                         <button
                             onClick={() => setMode('production')}
                             className={`flex flex-col items-center justify-center p-4 rounded-md transition-all ${mode === 'production'
-                                ? 'bg-green-600 text-white shadow-lg'
+                                ? 'bg-primary text-white shadow-lg'
                                 : 'text-[#9da8b9] hover:bg-[#1a2027] hover:text-white'
                                 }`}
                         >
