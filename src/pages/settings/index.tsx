@@ -19,11 +19,6 @@ export default function Settings() {
     return (
         <div className="flex flex-col h-full bg-app-base text-app-text-main p-6 gap-6">
             <div className="flex flex-col gap-2">
-                <nav className="flex flex-wrap gap-2 text-sm">
-                    <Link href="/" className="text-app-text-muted font-medium hover:text-white transition-colors">ダッシュボード</Link>
-                    <span className="text-app-text-muted font-medium">/</span>
-                    <span className="text-white font-medium">設定</span>
-                </nav>
                 <h1 className="text-3xl font-bold text-white">設定</h1>
                 <p className="text-app-text-muted text-base max-w-2xl">
                     アプリケーションの全般設定とライセンス管理を行います。

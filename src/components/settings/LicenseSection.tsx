@@ -30,19 +30,44 @@ export function LicenseSection() {
         <div className="bg-app-surface border border-app-border rounded-xl p-6">
             <h2 className="text-lg font-bold text-white mb-4">ライセンス認証</h2>
 
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
                 <div>
                     <p className="text-sm font-bold text-app-text-muted">ステータス</p>
                     <div className="flex items-center gap-2 mt-1">
                         <div className={`w-3 h-3 rounded-full ${status === 'ACTIVE' ? 'bg-green-500' : 'bg-red-500'}`} />
                         <span className="text-lg font-bold text-white">{getStatusLabel(status)}</span>
                     </div>
+
+                    {/* Current License Key Display */}
+                    {status === 'ACTIVE' && typeof window !== 'undefined' && (
+                        <div className="mt-3">
+                            <p className="text-xs font-bold text-app-text-muted mb-1">現在のライセンスキー:</p>
+                            {(() => {
+                                const currentKey = localStorage.getItem('merfox_license_key') || '';
+                                if (currentKey === 'MER-DEV-0000') {
+                                    return (
+                                        <div className="flex items-center gap-2">
+                                            <code className="font-mono text-sm text-yellow-400 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20">
+                                                MER-DEV-0000
+                                            </code>
+                                            <span className="text-xs text-yellow-400">(Developer Mode)</span>
+                                        </div>
+                                    );
+                                }
+                                return (
+                                    <code className="font-mono text-sm text-green-400 bg-green-500/10 px-2 py-1 rounded border border-green-500/20">
+                                        {currentKey || '(不明)'}
+                                    </code>
+                                );
+                            })()}
+                        </div>
+                    )}
                 </div>
                 {status === 'ACTIVE' && (
                     <button
                         onClick={handleDeactivate}
                         disabled={busy}
-                        className="px-4 py-2 border border-red-500/30 text-red-500 hover:bg-red-500/10 rounded-lg text-xs font-bold transition-colors"
+                        className="px-4 py-2 border border-red-500/30 text-red-500 hover:bg-red-500/10 rounded-lg text-xs font-bold transition-colors self-start sm:self-center"
                     >
                         解除する
                     </button>

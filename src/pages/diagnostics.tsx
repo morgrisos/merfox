@@ -73,7 +73,7 @@ export default function Diagnostics() {
                     <div className="flex gap-3">
                         <Button
                             onClick={handleCopy}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 bg-primary hover:bg-blue-600"
                         >
                             {copied ? (
                                 <>
@@ -89,8 +89,7 @@ export default function Diagnostics() {
                         </Button>
                         <Button
                             onClick={fetchDiagnostics}
-                            variant="outline"
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 bg-app-element hover:bg-gray-700 text-white"
                         >
                             <RefreshCw className="w-4 h-4" />
                             再読み込み
