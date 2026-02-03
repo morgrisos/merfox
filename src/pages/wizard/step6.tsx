@@ -80,10 +80,10 @@ export default function Step6_Final() {
                             <span className="text-3xl">📋</span>
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-white mb-2">あと1ステップ：ASIN/JANマッピングが必要です</h2>
+                            <h2 className="text-2xl font-bold text-white mb-2">変換できませんでした（マッピングが未設定です）</h2>
                             <p className="text-blue-100/80 text-sm leading-relaxed">
-                                変換対象の商品にASIN/JANが未設定のため、Amazon TSVを作成できません。<br />
-                                マッピングを1件以上登録してから再実行してください。
+                                ASIN/JANが未登録のため、Amazon用TSVを作れません。<br />
+                                マッピングを設定すると次回から成功します。
                             </p>
                         </div>
 
@@ -99,7 +99,7 @@ export default function Step6_Final() {
                                 className="w-full h-12 text-base font-bold bg-blue-600 hover:bg-blue-500 text-white"
                                 onClick={() => router.push(`/mapping${runId ? `?runId=${runId}` : ''}`)}
                             >
-                                マッピングへ
+                                マッピングを設定する
                             </Button>
                             <div className="flex gap-3">
                                 {failureInfo.reason === 'CONVERT_FAILED' && (
@@ -108,7 +108,7 @@ export default function Step6_Final() {
                                         className="flex-1"
                                         onClick={() => handleDownload('failed')}
                                     >
-                                        failed.csv を開く
+                                        失敗リストをダウンロード
                                     </Button>
                                 )}
                                 <Button
