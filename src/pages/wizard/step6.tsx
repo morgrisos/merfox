@@ -29,9 +29,22 @@ export default function Step6_Final() {
             .catch(() => setLoading(false));
     }, [runId]);
 
-    const handleDownload = (type: string) => {
+    const handleDownload = async (type: string) => {
         if (!runId) return;
-        window.open(`/api/runs/${runId}/files/${type}`, '_blank');
+        try {
+            const response = await fetch(`/api/runs/${runId}/files/${type}`);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${type}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Download failed:', err);
+        }
     };
 
     const handleOpenFolder = async () => {
