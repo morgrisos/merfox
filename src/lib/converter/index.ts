@@ -3,7 +3,7 @@ import path from 'path';
 import { parse } from 'csv-parse/sync';
 import { stringify } from 'csv-stringify/sync';
 import { MerItem } from '../types';
-import { getGlobalMappingPath } from '../runUtils';
+
 
 // [REQ 4] Official Amazon Inventory Loader Header (Fixed)
 // Using standard headers (dashes).
@@ -36,7 +36,7 @@ export class AmazonConverter {
             // I will copy the mapping logic from previous `view_file` output.
 
             // [MAPPING LOAD]
-            const mappingPath = getGlobalMappingPath();
+            const mappingPath = path.join(executionDir, 'mapping.csv');
             const runLogPath = path.join(executionDir, 'run.log');
             let mapping = new Map<string, { id: string, type: string }>();
 

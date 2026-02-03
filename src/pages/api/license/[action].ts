@@ -14,7 +14,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 // In-memory "Database" for Mocking
 // Real implementation would use Prisma/Supabase
-const VALID_KEYS = new Set(['VALID_KEY', 'TEST_KEY_123']);
+const VALID_KEYS = new Set(['VALID_KEY', 'TEST_KEY_123', 'MER-DEV-0000', 'MER-DEV-0001']);
 const SUSPENDED_KEYS = new Set(['SUSPENDED_KEY', 'BAD_PAYMENT']);
 const DEVICE_MAP = new Map<string, Set<string>>(); // Key -> Set<DeviceId>
 

@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "schedule": {
+    "kind": "daily",
+    "hour": 12,
+    "minute": 0
+  },
+  "targetUrl": "https://jp.mercari.com/search?keyword=test",
+  "lastTriggeredAt": "2026-01-28T07:15:33.404Z"
+}

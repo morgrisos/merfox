@@ -142,18 +142,37 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
         try {
             let targetUrl = 'https://jp.mercari.com/search?keyword=test';
+            let limit = test ? 20 : 100;
+            let excludeKeywords: string[] = [];
+            let runType = test ? 'test' : 'production';
+
             if (typeof window !== 'undefined') {
                 const stored = localStorage.getItem('merfox_settings');
                 if (stored) {
                     const parsed = JSON.parse(stored);
                     if (parsed.target?.url) targetUrl = parsed.target.url;
+                    // For Production, respect the user setting. For Test, force 20.
+                    if (!test && parsed.stopConditions?.countLimit) {
+                        limit = parsed.stopConditions.countLimit;
+                    }
+                    if (parsed.filters?.excludeKeywords) {
+                        excludeKeywords = parsed.filters.excludeKeywords;
+                    }
+                    if (parsed.runType) {
+                        runType = parsed.runType;
+                    }
                 }
             }
 
             const res = await fetch('/api/scraper/run', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: targetUrl, limit: test ? 20 : 100 })
+                body: JSON.stringify({
+                    url: targetUrl,
+                    limit,
+                    excludeKeywords,
+                    runType
+                })
             });
             const json = await res.json();
 

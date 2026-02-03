@@ -46,7 +46,21 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
                 body: JSON.stringify({ updates: localChanges })
             });
             if (res.ok) {
-                alert('保存しました'); // MVP Notification
+                const runIdFromQuery = new URLSearchParams(window.location.search).get('runId');
+
+                if (runIdFromQuery) {
+                    // Show confirmation dialog with reconvert option
+                    const confirmed = window.confirm(
+                        'カテゴリ変換を保存しました。\n\nこのrunIdで再変換を実行しますか？'
+                    );
+
+                    if (confirmed) {
+                        router.push(`/wizard/step5?runId=${runIdFromQuery}&action=reconvert`);
+                        return;
+                    }
+                }
+
+                alert('保存しました');
                 fetchData(); // Refetch
             } else {
                 alert('保存に失敗しました');
