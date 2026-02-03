@@ -33,17 +33,23 @@ export default function Step6_Final() {
         if (!runId) return;
         try {
             const response = await fetch(`/api/runs/${runId}/files/${type}`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${type}.csv`;
+            // Safe filename: prevent double extension
+            const filename = type.includes('.') ? type : `${type}.csv`;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         } catch (err) {
             console.error('Download failed:', err);
+            alert(`ダウンロードに失敗しました: ${err instanceof Error ? err.message : '不明なエラー'}`);
         }
     };
 
