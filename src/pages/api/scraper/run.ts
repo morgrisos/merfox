@@ -11,20 +11,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const { url, limit = 50, filters } = req.body;
+        const { url, limit = 50, excludeKeywords = [], runType = 'test' } = req.body;
 
         if (!url) return res.status(400).json({ error: 'URL is required' });
 
-        console.log('[API] Starting Scraper Run...', { url, limit });
+        console.log('[API] Starting Scraper Run...', { url, limit, excludeKeywords, runType });
 
         const dateStr = new Date().toISOString().split('T')[0];
-        // Generate a run ID. Scraper class typically expects just "runXXX" or similar if handled?
-        // Actually Scraper.js takes `runId` and creates folder `runsDir/runId` or similar.
-        // If we want `YYYY-MM-DD_runXXX`, we need to handle that.
-        // Let's use simple logic: find existing runs to increment ID?
-        // Or let Scraper handle it? Scraper(runId, type, url, options).
-        // Let's generate a unique enough ID: "run-" + timestamp.
-        // Automation uses 'run999'. Standard Wizard should be cleaner.
         const runId = `${dateStr}_run${Math.floor(Math.random() * 900) + 100}`;
 
         // Pass environment
@@ -32,7 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const scraper = new Scraper(runId, 'wizard', url, {
             stopLimit: limit,
-            excludeKeywords: filters?.ngWord || ''
+            excludeKeywords: excludeKeywords,
+            runType: runType
         });
 
         // Run in background (don't await completion for the API response, unless we want to block?)

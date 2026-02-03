@@ -80,17 +80,48 @@ export default function Step2_Extract() {
                         </div>
 
                         {/* 2. Stats */}
-                        <div className="grid grid-cols-2 gap-8 w-full max-w-md mx-auto text-center border-t border-b border-app-border py-6">
-                            <div>
-                                <p className="text-xs text-app-text-muted uppercase font-bold tracking-wider mb-1">検出アイテム</p>
-                                <span className="text-2xl font-mono text-white">{stats.totalItems || 0}</span>
+                        {/* 2. Stats Breakdown */}
+                        <div className="w-full max-w-md mx-auto border-t border-b border-app-border py-4 space-y-4">
+                            <div className="grid grid-cols-2 gap-8 text-center">
+                                <div>
+                                    <p className="text-xs text-app-text-muted uppercase font-bold tracking-wider mb-1">取得件数</p>
+                                    <span className="text-2xl font-mono text-white">{stats.totalItems || 0}</span>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-app-text-muted uppercase font-bold tracking-wider mb-1">通過 (Success)</p>
+                                    <span className={`text-3xl font-mono font-bold ${stats.newItems > 0 ? 'text-green-400' : 'text-app-text-muted'}`}>
+                                        {stats.newItems} <span className="text-base font-normal text-app-text-muted">件</span>
+                                    </span>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-xs text-app-text-muted uppercase font-bold tracking-wider mb-1">取得件数</p>
-                                <span className={`text-3xl font-mono font-bold ${stats.newItems > 0 ? 'text-blue-400' : 'text-app-text-muted'}`}>
-                                    {stats.newItems} <span className="text-base font-normal text-app-text-muted">件</span>
-                                </span>
+
+                            {/* Excluded Section */}
+                            <div className="bg-red-900/10 rounded p-3 border border-red-900/20">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-xs font-bold text-red-400">除外 (Excluded)</span>
+                                    <span className="text-sm font-mono font-bold text-red-400">
+                                        {stats.excluded.ngWord + stats.excluded.shops + stats.excluded.unknown + stats.excluded.shipping + stats.excluded.highPrice} 件
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-app-text-muted">
+                                    <div className="flex justify-between"><span>NGワード:</span> <span className="font-mono text-red-300">{stats.excluded.ngWord}</span></div>
+                                    <div className="flex justify-between"><span>ショップ:</span> <span className="font-mono">{stats.excluded.shops}</span></div>
+                                    <div className="flex justify-between"><span>送料別:</span> <span className="font-mono">{stats.excluded.shipping}</span></div>
+                                    <div className="flex justify-between"><span>その他:</span> <span className="font-mono">{stats.excluded.unknown}</span></div>
+                                </div>
                             </div>
+
+                            {/* Low Results Warning */}
+                            {status === 'COMPLETED' && stats.newItems <= 5 && (
+                                <div className="text-xs text-yellow-500 bg-yellow-900/10 p-3 rounded border border-yellow-900/20">
+                                    <p className="font-bold mb-1"><AlertTriangle className="w-3 h-3 inline mr-1" /> 抽出件数が少ない可能性があります</p>
+                                    <ul className="list-disc list-inside opacity-80 text-[10px]">
+                                        <li>NGワードが多すぎる</li>
+                                        <li>キーワードが広すぎる/狭すぎる</li>
+                                        <li>出品数が少ない時間帯</li>
+                                    </ul>
+                                </div>
+                            )}
                         </div>
 
                         {/* 3. CTA Buttons */}

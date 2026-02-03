@@ -50,10 +50,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     excludeShops: true,
                     excludeUnknown: true,
                     onlyFreeShipping: true,
+                    excludeKeywords: []
                 },
                 stopConditions: {
                     useCount: true,
-                    countLimit: 1000,
+                    countLimit: 20,
                     useTime: true,
                     timeLimit: 25
                 }
