@@ -1,8 +1,10 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import { useToast } from '@/components/ui/SimpleToast';
 
 export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
     const router = useRouter();
+    const { showToast, ToastComponent } = useToast();
     const [data, setData] = React.useState<any>(null);
     const [loading, setLoading] = React.useState(true);
     const [filterPending, setFilterPending] = React.useState(true);
@@ -49,18 +51,18 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
                 const runIdFromQuery = new URLSearchParams(window.location.search).get('runId');
 
                 if (runIdFromQuery) {
-                    // Show confirmation dialog with reconvert option
-                    const confirmed = window.confirm(
-                        'カテゴリ変換を保存しました。\n\nこのrunIdで再変換を実行しますか？'
-                    );
-
-                    if (confirmed) {
-                        router.push(`/wizard/step5?runId=${runIdFromQuery}&action=reconvert`);
-                        return;
-                    }
+                    // Show toast with action button
+                    showToast('カテゴリ変換を保存しました', {
+                        label: 'このリサーチで再変換',
+                        onClick: () => {
+                            router.push(`/wizard/step5?runId=${runIdFromQuery}&action=reconvert`);
+                        }
+                    });
+                } else {
+                    // No runId, show simple toast
+                    showToast('カテゴリ変換を保存しました');
                 }
 
-                alert('保存しました');
                 fetchData(); // Refetch
             } else {
                 alert('保存に失敗しました');
@@ -203,6 +205,8 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
                     </div>
                 </div>
             )}
+            {ToastComponent}
         </div>
     );
 }
+```
