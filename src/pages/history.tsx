@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { AppShell } from '@/components/layout/AppShell';
 import { useRunHistory } from '@/hooks/useRunHistory';
 
 export const CsvManager = () => {
+    const router = useRouter();
     const { history } = useRunHistory();
     const [activeTab, setActiveTab] = useState<'history' | 'report'>('history');
     const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
@@ -125,12 +127,33 @@ export const CsvManager = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <button
-                                                    onClick={() => { setSelectedRunId(run.id); setActiveTab('report'); }}
-                                                    className="text-primary font-bold hover:underline"
-                                                >
-                                                    詳細レポート
-                                                </button>
+                                                <div className="flex items-center justify-end gap-3">
+                                                    {run.configExists && (
+                                                        <button
+                                                            onClick={async () => {
+                                                                try {
+                                                                    const res = await fetch(`/api/runs/${run.id}/config`);
+                                                                    if (res.ok) {
+                                                                        const config = await res.json();
+                                                                        localStorage.setItem('rerun_config', JSON.stringify(config));
+                                                                        router.push('/wizard/step1?rerun=true');
+                                                                    }
+                                                                } catch (e) {
+                                                                    console.error('Failed to load config:', e);
+                                                                }
+                                                            }}
+                                                            className="text-xs text-app-text-muted hover:text-primary font-bold transition-colors"
+                                                        >
+                                                            同じ条件で再実行
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        onClick={() => { setSelectedRunId(run.id); setActiveTab('report'); }}
+                                                        className="text-primary font-bold hover:underline text-sm"
+                                                    >
+                                                        詳細レポート
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
