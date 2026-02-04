@@ -265,7 +265,7 @@ export default function Dashboard() {
                                             </td>
                                         </tr>
                                     ) : (
-                                        priorityCandidates.map((item: any, idx: number) => (
+                                        priorityCandidates.slice(0, 5).map((item: any, idx: number) => (
                                             <PriorityRow
                                                 key={idx}
                                                 priority="High" // TODO: Real priority logic
@@ -298,7 +298,7 @@ export default function Dashboard() {
                             {dangerList.length === 0 ? (
                                 <div className="text-center text-app-text-muted text-xs py-4">問題なし</div>
                             ) : (
-                                dangerList.map((item: any, idx: number) => (
+                                dangerList.slice(0, 3).map((item: any, idx: number) => (
                                     <div key={idx} className="flex items-center justify-between text-sm p-3 bg-red-500/5 border border-red-500/10 rounded-lg">
                                         <span className="text-red-400 truncate max-w-[200px]" title={item.message}>{item.message}</span>
                                         <span className="font-bold text-white">WARN</span>
