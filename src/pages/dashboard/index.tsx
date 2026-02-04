@@ -184,6 +184,7 @@ export default function Dashboard() {
                     sub="今日取得・重複除外済"
                     icon={<Search className="w-5 h-5" />}
                     colorClass="bg-blue-500"
+                    onClick={() => router.push('/history?filter=new')}
                 />
                 <SummaryCard
                     title="出品OK"
@@ -191,6 +192,7 @@ export default function Dashboard() {
                     sub="Amazonアップロード可能"
                     icon={<CheckCircle className="w-5 h-5 text-primary" />}
                     colorClass="bg-primary"
+                    onClick={() => router.push('/history?filter=ready')}
                 />
                 <SummaryCard
                     title="危険 / 注意"
@@ -198,7 +200,7 @@ export default function Dashboard() {
                     sub="欠品・公開終了の可能性"
                     icon={<AlertTriangle className="w-5 h-5 text-red-500" />}
                     colorClass="bg-red-500"
-                    onClick={() => router.push('/scraper')}
+                    onClick={() => router.push('/history?filter=warning')}
                 />
             </div>
 
@@ -357,7 +359,7 @@ export default function Dashboard() {
 
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

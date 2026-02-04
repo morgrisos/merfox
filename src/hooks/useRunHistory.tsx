@@ -27,7 +27,8 @@ export const useRunHistory = () => {
                         },
                         logs: [],
                         failureReasons: r.failureReasons || [],
-                        failedUrls: r.failedUrls || []
+                        failedUrls: r.failedUrls || [],
+                        configExists: r.configExists || false
                     }));
                     setHistory(mapped);
                 }
