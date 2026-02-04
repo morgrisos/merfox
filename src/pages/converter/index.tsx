@@ -126,7 +126,7 @@ export const Converter = () => {
                                         <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">1. Raw Data (items.csv)</label>
                                         <div className="flex items-center gap-3">
                                             <input type="file" accept=".csv" onChange={(e) => handleFileChange(e, 'raw')} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
-                                            {rawFile && <span className="material-symbols-outlined text-green-500">check_circle</span>}
+                                            {rawFile && <span className="material-symbols-outlined text-primary">check_circle</span>}
                                         </div>
                                     </div>
                                     <div className="w-full h-px bg-slate-200 dark:bg-slate-700"></div>
@@ -134,7 +134,7 @@ export const Converter = () => {
                                         <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">2. Mapping Table (mapping.csv)</label>
                                         <div className="flex items-center gap-3">
                                             <input type="file" accept=".csv" onChange={(e) => handleFileChange(e, 'mapping')} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
-                                            {mappingFile && <span className="material-symbols-outlined text-green-500">check_circle</span>}
+                                            {mappingFile && <span className="material-symbols-outlined text-primary">check_circle</span>}
                                         </div>
                                         <p className="text-xs text-slate-400 mt-2">必須カラム: item_id, product_id, product_id_type</p>
                                     </div>
@@ -170,7 +170,7 @@ export const Converter = () => {
                                     ) : stats.total > 0 ? (
                                         <div className="flex justify-around w-full">
                                             <div className="text-center">
-                                                <div className="text-3xl font-bold text-green-500">{stats.success}</div>
+                                                <div className="text-3xl font-bold text-primary">{stats.success}</div>
                                                 <div className="text-sm text-slate-500">成功</div>
                                             </div>
                                             <div className="text-center">

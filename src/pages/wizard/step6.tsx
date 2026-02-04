@@ -143,13 +143,13 @@ export default function Step6_Final() {
                 <div className="w-full space-y-6">
                     <Card className="bg-app-surface border border-app-border p-8 text-center rounded-xl space-y-6">
                         <div className="flex flex-col items-center">
-                            <FileText className="w-16 h-16 text-green-500 mb-4" />
-                            <h2 className="text-xl font-bold text-white">amazon_upload.tsv</h2>
-                            <p className="text-green-200/70 text-sm">出力完了 / {preview.length > 0 ? preview.length - 1 : 0} Items</p>
+                            <FileText className="w-16 h-16 text-primary mb-4" />
+                            <h3 className="text-xl font-bold text-white mb-2">ファイル出力が完了しました</h3>
+                            <p className="text-blue-200/70 text-sm">出力完了 / {preview.length > 0 ? preview.length - 1 : 0} Items</p>
                         </div>
                         <Button
                             size="lg"
-                            className="w-full h-14 text-lg font-bold bg-green-600 hover:bg-green-500 text-white rounded-lg shadow-lg"
+                            className="w-full h-14 text-lg font-bold bg-primary hover:bg-blue-600 text-white rounded-lg shadow-lg"
                             onClick={() => handleDownload('amazon')}
                         >
                             <Download className="mr-2 h-6 w-6" /> 最終TSVをダウンロード
