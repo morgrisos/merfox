@@ -22,6 +22,52 @@ export default function InventoryMonitoring() {
                         監視商品を追加
                     </button>
                 </div>
+            </div>
+
+            {/* Preparation Status Banner */}
+            <div className="max-w-5xl mx-auto w-full mb-6">
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6">
+                    <h3 className="text-lg font-bold text-white mb-3">⚠️ この機能は現在準備中です</h3>
+                    <p className="text-sm text-blue-100/90 mb-3">
+                        近日公開予定の機能です。実装後は以下が可能になります：
+                    </p>
+                    <ul className="text-sm text-blue-100/80 space-y-1.5 pl-5" style={{ listStyle: 'disc' }}>
+                        <li><strong className="text-blue-200">在庫切れ検知</strong> - メルカリ元商品のSOLD OUT自動検知</li>
+                        <li><strong className="text-blue-200">価格変動監視</strong> - 元商品の値下げ・値上げをリアルタイム追跡</li>
+                        <li><strong className="text-blue-200">削除検知</strong> - 商品ページ削除時に即座にアラート</li>
+                    </ul>
+
+                    <div className="mt-5 pt-5 border-t border-blue-500/20">
+                        <h4 className="text-base font-bold text-white mb-3">📖 使い方（準備完了後）</h4>
+                        <div className="space-y-2.5">
+                            <div className="flex gap-3">
+                                <span className="text-primary font-bold text-sm">1.</span>
+                                <div className="flex-1">
+                                    <p className="font-bold text-white text-sm">
+                                        Amazon出品中商品を登録</p>
+                                    <p className="text-xs text-blue-200/70">監視したいASIN/SKUを登録します</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3">
+                                <span className="text-primary font-bold text-sm">2.</span>
+                                <div className="flex-1">
+                                    <p className="font-bold text-white text-sm">元メルカリURLを紐付け</p>
+                                    <p className="text-xs text-blue-200/70">仕入れ元のメルカリ商品URLを関連付けます</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3">
+                                <span className="text-primary font-bold text-sm">3.</span>
+                                <div className="flex-1">
+                                    <p className="font-bold text-white text-sm">自動監視開始</p>
+                                    <p className="text-xs text-blue-200/70">定期チェックで価格・在庫変動をダッシュボードに通知</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-5xl mx-auto w-full flex flex-col gap-8">
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

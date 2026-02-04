@@ -29,6 +29,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             runType: runType
         });
 
+        // Save config.json for re-run feature
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const runDir = path.join(getRunsDir(), runId);
+
+            // Ensure run directory exists (scraper will create it, but we do early)
+            if (!fs.existsSync(runDir)) {
+                fs.mkdirSync(runDir, { recursive: true });
+            }
+
+            const config = {
+                url,
+                ngWords: excludeKeywords,
+                limit,
+                mode: runType,
+                createdAt: new Date().toISOString()
+            };
+
+            fs.writeFileSync(
+                path.join(runDir, 'config.json'),
+                JSON.stringify(config, null, 2)
+            );
+            console.log('[API] Saved config.json for runId:', runId);
+        } catch (configErr) {
+            console.warn('[API] Failed to save config.json:', configErr);
+            // Don't fail the entire request, just log
+        }
+
         // Run in background (don't await completion for the API response, unless we want to block?)
         // Automation ran inline. Wizard Step 2 implies progress bar.
         // We should start it and return success immediately, so Frontend can poll logs.
