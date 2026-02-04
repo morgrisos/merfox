@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
 import { useOutcome } from '@/contexts/OutcomeContext';
+import { useSettings } from '@/hooks/useSettings';
 import { AlertTriangle, ArrowRight, RefreshCw, Settings, Play } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
 
@@ -10,7 +11,11 @@ export default function Step3_Verify() {
     const router = useRouter();
     const { mode } = router.query;
     const { outcome } = useOutcome();
+    const { settings } = useSettings();
     const isSuccess = mode === 'success';
+
+    // Check if this is test mode
+    const isTestMode = settings.runType === 'test';
 
     // Type casting for robust latestRunId access
     const latestRunId = (outcome as any).latestRunId;
@@ -25,7 +30,7 @@ export default function Step3_Verify() {
                     </h1>
                     <p className="text-app-text-muted text-sm">
                         {isSuccess
-                            ? '内容を確認して、マッピングへ進んでください。'
+                            ? '内容を確認して、カテゴリ変換へ進んでください。'
                             : '問題の原因と、次に押すボタンを表示します。'}
                     </p>
                 </div>
@@ -45,10 +50,32 @@ export default function Step3_Verify() {
                             </div>
                         </div>
 
-                        {/* 3B-4: Primary CTA (Success) */}
+                        {/* Primary CTA */}
                         <Button size="lg" className="w-full h-14 text-lg font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-lg" onClick={() => router.push('/wizard/step4')}>
-                            次へ（mapping確認） <ArrowRight className="ml-2 h-5 w-5" />
+                            次へ（カテゴリ変換設定） <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
+
+                        {/* Test→本番 CTA (テストモード時のみ) */}
+                        {isTestMode && (
+                            <Button
+                                size="lg"
+                                className="w-full h-12 text-base font-bold bg-app-element hover:bg-app-border text-white border border-app-border rounded-lg"
+                                onClick={() => {
+                                    // 現在の設定を保存
+                                    const wizardSettings = {
+                                        url: settings.target?.url || '',
+                                        keyword: settings.target?.keyword || '',
+                                        ngWords: (settings.filters?.excludeKeywords || []).join(', '),
+                                        limit: 100,
+                                        inputType: settings.target?.mode || 'url'
+                                    };
+                                    localStorage.setItem('wizard_settings', JSON.stringify(wizardSettings));
+                                    router.push('/wizard/step1?restore=true');
+                                }}
+                            >
+                                この設定のまま本番抽出する
+                            </Button>
+                        )}
 
                         <div className="text-center">
                             <button className="text-xs text-app-text-muted hover:text-white underline" onClick={() => router.push('/dashboard')}>
