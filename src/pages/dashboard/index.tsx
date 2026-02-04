@@ -252,8 +252,14 @@ export default function Dashboard() {
                                 <tbody>
                                     {priorityCandidates.length === 0 ? (
                                         <tr>
-                                            <td colSpan={6} className="px-4 py-8 text-center text-app-text-muted">
-                                                データがありません
+                                            <td colSpan={6} className="px-4 py-12 text-center">
+                                                <p className="text-app-text-muted mb-4">まだリサーチがありません</p>
+                                                <button
+                                                    onClick={() => router.push('/wizard/step1')}
+                                                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 font-bold transition-colors"
+                                                >
+                                                    新規リサーチを開始
+                                                </button>
                                             </td>
                                         </tr>
                                     ) : (
