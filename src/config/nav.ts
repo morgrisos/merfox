@@ -1,4 +1,4 @@
-import { LayoutDashboard, History, Activity, Settings, Zap, FileText, Clock, Link2 } from 'lucide-react';
+import { LayoutDashboard, History, Activity, Settings, Zap, Link2, Eye } from 'lucide-react';
 
 export const NAV_SECTIONS = [
     {
@@ -10,16 +10,15 @@ export const NAV_SECTIONS = [
     {
         title: 'データ管理',
         items: [
-            { id: 'runs', label: '履歴', path: '/runs', icon: History },
+            { id: 'history', label: '履歴', path: '/history', icon: History },
             { id: 'mapping', label: 'カテゴリ変換', path: '/mapping', icon: Link2 },
-            { id: 'files', label: 'ファイル', path: '/csv', icon: FileText },
         ]
     },
     {
         title: '高度な機能',
         items: [
-            { id: 'scraper', label: 'リアルタイム抽出', path: '/scraper', icon: Activity },
-            { id: 'automation', label: '定期実行ルール', path: '/automation', icon: Clock },
+            { id: 'inventory', label: '在庫監視', path: '/inventory', icon: Eye },
+            { id: 'automation', label: '定期実行', path: '/scraper', icon: Activity },
         ]
     },
     {

@@ -77,10 +77,10 @@ export default function InventoryMonitor() {
                     <div>
                         <h1 className="text-2xl font-black text-white flex items-center gap-3">
                             <Activity className="w-8 h-8 text-primary" />
-                            在庫監視マネージャー
+                            定期実行
                         </h1>
                         <p className="text-app-text-muted mt-2">
-                            メルカリの検索条件を登録し、売り切れ・新着・再出品を自動でチェックします。
+                            メルカリの検索条件を登録し、定期的に自動で商品を抽出します。
                         </p>
                     </div>
                     <button
