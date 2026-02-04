@@ -209,4 +209,3 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
         </div>
     );
 }
-```
