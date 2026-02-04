@@ -35,9 +35,9 @@ export default function Step3_Verify() {
                     <div className="space-y-8">
                         {/* Success Summary */}
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-green-900/10 border border-green-800/30 p-6 rounded-lg text-center">
-                                <p className="text-app-text-muted text-xs uppercase tracking-wider mb-2">取得成功</p>
-                                <p className="text-4xl font-bold text-green-500 font-mono">{outcome.itemsCount ?? 0}<span className="text-base text-app-text-muted ml-1">件</span></p>
+                            <div className="bg-primary/10 border border-primary/30 p-6 rounded-lg text-center">
+                                <p className="text-xs font-bold text-app-text-muted mb-1">抽出結果</p>
+                                <p className="text-4xl font-bold text-primary font-mono">{outcome.itemsCount ?? 0}<span className="text-base text-app-text-muted ml-1">件</span></p>
                             </div>
                             <div className="bg-app-element border border-app-border p-6 rounded-lg text-center">
                                 <p className="text-app-text-muted text-xs uppercase tracking-wider mb-2">除外/失敗</p>

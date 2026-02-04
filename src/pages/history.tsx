@@ -107,7 +107,7 @@ export const CsvManager = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${run.status === 'completed' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${run.status === 'completed' ? 'bg-primary/10 text-primary border-primary/20' :
                                                     run.status === 'failed' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
                                                         run.status === 'running' ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20 animate-pulse' :
                                                             'bg-gray-500/10 text-gray-500 border-gray-500/20'
@@ -117,7 +117,7 @@ export const CsvManager = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3 font-mono text-xs">
-                                                    <span className="text-green-400 font-bold">{run.stats.success} OK</span>
+                                                    <span className="text-primary font-bold">{run.stats.success} OK</span>
                                                     <span className="text-app-text-muted">/</span>
                                                     <span className="text-app-text-muted">{run.stats.excluded} EXC</span>
                                                     <span className="text-app-text-muted">/</span>

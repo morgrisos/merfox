@@ -95,7 +95,7 @@ export default function InventoryMonitor() {
                 {/* Dashboard Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-app-surface border border-app-border rounded-xl p-5 flex items-center gap-4">
-                        <div className="p-3 rounded-full bg-green-500/10 text-green-500">
+                        <div className="p-3 rounded-full bg-primary/10 text-primary">
                             <Activity className="w-6 h-6" />
                         </div>
                         <div>
@@ -153,7 +153,7 @@ export default function InventoryMonitor() {
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${job.isEnabled ? 'bg-green-500/20 text-green-400' : 'bg-app-element text-app-text-muted'}`}>
+                                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${job.isEnabled ? 'bg-primary/20 text-primary' : 'bg-app-element text-app-text-muted'}`}>
                                                     {job.isEnabled ? 'ACTIVE' : 'STOPPED'}
                                                 </span>
                                                 <div className="flex items-center gap-1 text-xs text-app-text-muted">
@@ -174,7 +174,7 @@ export default function InventoryMonitor() {
                                         <div className="flex items-center gap-3">
                                             <button
                                                 onClick={() => toggleJob(job.id)}
-                                                className={`p-2 rounded-lg border transition-colors ${job.isEnabled ? 'border-green-500/30 text-green-500 hover:bg-green-500/10' : 'border-app-border text-app-text-muted hover:text-white hover:bg-app-element'}`}
+                                                className={`p-2 rounded-lg border transition-colors ${job.isEnabled ? 'border-primary/30 text-primary hover:bg-primary/10' : 'border-app-border text-app-text-muted hover:text-white hover:bg-app-element'}`}
                                                 title={job.isEnabled ? "停止する" : "再開する"}
                                             >
                                                 {job.isEnabled ? <Square className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current" />}

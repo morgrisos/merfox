@@ -184,13 +184,13 @@ export default function Step1_Setup() {
                                 <div className="flex items-center gap-4 text-sm mb-2">
                                     <button
                                         onClick={() => setInputType('keyword')}
-                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${inputType === 'keyword' ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-transparent text-[#9da8b9] hover:text-white'}`}
+                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${inputType === 'keyword' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-[#9da8b9] hover:text-white'}`}
                                     >
                                         <Search className="w-3.5 h-3.5" /> キーワード検索
                                     </button>
                                     <button
                                         onClick={() => setInputType('url')}
-                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${inputType === 'url' ? 'border-green-500 bg-green-500/10 text-green-400' : 'border-transparent text-[#9da8b9] hover:text-white'}`}
+                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${inputType === 'url' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-[#9da8b9] hover:text-white'}`}
                                     >
                                         <LinkIcon className="w-3.5 h-3.5" /> URL貼り付け
                                     </button>
@@ -233,7 +233,7 @@ export default function Step1_Setup() {
                                                     key={val}
                                                     onClick={() => setLimit(val)}
                                                     className={`py-2 text-sm font-bold rounded border transition-all ${limit === val
-                                                        ? 'border-green-500 bg-green-500/20 text-green-400'
+                                                        ? 'border-primary bg-primary/20 text-primary'
                                                         : 'border-[#282f39] bg-[#0d1014] text-[#9da8b9] hover:border-[#3e4856]'
                                                         }`}
                                                 >
@@ -251,7 +251,7 @@ export default function Step1_Setup() {
                                             </label>
                                             <div
                                                 onClick={() => setNgEnabled(!ngEnabled)}
-                                                className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${ngEnabled ? 'bg-green-600' : 'bg-gray-700'}`}
+                                                className={`w-10 h-5 rounded-full relative cursor-pointer transition-colors ${ngEnabled ? 'bg-primary' : 'bg-gray-700'}`}
                                             >
                                                 <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${ngEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
                                             </div>
@@ -259,7 +259,7 @@ export default function Step1_Setup() {
 
                                         {ngEnabled && (
                                             <textarea
-                                                className="w-full h-24 bg-[#0d1014] border border-[#282f39] rounded p-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-green-500 resize-none"
+                                                className="w-full h-24 bg-[#0d1014] border border-[#282f39] rounded p-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-primary resize-none"
                                                 placeholder="除外したいワードを改行またはカンマ区切りで入力&#13;&#10;例: ジャンク, 破損, 動作未確認"
                                                 value={ngWords}
                                                 onChange={(e) => setNgWords(e.target.value)}
@@ -280,7 +280,7 @@ export default function Step1_Setup() {
                         size="lg"
                         className={`w-full h-14 text-lg font-bold shadow-xl transition-all ${mode === 'test'
                             ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/20'
-                            : 'bg-green-600 hover:bg-green-500 shadow-green-900/20'
+                            : 'bg-primary hover:bg-blue-600 shadow-blue-900/20'
                             }`}
                         onClick={handleStart}
                     >

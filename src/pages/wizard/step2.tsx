@@ -59,11 +59,11 @@ export default function Step2_Extract() {
                             <div className="relative inline-flex items-center justify-center">
                                 <div className={`absolute w-24 h-24 rounded-full ${status === 'RUNNING' ? 'bg-blue-500/20 animate-ping' : 'bg-transparent'}`} />
                                 <div className={`relative w-20 h-20 rounded-full flex items-center justify-center border-4 shadow-xl ${status === 'RUNNING' ? 'border-blue-500 bg-app-base' :
-                                    status === 'COMPLETED' || isTestComplete ? 'border-green-500 bg-green-500/10' :
+                                    status === 'COMPLETED' || isTestComplete ? 'border-primary bg-primary/10' :
                                         'border-red-500 bg-red-500/10'
                                     }`}>
                                     {status === 'RUNNING' ? <Loader2 className="w-8 h-8 text-blue-500 animate-spin" /> :
-                                        status === 'COMPLETED' || isTestComplete ? <CheckCircle className="w-8 h-8 text-green-500" /> :
+                                        status === 'COMPLETED' || isTestComplete ? <CheckCircle className="w-8 h-8 text-primary" /> :
                                             <AlertTriangle className="w-8 h-8 text-red-500" />}
                                 </div>
                             </div>
@@ -89,7 +89,7 @@ export default function Step2_Extract() {
                                 </div>
                                 <div>
                                     <p className="text-xs text-app-text-muted uppercase font-bold tracking-wider mb-1">通過 (Success)</p>
-                                    <span className={`text-3xl font-mono font-bold ${stats.newItems > 0 ? 'text-green-400' : 'text-app-text-muted'}`}>
+                                    <span className={`text-3xl font-mono font-bold ${stats.newItems > 0 ? 'text-primary' : 'text-app-text-muted'}`}>
                                         {stats.newItems} <span className="text-base font-normal text-app-text-muted">件</span>
                                     </span>
                                 </div>
@@ -131,7 +131,7 @@ export default function Step2_Extract() {
                                     <StopCircle className="mr-2 h-5 w-5" /> 停止する
                                 </Button>
                             ) : (stats.newItems > 0) ? (
-                                <Button size="lg" className="w-full h-14 text-lg font-bold bg-green-600 hover:bg-green-500 text-white shadow-xl transform transition-transform hover:scale-[1.02]" onClick={handleNext}>
+                                <Button size="lg" className="w-full h-14 text-lg font-bold bg-primary hover:bg-blue-600 text-white shadow-xl transform transition-transform hover:scale-[1.02]" onClick={handleNext}>
                                     次へ（確認） <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                             ) : (
@@ -157,7 +157,7 @@ export default function Step2_Extract() {
                                     <div className="space-y-3">
                                         <div className="flex flex-col gap-2">
                                             <div className="flex items-center gap-2 text-sm text-white">
-                                                <CheckCircle className="w-4 h-4 text-green-500" /> <span>ショップ除外: <span className="font-bold">ON</span></span>
+                                                <CheckCircle className="w-4 h-4 text-primary" /> <span>ショップ除外: <span className="font-bold">ON</span></span>
                                             </div>
                                             <div className="flex items-center gap-2 text-sm text-app-text-muted">
                                                 <div className="w-4 h-4 border border-app-text-muted rounded-sm"></div> <span>送料込みのみ: <span className="font-mono">未指定</span></span>
@@ -186,7 +186,7 @@ export default function Step2_Extract() {
                                 logs.slice().reverse().map((log, i) => (
                                     <div key={i} className="flex gap-3 text-app-text-muted hover:text-white/90 transition-colors">
                                         <span className="opacity-50 shrink-0 select-none">[{log.timestamp}]</span>
-                                        <span className={log.message.includes('Error') ? 'text-red-400' : log.message.includes('Success') || log.message.includes('Found') ? 'text-green-400' : ''}>
+                                        <span className={log.message.includes('Error') ? 'text-red-400' : log.message.includes('Success') || log.message.includes('Found') ? 'text-primary' : ''}>
                                             {log.message}
                                         </span>
                                     </div>

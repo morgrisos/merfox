@@ -47,7 +47,7 @@ const PriorityRow = ({ priority, status, profit, risk, title }: any) => (
         </td>
         <td className="px-4 py-3">
             <div className="flex items-center gap-2">
-                {status === 'OK' ? <CheckCircle className="w-4 h-4 text-green-500" /> :
+                {status === 'OK' ? <CheckCircle className="w-4 h-4 text-primary" /> :
                     status === 'Mapping' ? <Activity className="w-4 h-4 text-orange-500" /> :
                         <AlertTriangle className="w-4 h-4 text-red-500" />}
                 <span className="text-white font-medium">
@@ -133,7 +133,7 @@ export default function Dashboard() {
                 action: () => console.log('Open TSV'), // TODO: IPC Open File
                 icon: <FileText className="w-6 h-6" />,
                 btnText: 'フォルダを開く',
-                color: 'bg-green-600'
+                color: 'bg-primary'
             };
         }
 
@@ -189,8 +189,8 @@ export default function Dashboard() {
                     title="出品OK"
                     count={summaryData.uploadReady}
                     sub="Amazonアップロード可能"
-                    icon={<CheckCircle className="w-5 h-5 text-green-500" />}
-                    colorClass="bg-green-500"
+                    icon={<CheckCircle className="w-5 h-5 text-primary" />}
+                    colorClass="bg-primary"
                 />
                 <SummaryCard
                     title="危険 / 注意"
@@ -233,7 +233,7 @@ export default function Dashboard() {
                         <div className="px-6 py-4 border-b border-app-border flex justify-between items-center">
                             <h3 className="font-bold text-white flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5 text-yellow-500" />
-                                優先して見るべき 10件
+                                優先して見るべき 5件
                             </h3>
                             <span className="text-xs text-app-text-muted">利益予測に基づく</span>
                         </div>
@@ -306,20 +306,20 @@ export default function Dashboard() {
                     {/* 6. Recent Runs */}
                     <div className="bg-app-surface border border-app-border rounded-xl overflow-hidden flex-1">
                         <div className="px-5 py-4 border-b border-app-border flex justify-between items-center bg-[#1a2027]">
-                            <h3 className="font-bold text-white text-sm">最近のRun</h3>
-                            <Link href="/runs" className="text-xs text-primary hover:text-blue-400 font-bold">すべて見る</Link>
+                            <h3 className="font-bold text-white text-sm">直近のリサーチ</h3>
+                            <Link href="/history" className="text-xs text-primary hover:text-blue-400 font-bold">すべて見る</Link>
                         </div>
                         <div className="divide-y divide-app-border">
                             {history.length === 0 ? (
                                 <div className="p-8 text-center text-app-text-muted text-sm">履歴なし</div>
                             ) : (
-                                history.slice(0, 5).map(run => (
+                                history.slice(0, 3).map(run => (
                                     <div key={run.id} className="p-4 hover:bg-[#202b3a] transition-colors">
                                         <div className="flex justify-between items-start mb-1">
                                             <span className="text-xs font-bold text-white truncate max-w-[150px]">
                                                 {run.platform === 'mercari' ? 'Mercari Search' : 'Shopee Search'}
                                             </span>
-                                            <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${run.status === 'completed' ? 'bg-green-500/10 text-green-500' :
+                                            <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${run.status === 'completed' ? 'bg-primary/10 text-primary' :
                                                 run.status === 'failed' ? 'bg-red-500/10 text-red-500' : 'bg-orange-500/10 text-orange-500'
                                                 }`}>
                                                 {run.status}
