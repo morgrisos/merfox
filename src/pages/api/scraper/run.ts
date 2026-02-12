@@ -45,6 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ngWords: excludeKeywords,
                 limit,
                 mode: runType,
+                categories: req.body.categories || [],
                 createdAt: new Date().toISOString()
             };
 
