@@ -12,6 +12,14 @@ import pkg from '../../../package.json';
 type ExtractionMode = 'test' | 'production';
 type InputType = 'keyword' | 'url';
 
+// Safe categories only (no dangerous/brand categories)
+const SAFE_CATEGORIES = [
+    { id: 'book', label: '本' },
+    { id: 'cd_dvd', label: 'CD・DVD' },
+    { id: 'game', label: 'ゲーム' },
+    { id: 'toy', label: 'おもちゃ' },
+];
+
 export default function Step1_Setup() {
     const router = useRouter();
     const { settings, updateSettings } = useSettings();
@@ -23,6 +31,7 @@ export default function Step1_Setup() {
     // Inputs
     const [url, setUrl] = useState('');
     const [keyword, setKeyword] = useState('');
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
     // Production Settings
     const [limit, setLimit] = useState(100);
@@ -87,6 +96,7 @@ export default function Step1_Setup() {
                     if (config.limit) setLimit(config.limit);
                     if (config.inputType) setInputType(config.inputType);
                     if (config.mode) setMode(config.mode);
+                    if (config.categories) setSelectedCategories(config.categories);
                     localStorage.removeItem('rerun_config');
                 } catch (e) {
                     console.error('Failed to restore rerun config:', e);
@@ -136,7 +146,18 @@ export default function Step1_Setup() {
             finalLimit = limit;
             if (inputType === 'keyword') {
                 const safeKw = encodeURIComponent(keyword.trim());
-                targetUrl = `https://jp.mercari.com/search?keyword=${safeKw}&status=on_sale`;
+                // Build URL with categories if selected
+                if (selectedCategories.length > 0) {
+                    // For now, include category labels in keyword for simplicity
+                    const categoryLabels = selectedCategories
+                        .map(catId => SAFE_CATEGORIES.find(c => c.id === catId)?.label || '')
+                        .filter(Boolean)
+                        .join(' ');
+                    const combinedKw = encodeURIComponent(`${keyword.trim()} ${categoryLabels}`.trim());
+                    targetUrl = `https://jp.mercari.com/search?keyword=${combinedKw}&status=on_sale`;
+                } else {
+                    targetUrl = `https://jp.mercari.com/search?keyword=${safeKw}&status=on_sale`;
+                }
             } else {
                 targetUrl = url;
             }
@@ -261,14 +282,50 @@ export default function Step1_Setup() {
                                     </div>
 
                                     {inputType === 'keyword' ? (
-                                        <div className="space-y-2">
-                                            <label className="block text-sm font-medium text-white">検索キーワード</label>
-                                            <Input
-                                                placeholder="例: PS5 本体, Nike スニーカー"
-                                                className="h-12 bg-[#0d1014] border-[#282f39]"
-                                                value={keyword}
-                                                onChange={(e) => { setKeyword(e.target.value); setError(''); }}
-                                            />
+                                        <div className="space-y-4">
+                                            <div className="space-y-2">
+                                                <label className="block text-sm font-medium text-white">検索キーワード</label>
+                                                <Input
+                                                    placeholder="例: PS5 本体, Nike スニーカー"
+                                                    className="h-12 bg-[#0d1014] border-[#282f39]"
+                                                    value={keyword}
+                                                    onChange={(e) => { setKeyword(e.target.value); setError(''); }}
+                                                />
+                                            </div>
+
+                                            {/* Category Selection */}
+                                            <div className="space-y-2 pt-2">
+                                                <label className="block text-sm font-medium text-[#9da8b9]">
+                                                    カテゴリ（複数選択可）
+                                                </label>
+                                                <p className="text-xs text-[#9da8b9] mb-2">
+                                                    カテゴリとキーワードを組み合わせて検索できます
+                                                </p>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {SAFE_CATEGORIES.map(category => {
+                                                        const isSelected = selectedCategories.includes(category.id);
+                                                        return (
+                                                            <button
+                                                                key={category.id}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setSelectedCategories(prev =>
+                                                                        isSelected
+                                                                            ? prev.filter(id => id !== category.id)
+                                                                            : [...prev, category.id]
+                                                                    );
+                                                                }}
+                                                                className={`px-4 py-2 rounded-lg text-sm font-bold border transition-all ${isSelected
+                                                                    ? 'bg-primary text-white border-primary'
+                                                                    : 'bg-[#0d1014] text-[#9da8b9] border-[#282f39] hover:border-primary/50 hover:text-white'
+                                                                    }`}
+                                                            >
+                                                                {category.label}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
                                         </div>
                                     ) : (
                                         <div className="space-y-2">
