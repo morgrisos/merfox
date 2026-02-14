@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getRunsDir } from '../../../lib/runUtils';
+import { FORCED_BRAND_EXCLUDES } from '../../../constants/forcedExcludes';
 
 // @ts-ignore
 const { Scraper } = require('../../../../server/engine/Scraper.js');
@@ -15,7 +16,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (!url) return res.status(400).json({ error: 'URL is required' });
 
-        console.log('[API] Starting Scraper Run...', { url, limit, excludeKeywords, runType });
+        // P0 Safety: Merge forced brand excludes with user-specified NG words
+        const mergedNgWords = [
+            ...excludeKeywords,
+            ...FORCED_BRAND_EXCLUDES
+        ];
+
+        console.log('[API] Starting Scraper Run...', { url, limit, excludeKeywords: mergedNgWords.length, runType });
 
         const dateStr = new Date().toISOString().split('T')[0];
         const runId = `${dateStr}_run${Math.floor(Math.random() * 900) + 100}`;
@@ -25,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const scraper = new Scraper(runId, 'wizard', url, {
             stopLimit: limit,
-            excludeKeywords: excludeKeywords,
+            excludeKeywords: mergedNgWords,
             runType: runType
         });
 
@@ -46,6 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 limit,
                 mode: runType,
                 categories: req.body.categories || [],
+                forcedBrandFilter: true,
                 createdAt: new Date().toISOString()
             };
 

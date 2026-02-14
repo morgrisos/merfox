@@ -7,6 +7,7 @@ import { useSettings } from '@/hooks/useSettings';
 import { Play, AlertCircle, Search, Link as LinkIcon } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
 import { WelcomeModal } from '@/components/onboarding/WelcomeModal';
+import { DANGEROUS_URL_KEYWORDS } from '@/constants/forcedExcludes';
 import pkg from '../../../package.json';
 
 type ExtractionMode = 'test' | 'production';
@@ -115,6 +116,11 @@ export default function Step1_Setup() {
         if (mode === 'test') {
             if (!url) return 'URLを入力してください';
             if (!url.includes('mercari.com')) return 'MercariのURLである必要があります';
+            // P0 Safety: Block dangerous URL keywords
+            const foundDangerousKeyword = DANGEROUS_URL_KEYWORDS.find(k => url.includes(k));
+            if (foundDangerousKeyword) {
+                return `このカテゴリ（${foundDangerousKeyword}）は安全対象外です。別のキーワードで検索してください。`;
+            }
         } else {
             // Production
             if (inputType === 'keyword') {
@@ -122,6 +128,11 @@ export default function Step1_Setup() {
             } else {
                 if (!url) return 'URLを入力してください';
                 if (!url.includes('mercari.com')) return 'MercariのURLである必要があります';
+                // P0 Safety: Block dangerous URL keywords in URL mode
+                const foundDangerousKeyword = DANGEROUS_URL_KEYWORDS.find(k => url.includes(k));
+                if (foundDangerousKeyword) {
+                    return `このカテゴリ（${foundDangerousKeyword}）は安全対象外です。別のキーワードで検索してください。`;
+                }
             }
         }
         return '';
