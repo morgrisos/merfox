@@ -2,7 +2,7 @@ import React from 'react';
 import { useLicense } from '@/contexts/LicenseContext';
 
 export function LicenseSection() {
-    const { status, activate, deactivate } = useLicense();
+    const { status, activate, deactivate, displaySubscriptionStatus, displayLicenseStatus } = useLicense();
     const [keyInput, setKeyInput] = React.useState('');
     const [msg, setMsg] = React.useState('');
     const [busy, setBusy] = React.useState(false);
@@ -73,6 +73,29 @@ export function LicenseSection() {
                     </button>
                 )}
             </div>
+
+            {/* Status Messages */}
+            {displaySubscriptionStatus === 'expired' && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-4">
+                    <p className="text-sm font-bold text-red-500 flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        サブスクリプションの期限が切れています。更新してください。
+                    </p>
+                </div>
+            )}
+
+            {displayLicenseStatus === 'suspended' && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 mb-4">
+                    <p className="text-sm font-bold text-red-500 flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        ライセンスは現在停止中です。サポートへお問い合わせください。
+                    </p>
+                </div>
+            )}
 
             {status !== 'ACTIVE' && status !== 'OFFLINE_GRACE' && (
                 <div className="bg-app-element rounded-lg p-4 mb-4">
