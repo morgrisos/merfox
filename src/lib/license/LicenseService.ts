@@ -3,10 +3,13 @@ import fs from 'fs/promises';
 import path from 'path';
 import os from 'os';
 
+// License Server URL from environment
+const LICENSE_SERVER_URL = process.env.NEXT_PUBLIC_LICENSE_SERVER_URL || 'http://localhost:3001';
+
 // Reuse logic from runUtils (or similar) to ensure persistent storage
 function getUserDataDir() {
     if (process.env.MERFOX_USER_DATA) return process.env.MERFOX_USER_DATA;
-    if (process.env.NODE_ENV === 'development') return path.join(process.cwd(), 'runs_dev'); // Fallback dev
+    if (process.env.NODE_ENV === 'development') return path.join(process.cwd(), 'runs_dev');
     return path.join(os.homedir(), 'Library/Application Support/merfox/MerFox');
 }
 
@@ -16,8 +19,8 @@ export type LicenseStatus = 'ACTIVE' | 'EXPIRED' | 'SUSPENDED' | 'DEVICE_LIMIT' 
 
 export interface LicenseData {
     key: string;
-    accessToken: string;
-    refreshToken: string;
+    leaseToken: string; // JWT from license server
+    leaseExpiresAt: number; // Unix timestamp (milliseconds)
     lastOnlineAt: number;
     deviceId: string;
 }
@@ -49,36 +52,98 @@ export class LicenseService {
         try {
             const raw = await fs.readFile(LICENSE_FILE, 'utf8');
             this.data = JSON.parse(raw);
+            console.log('[License] Loaded license.json:', { key: this.data?.key, expiresAt: this.data ? new Date(this.data.leaseExpiresAt) : 'unknown' });
         } catch {
             this.data = null;
+            console.log('[License] No license.json found');
         }
     }
 
     public getStatus(): LicenseStatus {
-        if (!this.data || !this.data.accessToken) return 'UNAUTHENTICATED';
+        if (!this.data || !this.data.leaseToken) return 'UNAUTHENTICATED';
 
         const now = Date.now();
-        const diffHours = (now - this.data.lastOnlineAt) / (1000 * 60 * 60);
 
-        // 72 Hours Offline Grace Period
+        // Check if Lease Token has expired
+        if (now > this.data.leaseExpiresAt) {
+            return 'EXPIRED';
+        }
+
+        // Check if within online grace period (72 hours from last online check)
+        const diffHours = (now - this.data.lastOnlineAt) / (1000 * 60 * 60);
         if (diffHours > 72) {
-            return 'OFFLINE_GRACE'; // Or EXPIRED if completely locked
+            return 'OFFLINE_GRACE';
         }
 
         return 'ACTIVE';
+    }
+
+    public getDeviceId(): string {
+        return this.deviceId;
+    }
+
+    public getLeaseToken(): string | null {
+        return this.data?.leaseToken || null;
+    }
+
+    /**
+     * Verify online license status by calling /v1/status
+     * Returns { ok: true/false, status: 'active'/'inactive', message?: string }
+     */
+    public async verifyOnline(): Promise<{ ok: boolean; status: string; message?: string; licenseStatus?: string; subscriptionStatus?: string }> {
+        if (!this.data || !this.data.leaseToken) {
+            return { ok: false, status: 'unauthenticated', message: 'No lease token' };
+        }
+
+        try {
+            console.log('[License] Verifying online status...', LICENSE_SERVER_URL);
+            const res = await fetch(`${LICENSE_SERVER_URL}/v1/status`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${this.data.leaseToken}`
+                }
+            });
+
+            if (!res.ok) {
+                const json = await res.json().catch(() => ({}));
+                return { ok: false, status: 'error', message: json.error || `HTTP ${res.status}` };
+            }
+
+            const json = await res.json();
+            console.log('[License] Online verification response:', json);
+
+            // Update last online timestamp
+            this.data.lastOnlineAt = Date.now();
+            await this.save();
+
+            return {
+                ok: json.ok && json.subscriptionStatus === 'active',
+                status: json.subscriptionStatus || 'unknown',
+                // [DISPLAY ONLY] Expose detailed status for UI
+                licenseStatus: json.licenseStatus,
+                subscriptionStatus: json.subscriptionStatus,
+                message: json.ok ? undefined : 'Subscription inactive'
+            };
+
+        } catch (e: any) {
+            console.error('[License] Online verification failed:', e);
+            return { ok: false, status: 'network_error', message: e.message || 'Network error' };
+        }
     }
 
     public async activate(key: string): Promise<{ success: boolean; message?: string }> {
         if (!this.deviceId) await this.init();
 
         try {
-            // Call Backend (Mocked for now)
-            const res = await fetch('http://localhost:13337/api/license/activate', {
+            console.log('[License] Activating...', { url: LICENSE_SERVER_URL, deviceId: this.deviceId });
+            const res = await fetch(`${LICENSE_SERVER_URL}/v1/activate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ key, deviceId: this.deviceId })
+                body: JSON.stringify({ licenseKey: key, deviceId: this.deviceId })
             });
+
             const json = await res.json();
+            console.log('[License] Activate response:', json);
 
             if (!res.ok) {
                 return { success: false, message: json.error || 'Activation failed' };
@@ -87,60 +152,64 @@ export class LicenseService {
             // Save Data
             this.data = {
                 key,
-                accessToken: json.accessToken,
-                refreshToken: json.refreshToken,
+                leaseToken: json.leaseToken,
+                leaseExpiresAt: new Date(json.expiresAt).getTime(),
                 lastOnlineAt: Date.now(),
                 deviceId: this.deviceId
             };
             await this.save();
+            console.log('[License] Activated successfully, lease expires:', new Date(this.data.leaseExpiresAt));
             return { success: true };
 
-        } catch (e) {
-            return { success: false, message: 'Network error or server unreachable' };
+        } catch (e: any) {
+            console.error('[License] Activation error:', e);
+            return { success: false, message: e.message || 'Network error or server unreachable' };
         }
     }
 
-    public async refresh(): Promise<boolean> {
+    /**
+     * Renew Lease Token by calling /v1/lease
+     */
+    public async renewLease(): Promise<boolean> {
         if (!this.data) return false;
 
         try {
-            const res = await fetch('http://localhost:13337/api/license/refresh', {
+            console.log('[License] Renewing lease...', LICENSE_SERVER_URL);
+            const res = await fetch(`${LICENSE_SERVER_URL}/v1/lease`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ refreshToken: this.data.refreshToken, deviceId: this.deviceId })
+                body: JSON.stringify({ licenseKey: this.data.key, deviceId: this.deviceId })
             });
 
             if (res.ok) {
                 const json = await res.json();
-                this.data.accessToken = json.accessToken;
+                console.log('[License] Lease renewed:', json);
+                this.data.leaseToken = json.leaseToken;
+                this.data.leaseExpiresAt = new Date(json.expiresAt).getTime();
                 this.data.lastOnlineAt = Date.now();
                 await this.save();
                 return true;
             } else {
-                return false; // Refresh failed (Suspended/Invalid)
+                const json = await res.json().catch(() => ({}));
+                console.error('[License] Lease renewal failed:', json);
+                return false;
             }
-        } catch {
-            return false; // Network fail, keep existing status if within grace
+        } catch (e) {
+            console.error('[License] Lease renewal network error:', e);
+            return false;
         }
     }
 
     public async deactivate(): Promise<void> {
-        if (this.data) {
-            try {
-                await fetch('http://localhost:13337/api/license/deactivate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key: this.data.key, deviceId: this.deviceId })
-                });
-            } catch { } // Ignore error
-        }
         this.data = null;
         await fs.unlink(LICENSE_FILE).catch(() => { });
+        console.log('[License] Deactivated, license.json deleted');
     }
 
     private async save() {
         if (!this.data) return;
         await fs.mkdir(path.dirname(LICENSE_FILE), { recursive: true });
         await fs.writeFile(LICENSE_FILE, JSON.stringify(this.data, null, 2));
+        console.log('[License] Saved to license.json');
     }
 }
