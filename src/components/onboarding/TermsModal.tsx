@@ -1,5 +1,5 @@
 import React from 'react';
-import { X } from 'lucide-react';
+
 
 interface TermsModalProps {
     isOpen: boolean;
@@ -81,8 +81,8 @@ export const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onAgree }) => {
                     }}
                     disabled={!agreed}
                     className={`w-full py-3 rounded-lg font-bold text-base transition-all ${agreed
-                            ? 'bg-primary text-white hover:bg-blue-600 cursor-pointer'
-                            : 'bg-[#282f39] text-[#9da8b9] cursor-not-allowed'
+                        ? 'bg-primary text-white hover:bg-blue-600 cursor-pointer'
+                        : 'bg-[#282f39] text-[#9da8b9] cursor-not-allowed'
                         }`}
                 >
                     {agreed ? '同意して利用開始' : '上記に同意してください'}
