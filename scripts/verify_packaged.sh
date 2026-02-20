@@ -36,19 +36,12 @@ if grep -E "(Export|Calc|ASIN):.*-" "$RUN_DIR/run.log"; then
     exit 1
 fi
 
-# 4. Compatibility Folders Check (Conditional)
-# Check if tsv_rows=0 in run.log
-TSV_ROWS_0=$(grep "tsv_rows=0" "$RUN_DIR/run.log" || true)
-
-if [ -n "$TSV_ROWS_0" ]; then
-    echo "⚠️  tsv_rows=0 detected. Skipping folder existence check (amazon/profit/asin/failed)."
-else
-    # Valid rows exist, so folders MUST exist
-    test -d "$RUN_DIR/amazon" || { echo "❌ amazon/ directory missing (tsv_rows > 0)"; exit 1; }
-    test -d "$RUN_DIR/profit" || { echo "❌ profit/ directory missing (tsv_rows > 0)"; exit 1; }
-    test -d "$RUN_DIR/asin" || { echo "❌ asin/ directory missing (tsv_rows > 0)"; exit 1; }
-    # failed folder is optional depending on failures, but usually good to check if logic implies it
-fi
+# 4. Compatibility Folders Check (strict - no exemptions)
+# Folders MUST exist even if 0 rows (as per fixed spec)
+test -d "$RUN_DIR/amazon" || { echo "❌ amazon/ directory missing"; exit 1; }
+test -d "$RUN_DIR/profit" || { echo "❌ profit/ directory missing"; exit 1; }
+test -d "$RUN_DIR/asin" || { echo "❌ asin/ directory missing"; exit 1; }
+test -d "$RUN_DIR/failed" || { echo "❌ failed/ directory missing"; exit 1; }
 
 # 5. Universal BOM Check for all CSV/TSV
 echo "🔍 Checking BOM for all CSV/TSV files..."
