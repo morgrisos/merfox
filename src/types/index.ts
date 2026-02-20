@@ -31,4 +31,5 @@ export interface RunRecord {
     logs: LogEntry[];
     failureReasons: FailureDetail[];
     failedUrls: FailedUrl[];
+    configExists?: boolean;
 }

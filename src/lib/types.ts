@@ -3,7 +3,7 @@ export type SearchTarget = {
     url: string;
     keyword: string;
     excludeKeyword: string;
-    category: string;
+    // category removed per v0.31 Strict Spec
     sort: 'new' | 'recommended';
 };
 
@@ -32,7 +32,7 @@ export type Filters = {
     excludeShops: boolean;
     excludeUnknown: boolean;
     onlyFreeShipping: boolean;
-    ngWords: string[];
+    excludeKeywords: string[];
     ngRegex: string[];
     ngTargetTitle: boolean;
     ngTargetDescription: boolean;
@@ -46,6 +46,7 @@ export type StopConditions = {
 };
 
 export type AppSettings = {
+    runType: 'test' | 'production';
     target: SearchTarget;
     preset: PresetMode;
     collectionMode: CollectionMode;
@@ -56,12 +57,12 @@ export type AppSettings = {
 };
 
 export const DEFAULT_SETTINGS: AppSettings = {
+    runType: 'test',
     target: {
         mode: 'url',
         url: '',
         keyword: '',
         excludeKeyword: '',
-        category: '',
         sort: 'new'
     },
     preset: 'beginner',
@@ -71,14 +72,14 @@ export const DEFAULT_SETTINGS: AppSettings = {
         excludeShops: true,
         excludeUnknown: true,
         onlyFreeShipping: true,
-        ngWords: [],
+        excludeKeywords: [], // Default empty
         ngRegex: [],
         ngTargetTitle: true,
         ngTargetDescription: false
     },
     stopConditions: {
         useCount: true,
-        countLimit: 1000,
+        countLimit: 100, // v0.31 Default (Production focus)
         useTime: true,
         timeLimit: 25
     },
