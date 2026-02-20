@@ -420,10 +420,21 @@ class Scraper extends EventEmitter {
                     }
 
 
-                    // [N-2] Condition extraction - fills existing condition column in raw.csv (no new columns)
-                    const conditionText = await page.locator('th:has-text("商品の状態") + td').first().textContent()
-                        .then(t => (t || '').trim())
-                        .catch(() => '');
+                    // [N-2b] Mercari uses DIV structure for condition.
+                    // DOM probe confirmed: div.titleWrapper__* (direct text='商品の状態')
+                    //   -> nextSibling div = value (e.g. '未使用に近い').
+                    // We target the titleWrapper class to avoid matching shallower label divs.
+                    await page.waitForTimeout(500); // minimal wait for JS-rendered section
+                    const conditionText = await page.evaluate(() => {
+                        // Find the wrapper div that directly contains only '商品の状態' text
+                        // and whose className includes 'titleWrapper' (Mercari's info table pattern)
+                        const candidate = [...document.querySelectorAll('div[class*="titleWrapper"]')]
+                            .find(el => (el.innerText || '').trim() === '\u5546\u54c1\u306e\u72b6\u614b');
+                        if (!candidate) return '';
+                        const next = candidate.nextElementSibling;
+                        if (!next) return '';
+                        return (next.innerText || '').split('\n')[0].trim();
+                    }).catch(() => '');
 
                     // Success
                     this.stats.success++;
