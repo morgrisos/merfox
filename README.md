@@ -13,3 +13,8 @@ This template should help get you started developing with Tauri, React and Types
 - **Release Verification Gate**: [scripts/verify_packaged.sh](scripts/verify_packaged.sh)
   - Automated check for release artifacts.
   - Note: Directories `amazon/profit/asin/failed` are treated as WARNINGs if missing in 0-row runs.
+
+## Support
+
+- サブスクリプションの更新・延長は運用者へ連絡してください（[License Server Runbook](docs/license-server-OPS.md) 参照）
+- ライセンス停止中の解除は運用者へ連絡してください
