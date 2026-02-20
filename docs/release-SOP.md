@@ -77,3 +77,22 @@ gh release view v0.1.88 --json assets --jq '.assets[].name'
   Macの「システム設定 > ネットワーク > Wi-Fi > 詳細 > DNS」からパブリックDNSに変更してリトライする。
   - Cloudflare: `1.1.1.1`
   - Google: `8.8.8.8`
+
+## 8. Optional: Local pre-push Hook (推奨)
+`scripts/verify_packaged.sh` の実行を `git push` 前に自動化する任意設定。
+**注意：`.git/hooks/` の内容はリポジトリに含めない（ローカルのみ）**
+
+```bash
+# .git/hooks/pre-push を作成・設定
+cat > .git/hooks/pre-push << 'EOF'
+#!/usr/bin/env bash
+set -e
+echo "🔍 Running pre-push verify..."
+./scripts/verify_packaged.sh
+echo "✅ verify passed. Proceeding with push."
+EOF
+chmod +x .git/hooks/pre-push
+```
+
+- verify が FAIL した場合、`push` は中断されます。
+- 削除するには `rm .git/hooks/pre-push`
