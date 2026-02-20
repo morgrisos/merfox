@@ -1,11 +1,14 @@
 import React from 'react';
 import { AppShell } from '@/components/layout/AppShell';
+import { Container } from '@/components/ui/Container';
 import { MappingEditor } from '@/components/mapping/MappingEditor';
 
 export default function Mapping() {
     return (
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-app-base text-white">
-            <MappingEditor />
+        <div className="flex-1 overflow-y-auto bg-app-base text-white">
+            <Container>
+                <MappingEditor />
+            </Container>
         </div>
     );
 }

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { useLicense } from '@/contexts/LicenseContext';
 
 export type ScraperStatus = 'IDLE' | 'RUNNING' | 'PAUSED' | 'COMPLETED' | 'ERROR';
 
@@ -53,6 +54,7 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const [isTestComplete, setIsTestComplete] = useState(false);
     const [latestRunId, setLatestRunId] = useState<string>('');
 
+    const { verifyOnline } = useLicense(); // License verification hook
     const intervalRef = useRef<number | null>(null);
 
     const addLog = (level: LogEntry['level'], message: string) => {
@@ -130,6 +132,33 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }, [status]);
 
     const startScraping = async (test = false) => {
+        // [LICENSE GATE] Verify license before starting
+        // Production runs require successful online verification
+        // Test runs allow offline grace period
+        try {
+            console.log('[Scraper] Verifying license before start...');
+            const isLicenseValid = await verifyOnline();
+
+            if (!test && !isLicenseValid) {
+                // Production run requires strict license validation
+                addLog('ERROR', 'ライセンス認証に失敗しました。本番抽出を開始できません。');
+                setStatus('ERROR');
+                return;
+            }
+
+            if (test && !isLicenseValid) {
+                // Test run: allow if within offline grace
+                addLog('WARN', 'オンライン認証に失敗しました。オフライン猶予期間内のため、テスト実行を許可します。');
+            } else {
+                addLog('SUCCESS', 'ライセンス認証OK');
+            }
+        } catch (e) {
+            console.error('[Scraper] License verification error:', e);
+            addLog('ERROR', 'ライセンス確認エラー: ' + (e as Error).message);
+            setStatus('ERROR');
+            return;
+        }
+
         // [REAL API CALL]
         // Reset state first
         resetScraper();

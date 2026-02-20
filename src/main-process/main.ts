@@ -1,15 +1,11 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import path from 'path';
-
-// [HARDENING] Prevent Zombie Processes (v0.1.83) - REMOVED
-// Reason: spawn() for Next.js server utilizes ELECTRON_RUN_AS_NODE, causing this guard to kill the backend.
-// if (process.env.ELECTRON_RUN_AS_NODE === "1") { ... }
 import { spawn, ChildProcess } from 'child_process';
-import net from 'net';
-import log from 'electron-log';
 import fs from 'fs';
+import * as logger from './logger';
+import { showRecoveryWindow, setupRecoveryHandlers } from './recoveryWindow';
 
-// PANIC HANDLER - DEPENDENCY FREE
+// PANIC HANDLER - DEPENDENCY FREE (keep for catastrophic failures)
 const PANIC_LOG = path.join(process.env.HOME || '/tmp', 'merfox-panic.log');
 
 const panicLog = (msg: string) => {
@@ -23,30 +19,19 @@ panicLog(`[START] Main process execution started. PID: ${process.pid}`);
 process.on('uncaughtException', (err: Error) => {
     panicLog('uncaughtException');
     panicLog(err && err.stack ? err.stack : String(err));
-    process.exit(1); // Standard exit on panic
+    logger.error('Uncaught exception', err);
+    process.exit(1);
 });
 
 process.on('unhandledRejection', (reason) => {
     panicLog('unhandledRejection');
     panicLog(String(reason));
+    logger.error(`Unhandled rejection: ${String(reason)}`);
 });
 
 import { scraperManager } from '../lib/manager';
 import { ScraperConfig } from '../lib/types';
 import { initUpdater } from './updater';
-
-// [LOGGING] Configure Electron Log (P9.21)
-try {
-    log.transports.file.level = 'info';
-    log.transports.file.maxSize = 5 * 1024 * 1024; // 5MB
-    log.transports.file.resolvePathFn = () => {
-        return process.platform === 'darwin'
-            ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
-            : path.join(app.getPath('userData'), 'logs/main.log');
-    };
-} catch (e) {
-    console.error('Log config failed:', e);
-}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (process.platform === 'win32') {
@@ -66,54 +51,44 @@ ipcMain.handle('app:get-version', () => {
 });
 
 ipcMain.handle('app:open-external', async (_, url: string) => {
-    // Strict Whitelist for GitHub Releases
     const ALLOWED_URL = 'https://github.com/morgrisos/merfox/releases';
     if (url === ALLOWED_URL) {
         await shell.openExternal(url);
     } else {
-        console.warn(`[SECURITY] Blocked unauthorized openExternal request: ${url}`);
+        logger.warn(`[SECURITY] Blocked unauthorized openExternal request: ${url}`);
     }
 });
 
 ipcMain.handle('app:open-log-folder', async () => {
-    const logPath = process.platform === 'darwin'
-        ? path.join(app.getPath('home'), 'Library/Logs/merfox')
-        : path.join(app.getPath('userData'), 'logs');
-
-    await shell.openPath(logPath);
+    await shell.openPath(logger.getLogDir());
 });
 
 ipcMain.handle('app:clear-logs', async () => {
     try {
-        const logPath = process.platform === 'darwin'
-            ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
-            : path.join(app.getPath('userData'), 'logs/main.log');
-
-        // Truncate file
+        const logPath = logger.getLogPath();
         if (fs.existsSync(logPath)) {
             fs.writeFileSync(logPath, '');
-            log.info('[SYSTEM] Logs cleared by user.');
+            logger.info('[SYSTEM] Logs cleared by user.');
             return { success: true };
         }
         return { success: false, reason: 'not_found' };
     } catch (e) {
-        log.error('Failed to clear logs:', e);
+        logger.error('Failed to clear logs', e as Error);
         return { success: false, error: String(e) };
     }
 });
 
-// Initialize Auto Updater (Manual Mode: Logging only)
-initUpdater();
+ipcMain.handle('app:get-log-path', () => {
+    return logger.getLogPath();
+});
 
-// [DIAGNOSTIC] Log Certificate Errors & Allow Insecure bypass if requested
+// [DIAGNOSTIC] Log Certificate Errors
 app.on('certificate-error', (event, _webContents, url, error, certificate, callback) => {
-    console.error(`[CERT-ERROR] URL: ${url}`);
-    console.error(`[CERT-ERROR] Error: ${error}`);
-    console.error(`[CERT-ERROR] Issuer: ${certificate.issuerName}`);
-    console.error(`[CERT-ERROR] Subject: ${certificate.subjectName}`);
+    logger.error(`[CERT-ERROR] URL: ${url}, Error: ${error}`);
+    logger.error(`[CERT-ERROR] Issuer: ${certificate.issuerName}, Subject: ${certificate.subjectName}`);
 
     if (process.env.MERFOX_INSECURE_SSL === '1') {
-        console.warn('[CERT-ERROR] Bypassing certificate error due to MERFOX_INSECURE_SSL=1');
+        logger.warn('[CERT-ERROR] Bypassing certificate error due to MERFOX_INSECURE_SSL=1');
         event.preventDefault();
         callback(true);
     } else {
@@ -121,43 +96,23 @@ app.on('certificate-error', (event, _webContents, url, error, certificate, callb
     }
 });
 
+// [v0.43.0] Server Configuration
 let mainWindow: BrowserWindow | null = null;
 let serverProcess: ChildProcess | null = null;
-const SERVER_PORT = 13337;
-// DIAGNOSTIC GLOBAL
-let logDir = '';
-let bootLog = '';
-let nextOut = '';
-let nextErr = '';
+const SERVER_PORT = process.env.MERFOX_PORT ? parseInt(process.env.MERFOX_PORT, 10) : 13337;
+let startupRetryCount = 0;
+const MAX_STARTUP_RETRIES = 2;
 
-const initLogs = () => {
-    try {
-        logDir = app.getPath('userData');
-        if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
-        bootLog = path.join(logDir, 'merfox-boot.log');
-        nextOut = path.join(logDir, 'merfox-next.stdout.log');
-        nextErr = path.join(logDir, 'merfox-next.stderr.log');
-
-        const pkg = require('../../package.json'); // CommonJS import for safely getting version
-        fs.appendFileSync(bootLog, `\n[${new Date().toISOString()}] [GLOBAL] Main process loaded. Version: ${pkg.version} PID: ${process.pid}\n`);
-    } catch (e) {
-        console.error('Failed to init logs:', e);
+/**
+ * Start the Next.js standalone server
+ */
+const startServer = async (): Promise<void> => {
+    if (process.env.NODE_ENV === 'development') {
+        logger.info('[Server] Skipping server start in development mode');
+        return;
     }
-};
 
-const startServer = async () => {
-    // DIAGNOSTIC PATCH: Remove development check for production debugging if needed
-    if (process.env.NODE_ENV === 'development') return;
-
-    if (!bootLog) initLogs(); // Safety fallback
-
-    try {
-        fs.appendFileSync(bootLog, `[BOOT] startServer entered\n`);
-        fs.appendFileSync(bootLog, `[DEBUG] app.getAppPath: ${app.getAppPath()}\n`);
-        fs.appendFileSync(bootLog, `[DEBUG] resourcesPath: ${process.resourcesPath}\n`);
-    } catch (e) {
-        console.error('Log write failed', e);
-    }
+    logger.info(`[Server] Starting server on port ${SERVER_PORT}...`);
 
     const resourcesPath = process.resourcesPath;
     const serverDir = app.isPackaged
@@ -165,70 +120,49 @@ const startServer = async () => {
         : path.join(__dirname, '../../.next/standalone');
     const standaloneServer = path.join(serverDir, 'server.js');
 
-    try {
-        fs.appendFileSync(bootLog, `[DEBUG] serverDir: ${serverDir}\n`);
-        fs.appendFileSync(bootLog, `[DEBUG] standaloneServer Target: ${standaloneServer}\n`);
-    } catch (_) { }
+    logger.info(`[Server] Server directory: ${serverDir}`);
+    logger.info(`[Server] Standalone server: ${standaloneServer}`);
 
     const serverExists = fs.existsSync(standaloneServer);
-    try {
-        fs.appendFileSync(bootLog, `[DEBUG] standaloneServer Exists: ${serverExists}\n`);
-    } catch (_) { }
+    logger.info(`[Server] Standalone server exists: ${serverExists}`);
 
     if (!serverExists) {
-        console.error('[FATAL] Standalone server missing');
-        try {
-            fs.appendFileSync(bootLog, `[FATAL] Standalone server missing at ${standaloneServer}\n`);
-            if (app.isPackaged) {
+        logger.error(`[Server] FATAL: Standalone server missing at ${standaloneServer}`);
+        if (app.isPackaged) {
+            try {
                 const contents = fs.readdirSync(resourcesPath);
-                fs.appendFileSync(bootLog, `[DEBUG] resourcesPath contents: ${contents.join(', ')}\n`);
+                logger.error(`[Server] resourcesPath contents: ${contents.join(', ')}`);
+            } catch (e) {
+                logger.error(`[Server] Failed to list resources: ${String(e)}`);
             }
-        } catch (e) {
-            try { fs.appendFileSync(bootLog, `[ERROR] Failed to list resources: ${e}\n`); } catch (_) { }
         }
+        throw new Error('Standalone server missing');
     }
 
-    // Prepare logs - use file descriptor to ensure flush
-    let outStream: number | undefined, errStream: number | undefined;
+    // [PORT GUARD] Check for port conflict (WARNING ONLY - no auto-kill)
+    // v0.43.1: Changed from auto-kill to warning-only to allow Recovery UI display
     try {
-        outStream = fs.openSync(nextOut, 'a');
-        errStream = fs.openSync(nextErr, 'a');
-    } catch (e) {
-        try { fs.appendFileSync(bootLog, `[ERROR] Failed to open streams: ${e}\n`); } catch (_) { }
-    }
-
-    console.log('Starting Next.js Standalone Server via:', standaloneServer);
-    try { fs.appendFileSync(bootLog, `[INFO] Spawning node process...\n`); } catch (_) { }
-
-    // [PORT GUARD] Kill existing process on 13337 before spawn
-    try {
-        const checkCmd = 'lsof -t -i:13337 -sTCP:LISTEN';
-        let pidsToKill = '';
+        const checkCmd = `lsof -t -i:${SERVER_PORT} -sTCP:LISTEN`;
+        let pidsOccupying = '';
         try {
-            pidsToKill = require('child_process').execSync(checkCmd, { encoding: 'utf8' }).trim();
-        } catch (e) { /* No process found usually throws */ }
+            pidsOccupying = require('child_process').execSync(checkCmd, { encoding: 'utf8' }).trim();
+        } catch (e) {
+            // No process found
+        }
 
-        if (pidsToKill) {
-            const pids = pidsToKill.split('\n').filter(p => p.trim());
-            fs.appendFileSync(bootLog, `[WARN] Port 13337 occupied by PIDs: ${pids.join(',')}. Killing...\n`);
-            pids.forEach(pid => {
-                try {
-                    process.kill(Number(pid), 'SIGTERM');
-                    fs.appendFileSync(bootLog, `[INFO] Sent SIGTERM to ${pid}\n`);
-                } catch (e) {
-                    fs.appendFileSync(bootLog, `[ERROR] Failed to kill ${pid}: ${e}\n`);
-                }
-            });
-            // Forced Wait for cleanup (simple blocking delay for safety)
-            const startWait = Date.now();
-            while (Date.now() - startWait < 1000) { /* busy wait 1s */ }
+        if (pidsOccupying) {
+            const pids = pidsOccupying.split('\n').filter(p => p.trim());
+            logger.warn(`[PortGuard] Port ${SERVER_PORT} occupied by PIDs: ${pids.join(',')}.`);
+            logger.warn(`[PortGuard] Auto-kill is disabled. Will attempt to start and rely on Recovery UI if it fails.`);
+            // DO NOT KILL - let natural EADDRINUSE occur and trigger recovery flow
         } else {
-            fs.appendFileSync(bootLog, `[INFO] Port 13337 appears free.\n`);
+            logger.info(`[PortGuard] Port ${SERVER_PORT} appears free.`);
         }
     } catch (e) {
-        try { fs.appendFileSync(bootLog, `[WARN] Port guard check failed: ${e}\n`); } catch (_) { }
+        logger.warn(`[PortGuard] Port guard check failed: ${String(e)}`);
     }
 
+    // Spawn server process
     try {
         serverProcess = spawn(process.execPath, [standaloneServer], {
             cwd: serverDir,
@@ -240,55 +174,122 @@ const startServer = async () => {
                 MERFOX_USER_DATA: app.getPath('userData'),
                 MERFOX_RUNS_DIR: path.join(app.getPath('userData'), 'MerFox/runs')
             },
-            stdio: ['ignore', outStream || 'ignore', errStream || 'ignore']
+            stdio: ['ignore', 'pipe', 'pipe']
         });
 
-        try { fs.appendFileSync(bootLog, `[INFO] Spawned. PID: ${serverProcess.pid}\n`); } catch (_) { }
+        logger.info(`[Server] Spawned. PID: ${serverProcess.pid}`);
 
-        if (serverProcess) {
-            serverProcess.on('error', (err) => {
-                console.error('Server failed to start:', err);
-                if (errStream) { try { fs.writeSync(errStream, `\n[LAUNCH ERROR] ${err}\n`); } catch (_) { } }
-                try { fs.appendFileSync(bootLog, `[ERROR] Spawn error: ${err}\n`); } catch (_) { }
-            });
-            serverProcess.on('exit', (code, signal) => {
-                if (errStream) { try { fs.writeSync(errStream, `\n[EXIT] Code: ${code}, Signal: ${signal}\n`); } catch (_) { } }
-                try { fs.appendFileSync(bootLog, `[EXIT] Server exited. Code: ${code}, Signal: ${signal}\n`); } catch (_) { }
+        if (serverProcess.stdout) {
+            serverProcess.stdout.on('data', (data) => {
+                logger.info(`[Next.js] ${data.toString().trim()}`);
             });
         }
+
+        if (serverProcess.stderr) {
+            serverProcess.stderr.on('data', (data) => {
+                const msg = data.toString().trim();
+                // Check for EADDRINUSE
+                if (msg.includes('EADDRINUSE')) {
+                    logger.error(`[Server] EADDRINUSE detected: Port ${SERVER_PORT} is in use`);
+                }
+                logger.error(`[Next.js Error] ${msg}`);
+            });
+        }
+
+        serverProcess.on('error', (err) => {
+            logger.error(`[Server] Spawn error: ${String(err)}`, err);
+        });
+
+        serverProcess.on('exit', (code, signal) => {
+            logger.info(`[Server] Server exited. Code: ${code}, Signal: ${signal}`);
+        });
     } catch (e) {
-        try { fs.appendFileSync(bootLog, `[CRITICAL] Exception during spawn: ${e}\n`); } catch (_) { }
+        logger.error(`[Server] CRITICAL: Exception during spawn: ${String(e)}`);
+        throw e;
     }
 };
 
-const waitForServer = (port: number, timeoutMs = 20000): Promise<void> => {
-    return new Promise((resolve, reject) => {
-        const started = Date.now();
-        const tryConnect = () => {
-            if (Date.now() - started > timeoutMs) {
-                reject(new Error(`waitForServer timeout ${timeoutMs}ms`));
-                return;
+/**
+ * Health check: GET /api/version with retry logic
+ * Returns true if server is healthy, false otherwise
+ */
+const healthCheck = async (port: number, timeoutMs = 10000): Promise<boolean> => {
+    logger.info(`[HealthCheck] Starting health check on port ${port}...`);
+    const startTime = Date.now();
+    const url = `http://127.0.0.1:${port}/api/version`;
+
+    while (Date.now() - startTime < timeoutMs) {
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                logger.info(`[HealthCheck] Server healthy! Version: ${data.version}`);
+                return true;
             }
-            const socket = new net.Socket();
-            socket.on('connect', () => {
-                socket.destroy();
-                resolve();
+        } catch (e) {
+            // Retry
+        }
+        await new Promise(resolve => setTimeout(resolve, 300));
+    }
+
+    logger.error(`[HealthCheck] Health check failed after ${timeoutMs}ms`);
+    return false;
+};
+
+/**
+ * Start server with automatic recovery
+ */
+const startServerWithRecovery = async (): Promise<void> => {
+    startupRetryCount++;
+    logger.info(`[Recovery] Startup attempt ${startupRetryCount}/${MAX_STARTUP_RETRIES}`);
+
+    try {
+        await startServer();
+
+        // Wait for server to become healthy
+        const healthy = await healthCheck(SERVER_PORT, 10000);
+
+        if (!healthy) {
+            throw new Error('Server failed health check');
+        }
+
+        logger.info('[Recovery] Server started successfully!');
+        startupRetryCount = 0; // Reset on success
+    } catch (e) {
+        logger.error(`[Recovery] Server startup failed: ${String(e)}`);
+
+        // Kill existing server process if any
+        if (serverProcess) {
+            logger.info('[Recovery] Killing existing server process...');
+            serverProcess.kill();
+            serverProcess = null;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        // Retry if under limit
+        if (startupRetryCount < MAX_STARTUP_RETRIES) {
+            logger.warn(`[Recovery] Retrying startup... (${startupRetryCount}/${MAX_STARTUP_RETRIES})`);
+            return startServerWithRecovery();
+        } else {
+            // Max retries exceeded - show recovery UI
+            logger.error('[Recovery] Max retries exceeded. Showing recovery UI.');
+            const errorCode = String(e).includes('EADDRINUSE') ? 'EADDRINUSE' : undefined;
+            showRecoveryWindow({
+                reason: `サーバーの起動に失敗しました: ${String(e)}`,
+                port: SERVER_PORT,
+                logPath: logger.getLogPath(),
+                errorCode
             });
-            socket.on('error', () => {
-                socket.destroy();
-                setTimeout(tryConnect, 200);
-            });
-            socket.connect(port, '127.0.0.1');
-        };
-        tryConnect();
-    });
+            throw e;
+        }
+    }
 };
 
 const createWindow = async () => {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
-        titleBarStyle: 'hiddenInset', // Mac style
+        titleBarStyle: 'hiddenInset',
         webPreferences: {
             preload: path.join(__dirname, './preload.js'),
             nodeIntegration: false,
@@ -301,25 +302,35 @@ const createWindow = async () => {
         mainWindow.loadURL('http://localhost:3000');
         mainWindow.webContents.openDevTools({ mode: 'detach' });
     } else {
-        // Production: Wait for server then load
-        console.log('Waiting for backend server...');
-        try {
-            await waitForServer(SERVER_PORT, 20000);
-            console.log('Server ready!');
-            mainWindow.loadURL(`http://localhost:${SERVER_PORT}`);
-        } catch (e) {
-            console.error('Failed to connect to server:', e);
-            try { fs.appendFileSync(bootLog, `[FATAL] waitForServer failed: ${e}\n`); } catch (_) { }
-            mainWindow.loadURL(`data:text/plain,MerFox backend failed to start. See logs in userData.`);
-        }
+        // Production: Load from local server
+        logger.info(`[Window] Loading from http://localhost:${SERVER_PORT}`);
+        mainWindow.loadURL(`http://localhost:${SERVER_PORT}`);
     }
 };
 
 app.on('ready', async () => {
-    initLogs(); // Initialize logs safely AFTER app is ready
-    await startServer();
-    createWindow();
-    startScheduler();
+    logger.initLogger();
+    logger.info('[App] App ready event fired');
+
+    // Setup recovery handlers
+    setupRecoveryHandlers(async () => {
+        logger.info('[Recovery] User requested retry');
+        startupRetryCount = 0; // Reset counter
+        await startServerWithRecovery();
+        if (mainWindow) {
+            mainWindow.loadURL(`http://localhost:${SERVER_PORT}`);
+        }
+    });
+
+    try {
+        await startServerWithRecovery();
+        await createWindow();
+        startScheduler();
+    } catch (e) {
+        logger.error(`[App] Failed to start application: ${String(e)}`);
+        // Recovery UI already shown by startServerWithRecovery
+    }
+
     // IPC Handlers
     ipcMain.handle('scraper:start', async (_, config: ScraperConfig) => {
         if (!config.outputDir) {
@@ -349,23 +360,9 @@ app.on('ready', async () => {
         await shell.openPath(filePath);
     });
 
-    ipcMain.handle('app:open-log-folder', async () => {
-        const logPath = process.platform === 'darwin'
-            ? path.join(app.getPath('home'), 'Library/Logs/merfox')
-            : path.join(app.getPath('userData'), 'logs');
-        await shell.openPath(logPath);
-    });
-
-    ipcMain.handle('app:get-log-path', () => {
-        return process.platform === 'darwin'
-            ? path.join(app.getPath('home'), 'Library/Logs/merfox/main.log')
-            : path.join(app.getPath('userData'), 'logs', 'main.log');
-    });
-
     // Initialize Auto Updater
     initUpdater();
 });
-
 
 app.on('before-quit', () => {
     if (serverProcess) {
@@ -404,33 +401,20 @@ function startStatusStream() {
 // [PHASE 5] Automation Scheduler
 let schedulerInterval: NodeJS.Timeout | null = null;
 function startScheduler() {
-    console.log('[Scheduler] Service started.');
+    logger.info('[Scheduler] Service started.');
     if (schedulerInterval) clearInterval(schedulerInterval);
 
-    // Check every 60s
     schedulerInterval = setInterval(async () => {
         const now = new Date();
-        // MVP: Hardcoded 09:00 check (aligns with merfox.automation.json default)
-        // Ideally read JSON, but API handles validation.
-        // We just need to trigger "on schedule". 
-        // For MVP, we'll naive check against 09:00 locally to avoid API spam, 
-        // OR just check "is it 9:00?" -> Call API.
-
-        // Wait, if I want to verify "it works" without waiting for 9AM, 
-        // I should probably rely on the API call manually for verification, 
-        // but for Real Impl, checking 09:00 is correct.
-
         if (now.getHours() === 9 && now.getMinutes() === 0) {
-            console.log('[Scheduler] Time match (09:00). Invoking Run API...');
+            logger.info('[Scheduler] Time match (09:00). Invoking Run API...');
             try {
-                // Assuming Main process can access localhost:13337 (Next.js)
                 const res = await fetch(`http://localhost:${SERVER_PORT}/api/automation/run`, { method: 'POST' });
                 const json = await res.json();
-                console.log('[Scheduler] Trigger result:', json);
+                logger.info(`[Scheduler] Trigger result: ${JSON.stringify(json)}`);
             } catch (e) {
-                console.error('[Scheduler] Failed to invoke trigger:', e);
+                logger.error(`[Scheduler] Failed to invoke trigger: ${String(e)}`);
             }
         }
     }, 60000); // 60s
 }
-

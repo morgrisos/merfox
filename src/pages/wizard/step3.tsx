@@ -6,6 +6,7 @@ import { useOutcome } from '@/contexts/OutcomeContext';
 import { useSettings } from '@/hooks/useSettings';
 import { AlertTriangle, ArrowRight, RefreshCw, Settings, Play } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
+import { TYPOGRAPHY_H1 } from '@/constants/designTokens';
 
 export default function Step3_Verify() {
     const router = useRouter();
@@ -25,7 +26,7 @@ export default function Step3_Verify() {
             <Card className="max-w-3xl w-full bg-app-surface border border-app-border text-white p-8 shadow-none rounded-xl">
                 {/* 3B-4: Header */}
                 <div className="text-center space-y-4 mb-8">
-                    <h1 className="text-2xl font-bold text-white">
+                    <h1 className={`${TYPOGRAPHY_H1} text-white`}>
                         {isSuccess ? '抽出できました' : '診断結果'}
                     </h1>
                     <p className="text-app-text-muted text-sm">

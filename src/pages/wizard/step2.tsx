@@ -6,6 +6,7 @@ import { useScraper } from '@/hooks/useScraper';
 import { Loader2, StopCircle, CheckCircle, AlertTriangle, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { useOutcome } from '@/contexts/OutcomeContext';
 import { AppShell } from '@/components/layout/AppShell';
+import { TYPOGRAPHY_H1, TYPOGRAPHY_BIG_NUMBER } from '@/constants/designTokens';
 
 export default function Step2_Extract() {
     const router = useRouter();
@@ -69,7 +70,7 @@ export default function Step2_Extract() {
                             </div>
 
                             <div className="text-center">
-                                <h2 className="text-2xl font-bold text-white mb-2">
+                                <h2 className={`${TYPOGRAPHY_H1} text-white mb-2`}>
                                     {status === 'RUNNING' ? '抽出しています...' : (stats.newItems > 0 ? '抽出完了' : '抽出終了')}
                                 </h2>
                                 <p className="text-app-text-muted text-sm">
@@ -85,7 +86,7 @@ export default function Step2_Extract() {
                             <div className="grid grid-cols-2 gap-8 text-center">
                                 <div>
                                     <p className="text-xs text-app-text-muted uppercase font-bold tracking-wider mb-1">取得件数</p>
-                                    <span className="text-2xl font-mono text-white">{stats.totalItems || 0}</span>
+                                    <span className={`${TYPOGRAPHY_BIG_NUMBER} font-mono text-white`}>{stats.totalItems || 0}</span>
                                 </div>
                                 <div>
                                     <p className="text-xs text-app-text-muted uppercase font-bold tracking-wider mb-1">通過 (Success)</p>

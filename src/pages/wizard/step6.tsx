@@ -6,6 +6,7 @@ import { FileText, Download, Folder, AlertTriangle, Eye } from 'lucide-react';
 import { useOutcome } from '@/contexts/OutcomeContext';
 import { AppShell } from '@/components/layout/AppShell';
 import { LicenseGate } from '@/components/license/LicenseGate';
+import { TYPOGRAPHY_H1, TYPOGRAPHY_CARD_TITLE } from '@/constants/designTokens';
 
 export default function Step6_Final() {
     const router = useRouter();
@@ -69,7 +70,7 @@ export default function Step6_Final() {
 
     return (
         <div className="flex flex-col items-center justify-center py-6 w-full max-w-4xl mx-auto px-4">
-            <h1 className="text-2xl font-bold text-white mb-6">Amazonアップロード</h1>
+            <h1 className={`${TYPOGRAPHY_H1} text-white mb-6`}>Amazonアップロード</h1>
 
             {loading ? (
                 <div className="text-app-text-muted">Loading preview...</div>
@@ -80,7 +81,7 @@ export default function Step6_Final() {
                             <span className="text-3xl">📋</span>
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-white mb-2">変換できませんでした（カテゴリ変換が未設定です）</h2>
+                            <h2 className={`${TYPOGRAPHY_H1} text-white mb-2`}>変換できませんでした（カテゴリ変換が未設定です）</h2>
                             <p className="text-blue-100/80 text-sm leading-relaxed">
                                 ASIN/JANが未登録のため、Amazon用TSVを作れません。<br />
                                 カテゴリ変換を設定すると次回から成功します。
@@ -124,7 +125,7 @@ export default function Step6_Final() {
                 ) : (
                     <Card className="w-full bg-red-500/10 border border-red-500/50 p-8 text-center rounded-xl space-y-4">
                         <AlertTriangle className="w-16 h-16 text-red-500 mx-auto" />
-                        <h2 className="text-xl font-bold text-white">TSV生成に失敗しました</h2>
+                        <h2 className={`${TYPOGRAPHY_CARD_TITLE} text-white`}>TSV生成に失敗しました</h2>
                         <div className="text-red-200 bg-red-900/30 p-4 rounded border border-red-500/30">
                             <p className="font-bold mb-2">原因: {failureInfo.reason || '不明なエラー'}</p>
                             <p className="text-sm">
@@ -144,7 +145,7 @@ export default function Step6_Final() {
                     <Card className="bg-app-surface border border-app-border p-8 text-center rounded-xl space-y-6">
                         <div className="flex flex-col items-center">
                             <FileText className="w-16 h-16 text-primary mb-4" />
-                            <h3 className="text-xl font-bold text-white mb-2">ファイル出力が完了しました</h3>
+                            <h3 className={`${TYPOGRAPHY_CARD_TITLE} text-white mb-2`}>ファイル出力が完了しました</h3>
                             <p className="text-blue-200/70 text-sm">出力完了 / {preview.length > 0 ? preview.length - 1 : 0} Items</p>
                         </div>
                         <Button

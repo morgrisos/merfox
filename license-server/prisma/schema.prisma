@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id               String         @id @default(cuid())
+  stripeCustomerId String?        @unique
+  email            String?        @unique
+  createdAt        DateTime       @default(now())
+  subscriptions    Subscription[]
+  licenses         License[]
+
+  @@map("customers")
+}
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  customerId           String
+  customer             Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId String   @unique
+  status               String   // active, canceled, past_due, etc.
+  currentPeriodEnd     DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("subscriptions")
+}
+
+model License {
+  id           String    @id @default(cuid())
+  customerId   String
+  customer     Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  licenseKey   String    @unique
+  status       String    @default("active") // active, inactive, canceled
+  deviceId     String?   @unique
+  activatedAt  DateTime?
+  lastSeenAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("licenses")
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { useToast } from '@/components/ui/SimpleToast';
+import { TYPOGRAPHY_H1 } from '@/constants/designTokens';
 
 export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
     const router = useRouter();
@@ -87,7 +88,7 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
             <header className="flex flex-col gap-4 mb-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-xl font-bold leading-tight text-white mb-1">マッピング編集</h2>
+                        <h2 className={`${TYPOGRAPHY_H1} text-white mb-1`}>マッピング編集</h2>
                         <div className="text-app-text-muted text-xs bg-app-surface p-3 mt-2 rounded border border-app-border space-y-1">
                             <p>・ASIN = Amazonの商品ID（B0〜で始まる10桁）です。</p>
                             <p>・抽出した商品(Mercari)に対応するAmazon ASINを入力して保存してください。</p>

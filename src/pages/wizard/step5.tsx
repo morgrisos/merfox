@@ -6,6 +6,7 @@ import { useOutcome } from '@/contexts/OutcomeContext';
 import { Loader2, ArrowRight, AlertCircle, CheckCircle, FileJson } from 'lucide-react';
 import axios from 'axios';
 import { AppShell } from '@/components/layout/AppShell';
+import { TYPOGRAPHY_H1, TYPOGRAPHY_BIG_NUMBER } from '@/constants/designTokens';
 
 export default function Step5_Convert() {
     const router = useRouter();
@@ -44,7 +45,7 @@ export default function Step5_Convert() {
             <Card className="max-w-xl w-full border border-app-border bg-app-surface shadow-none flex flex-col items-center justify-center space-y-8 p-8 text-white rounded-xl">
                 {/* 3B-6 Header */}
                 <div className="text-center space-y-2">
-                    <h1 className="text-2xl font-bold text-white">Amazon用TSVに変換します</h1>
+                    <h1 className={`${TYPOGRAPHY_H1} text-white`}>Amazon用TSVに変換します</h1>
                     <p className="text-app-text-muted text-sm">
                         このRunのデータとmappingを使って変換します。<br />
                         （ファイル選択は不要です）
@@ -117,11 +118,11 @@ export default function Step5_Convert() {
                             {/* Result Stats */}
                             <div className="grid grid-cols-2 gap-4 text-center">
                                 <div>
-                                    <p className="text-3xl font-bold text-primary">{result.amazon_rows ?? 0}</p>
+                                    <p className={`${TYPOGRAPHY_BIG_NUMBER} text-primary`}>{result.amazon_rows ?? 0}</p>
                                     <p className="text-xs text-app-text-muted">変換成功</p>
                                 </div>
                                 <div>
-                                    <p className="text-3xl font-bold text-gray-400">{result.failed_rows ?? 0}</p>
+                                    <p className={`${TYPOGRAPHY_BIG_NUMBER} text-gray-400`}>{result.failed_rows ?? 0}</p>
                                     <p className="text-xs text-app-text-muted">対象外/失敗</p>
                                 </div>
                             </div>
