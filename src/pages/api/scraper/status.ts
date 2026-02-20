@@ -44,7 +44,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const latestRunId = runDirs[0];
         const runPath = path.join(runsDir, latestRunId);
 
-        // 1. Read key files existence
+        // [FIX] Priority: progress.json > summary.json > raw.csv fallback
+        let progress: any = null;
+        try {
+            const pPath = path.join(runPath, 'progress.json');
+            const pData = await fs.readFile(pPath, 'utf8');
+            progress = JSON.parse(pData);
+        } catch { }
+
+        // 1. Files Check
         const files = {
             raw: false,
             mapping: false,
@@ -52,78 +60,75 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             failed: 0,
             logFile: ''
         };
-
-        let runDirEntries: string[] = [];
         try {
-            runDirEntries = await fs.readdir(runPath);
-        } catch {
-            return res.status(200).json({ latestRunId, status: 'unknown' });
-        }
+            const runDirEntries = await fs.readdir(runPath);
+            if (runDirEntries.includes('raw.csv')) files.raw = true;
+            if (runDirEntries.includes('mapping.csv')) files.mapping = true;
+            if (runDirEntries.includes('amazon_upload.tsv')) files.amazon = true; // Fixed name
+            const failedCsvs = runDirEntries.filter(f => f.endsWith('_failed.csv'));
+            files.failed = failedCsvs.length;
+        } catch { }
 
-        if (runDirEntries.includes('raw.csv')) files.raw = true;
-        if (runDirEntries.includes('mapping.csv')) files.mapping = true;
-        if (runDirEntries.includes('amazon.tsv')) files.amazon = true;
+        // 2. Construct Response from Progress
+        let status = 'running';
+        let phase = 'init';
+        let counts = { scanned: 0, success: 0, failed: 0 };
+        let message = '';
+        let updatedAt = new Date().toISOString();
 
-        const failedCsvs = runDirEntries.filter(f => f.endsWith('_failed.csv'));
-        files.failed = failedCsvs.length;
+        if (progress) {
+            // [Source: progress.json]
+            phase = progress.phase || 'running';
+            status = (phase === 'done' || phase === 'error' || phase === 'stopped') ? 'completed' : 'running';
+            if (phase === 'stopped') status = 'stopped'; // Optional granular status
 
-        // 2. Read Summary
-        let summary: any = {};
-        if (runDirEntries.includes('summary.json')) {
-            try {
-                const data = await fs.readFile(path.join(runPath, 'summary.json'), 'utf8');
-                summary = JSON.parse(data);
-            } catch { }
-        }
-
-        const status = summary.status || 'unknown';
-
-        // 3. Read Log (Tail)
-        let logContent: string[] = [];
-        const logCandidates = ['run.log', 'scraper.log', 'server.log'];
-        for (const candidate of logCandidates) {
-            if (runDirEntries.includes(candidate)) {
-                files.logFile = candidate;
-                break;
+            counts = progress.counts || { scanned: 0, success: 0, failed: 0 };
+            message = progress.message || '';
+            updatedAt = progress.updatedAt || updatedAt;
+        } else {
+            // [Source: Legacy Fallback]
+            let fallbackCount = 0;
+            if (files.raw) {
+                try {
+                    const rawPath = path.join(runPath, 'raw.csv');
+                    const rawContent = await fs.readFile(rawPath, 'utf8');
+                    const lines = rawContent.trim().split('\n');
+                    fallbackCount = lines.length > 0 ? lines.length - 1 : 0;
+                } catch { }
             }
-        }
-        // Fallback: any .log file
-        if (!files.logFile) {
-            const anyLog = runDirEntries.find(f => f.endsWith('.log'));
-            if (anyLog) files.logFile = anyLog;
-        }
 
-        if (files.logFile) {
-            try {
-                const logFullPath = path.join(runPath, files.logFile);
-                const stats = await fs.stat(logFullPath);
-                const size = stats.size;
-                const bufferSize = Math.min(size, 50 * 1024); // Read last 50KB
+            counts.scanned = fallbackCount;
+            counts.success = fallbackCount;
 
-                const handle = await fs.open(logFullPath, 'r');
-                const buffer = Buffer.alloc(bufferSize);
-                await handle.read(buffer, 0, bufferSize, size - bufferSize);
-                await handle.close();
-
-                const text = buffer.toString('utf8');
-                // Split lines, handle partial line at start
-                let lines = text.split('\n');
-                if (size > bufferSize) lines.shift(); // remove partial first line
-
-                // Get last 200 lines
-                if (lines.length > 200) lines = lines.slice(-200);
-                logContent = lines;
-            } catch (e) {
-                logContent = [`[Error reading log: ${String(e)}]`];
+            // Guess Status from Time
+            let isRunning = true;
+            if (files.raw) {
+                try {
+                    const stats = await fs.stat(path.join(runPath, 'raw.csv'));
+                    const ageMs = Date.now() - stats.mtime.getTime();
+                    if (ageMs > 15000) isRunning = false;
+                } catch { }
             }
+            status = isRunning ? 'running' : 'completed';
+            phase = isRunning ? 'detail_fetch' : 'done';
+            message = isRunning ? '処理中 (Legacy)' : '完了 (Legacy)';
         }
+
+        // [Log] Disabled to prevent freeze
+        const log = {
+            file: '',
+            tail: [`[System] Phase: ${phase}`, `[System] Message: ${message}`, `[System] Updated: ${updatedAt}`]
+        };
 
         return res.status(200).json({
             latestRunId,
             status,
-            summary,
+            phase,
+            counts,
+            updatedAt,
+            message,
             files,
-            log: { file: files.logFile, tail: logContent }
+            log
         });
 
     } catch (e: any) {

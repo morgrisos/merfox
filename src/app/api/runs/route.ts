@@ -127,6 +127,9 @@ export async function GET() {
                 date = stat.birthtime.toISOString().split('T')[0];
             }
 
+            // Check if config.json exists
+            const configExists = runFiles.includes('config.json');
+
             runs.push({
                 id,
                 name: dirName,
@@ -135,6 +138,7 @@ export async function GET() {
                 stats,
                 failureReasons: sortedReasons,
                 failedUrls,
+                configExists,
                 artifacts: {
                     hasGoogle: false,
                     hasAmazon: runFiles.includes('amazon.tsv'),

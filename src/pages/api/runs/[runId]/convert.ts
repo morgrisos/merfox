@@ -72,7 +72,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             run_dir: runDir,
             mapping_status: mappingStatus,
             amazon_rows: stats.converted,
-            failed_rows: stats.failed
+            failed_rows: stats.failed,
+            failed_no_id: stats.failedNoId,
+            error: stats.error
         });
 
     } catch (e: any) {

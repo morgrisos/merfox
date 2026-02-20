@@ -14,6 +14,7 @@ export default function Step6_Final() {
     const [preview, setPreview] = useState<string[]>([]);
     const [exists, setExists] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [failureInfo, setFailureInfo] = useState({ reason: '', detail: '' });
 
     useEffect(() => {
         if (!runId) return;
@@ -22,14 +23,34 @@ export default function Step6_Final() {
             .then(data => {
                 setExists(data.exists);
                 setPreview(data.preview || []);
+                setFailureInfo({ reason: data.reason || '', detail: data.detail || '' });
                 setLoading(false);
             })
             .catch(() => setLoading(false));
     }, [runId]);
 
-    const handleDownload = (type: string) => {
+    const handleDownload = async (type: string) => {
         if (!runId) return;
-        window.open(`/api/runs/${runId}/files/${type}`, '_blank');
+        try {
+            const response = await fetch(`/api/runs/${runId}/files/${type}`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            // Safe filename: prevent double extension
+            const filename = type.includes('.') ? type : `${type}.csv`;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Download failed:', err);
+            alert(`ダウンロードに失敗しました: ${err instanceof Error ? err.message : '不明なエラー'}`);
+        }
     };
 
     const handleOpenFolder = async () => {
@@ -53,41 +74,88 @@ export default function Step6_Final() {
             {loading ? (
                 <div className="text-app-text-muted">Loading preview...</div>
             ) : !exists ? (
-                /* [REQ 2] Error State */
-                <Card className="w-full bg-red-500/10 border border-red-500/50 p-8 text-center rounded-xl space-y-4">
-                    <AlertTriangle className="w-16 h-16 text-red-500 mx-auto" />
-                    <h2 className="text-xl font-bold text-white">TSV生成に失敗、または有効なデータがありません</h2>
-                    <p className="text-red-200">
-                        「マッピング不足」あるいは「除外フィルタ」により、出力できる商品が0件でした。<br />
-                        <span className="font-bold underline cursor-pointer" onClick={() => handleDownload('failed')}>
-                            失敗リスト(failed.csv)を確認
-                        </span>
-                        してください。
-                    </p>
-                    <div className="flex justify-center gap-4 mt-4">
-                        <Button variant="outline" onClick={() => router.push('/scraper/mapping?auto=true')}>マッピング設定を開く</Button>
-                        <Button variant="outline" onClick={() => router.push('/dashboard')}>終了</Button>
-                    </div>
-                </Card>
+                failureInfo.reason === 'CONVERT_FAILED' || failureInfo.reason === 'MAPPING_MISSING' ? (
+                    <Card className="w-full bg-blue-900/20 border border-blue-500/50 p-8 text-center rounded-xl space-y-6">
+                        <div className="w-16 h-16 mx-auto bg-blue-500/20 rounded-full flex items-center justify-center">
+                            <span className="text-3xl">📋</span>
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold text-white mb-2">変換できませんでした（カテゴリ変換が未設定です）</h2>
+                            <p className="text-blue-100/80 text-sm leading-relaxed">
+                                ASIN/JANが未登録のため、Amazon用TSVを作れません。<br />
+                                カテゴリ変換を設定すると次回から成功します。
+                            </p>
+                        </div>
+
+                        {failureInfo.detail && (
+                            <div className="text-blue-200/70 bg-blue-900/30 p-3 rounded text-xs border border-blue-500/30">
+                                詳細: {failureInfo.detail}
+                            </div>
+                        )}
+
+                        <div className="flex flex-col gap-3">
+                            <Button
+                                size="lg"
+                                className="w-full h-12 text-base font-bold bg-blue-600 hover:bg-blue-500 text-white"
+                                onClick={() => router.push(`/mapping${runId ? `?runId=${runId}` : ''}`)}
+                            >
+                                カテゴリ変換を設定する
+                            </Button>
+                            <div className="flex gap-3">
+                                {failureInfo.reason === 'CONVERT_FAILED' && (
+                                    <Button
+                                        variant="outline"
+                                        className="flex-1"
+                                        onClick={() => handleDownload('failed')}
+                                    >
+                                        失敗リストをダウンロード
+                                    </Button>
+                                )}
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={() => router.push('/dashboard')}
+                                >
+                                    終了
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                ) : (
+                    <Card className="w-full bg-red-500/10 border border-red-500/50 p-8 text-center rounded-xl space-y-4">
+                        <AlertTriangle className="w-16 h-16 text-red-500 mx-auto" />
+                        <h2 className="text-xl font-bold text-white">TSV生成に失敗しました</h2>
+                        <div className="text-red-200 bg-red-900/30 p-4 rounded border border-red-500/30">
+                            <p className="font-bold mb-2">原因: {failureInfo.reason || '不明なエラー'}</p>
+                            <p className="text-sm">
+                                {failureInfo.reason === 'RAW_EMPTY' && '抽出された商品が0件です。検索結果ページを確認してください。'}
+                                {failureInfo.reason === 'UNKNOWN' && 'ログやカテゴリ変換設定を確認してください。'}
+                                {failureInfo.detail}
+                            </p>
+                        </div>
+                        <div className="flex justify-center gap-4 mt-4">
+                            <Button variant="outline" onClick={() => router.push('/mapping')}>カテゴリ変換を開く</Button>
+                            <Button variant="outline" onClick={() => router.push('/dashboard')}>終了</Button>
+                        </div>
+                    </Card>
+                )
             ) : (
-                /* Success State */
                 <div className="w-full space-y-6">
                     <Card className="bg-app-surface border border-app-border p-8 text-center rounded-xl space-y-6">
                         <div className="flex flex-col items-center">
-                            <FileText className="w-16 h-16 text-green-500 mb-4" />
-                            <h2 className="text-xl font-bold text-white">amazon_upload.tsv</h2>
-                            <p className="text-green-200/70 text-sm">出力完了 / {preview.length > 0 ? preview.length - 1 : 0} Items</p>
+                            <FileText className="w-16 h-16 text-primary mb-4" />
+                            <h3 className="text-xl font-bold text-white mb-2">ファイル出力が完了しました</h3>
+                            <p className="text-blue-200/70 text-sm">出力完了 / {preview.length > 0 ? preview.length - 1 : 0} Items</p>
                         </div>
                         <Button
                             size="lg"
-                            className="w-full h-14 text-lg font-bold bg-green-600 hover:bg-green-500 text-white rounded-lg shadow-lg"
+                            className="w-full h-14 text-lg font-bold bg-primary hover:bg-blue-600 text-white rounded-lg shadow-lg"
                             onClick={() => handleDownload('amazon')}
                         >
                             <Download className="mr-2 h-6 w-6" /> 最終TSVをダウンロード
                         </Button>
                     </Card>
 
-                    {/* [REQ 3] Preview Table */}
                     <div className="bg-app-surface border border-app-border rounded-xl overflow-hidden">
                         <div className="px-4 py-3 bg-[#1a2027] border-b border-app-border flex items-center gap-2">
                             <Eye className="w-4 h-4 text-app-text-muted" />

@@ -93,7 +93,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const idCol = findCol(['itemid', 'id', 'merid', 'mercariid']) || findCol(['url']) || 'item_id'; // Default if Not Found, but better to be safe
         const titleCol = findCol(['title', 'name']) || 'title';
-        const asinCol = findCol(['asin', 'amazonasin', 'amazonid', 'asincode', 'amazonproductid', 'amazon_product_id']);
+        let asinCol = findCol(['asin', 'amazonasin', 'amazonid', 'asincode', 'amazonproductid', 'amazon_product_id']);
         const imgCol = findCol(['image', 'img', 'thumb']);
 
         if (req.method === 'GET') {
@@ -149,7 +149,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             if (!asinCol) {
-                return res.status(400).json({ error: 'Cannot update: No ASIN column identified' });
+                // [FIX] If no ASIN column exists (e.g. source is raw.csv), create one.
+                asinCol = 'amazon_product_id';
+                headers.push(asinCol);
             }
 
             let updatedCount = 0;
@@ -161,7 +163,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if (!rowKey) rowKey = r[Object.keys(r)[0]];
 
                 if (updates[rowKey] !== undefined) {
-                    r[asinCol] = updates[rowKey]; // Update value
+                    r[asinCol!] = updates[rowKey]; // Update value
                     updatedCount++;
                 }
                 return r;
@@ -180,6 +182,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             // If we fell back to raw.csv, we are now SAVING as mapping.csv (Global).
             // Always save to Global Path.
             await fs.writeFile(getGlobalMappingPath(), stringifier, 'utf8');
+
+            // [FIX] Also save to Run Local Path so Converter (which reads executionDir/mapping.csv)
+            // gets the UI updates.
+            if (latestRunDir) {
+                const localPath = path.join(latestRunDir, 'mapping.csv');
+                await fs.writeFile(localPath, stringifier, 'utf8');
+            }
 
             return res.status(200).json({ success: true, updatedCount });
         }

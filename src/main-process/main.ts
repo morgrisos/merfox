@@ -138,7 +138,8 @@ const initLogs = () => {
         nextOut = path.join(logDir, 'merfox-next.stdout.log');
         nextErr = path.join(logDir, 'merfox-next.stderr.log');
 
-        fs.appendFileSync(bootLog, `\n[${new Date().toISOString()}] [GLOBAL] Main process loaded. PID: ${process.pid}\n`);
+        const pkg = require('../../package.json'); // CommonJS import for safely getting version
+        fs.appendFileSync(bootLog, `\n[${new Date().toISOString()}] [GLOBAL] Main process loaded. Version: ${pkg.version} PID: ${process.pid}\n`);
     } catch (e) {
         console.error('Failed to init logs:', e);
     }
@@ -198,6 +199,35 @@ const startServer = async () => {
 
     console.log('Starting Next.js Standalone Server via:', standaloneServer);
     try { fs.appendFileSync(bootLog, `[INFO] Spawning node process...\n`); } catch (_) { }
+
+    // [PORT GUARD] Kill existing process on 13337 before spawn
+    try {
+        const checkCmd = 'lsof -t -i:13337 -sTCP:LISTEN';
+        let pidsToKill = '';
+        try {
+            pidsToKill = require('child_process').execSync(checkCmd, { encoding: 'utf8' }).trim();
+        } catch (e) { /* No process found usually throws */ }
+
+        if (pidsToKill) {
+            const pids = pidsToKill.split('\n').filter(p => p.trim());
+            fs.appendFileSync(bootLog, `[WARN] Port 13337 occupied by PIDs: ${pids.join(',')}. Killing...\n`);
+            pids.forEach(pid => {
+                try {
+                    process.kill(Number(pid), 'SIGTERM');
+                    fs.appendFileSync(bootLog, `[INFO] Sent SIGTERM to ${pid}\n`);
+                } catch (e) {
+                    fs.appendFileSync(bootLog, `[ERROR] Failed to kill ${pid}: ${e}\n`);
+                }
+            });
+            // Forced Wait for cleanup (simple blocking delay for safety)
+            const startWait = Date.now();
+            while (Date.now() - startWait < 1000) { /* busy wait 1s */ }
+        } else {
+            fs.appendFileSync(bootLog, `[INFO] Port 13337 appears free.\n`);
+        }
+    } catch (e) {
+        try { fs.appendFileSync(bootLog, `[WARN] Port guard check failed: ${e}\n`); } catch (_) { }
+    }
 
     try {
         serverProcess = spawn(process.execPath, [standaloneServer], {

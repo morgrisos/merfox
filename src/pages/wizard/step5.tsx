@@ -66,12 +66,12 @@ export default function Step5_Convert() {
                 <div className="relative inline-flex items-center justify-center py-4">
                     <div className={`absolute w-40 h-40 rounded-full ${status === 'running' ? 'bg-purple-500/20 animate-ping' : 'bg-transparent'}`} />
                     <div className={`relative w-32 h-32 rounded-full flex items-center justify-center border-4 shadow-xl transition-all ${status === 'running' ? 'border-purple-500 bg-app-base' :
-                        status === 'success' ? 'border-green-500 bg-app-base' :
+                        status === 'success' ? 'border-primary bg-app-base' :
                             status === 'error' ? 'border-red-500 bg-app-base' :
                                 'border-app-border bg-app-base'
                         }`}>
                         {status === 'running' ? <Loader2 className="w-12 h-12 text-purple-500 animate-spin" /> :
-                            status === 'success' ? <CheckCircle className="w-12 h-12 text-green-500" /> :
+                            status === 'success' ? <CheckCircle className="w-12 h-12 text-primary" /> :
                                 status === 'error' ? <AlertCircle className="w-12 h-12 text-red-500" /> :
                                     <ArrowRight className="w-12 h-12 text-blue-500" />
                         }
@@ -117,7 +117,7 @@ export default function Step5_Convert() {
                             {/* Result Stats */}
                             <div className="grid grid-cols-2 gap-4 text-center">
                                 <div>
-                                    <p className="text-3xl font-bold text-green-500">{result.amazon_rows ?? 0}</p>
+                                    <p className="text-3xl font-bold text-primary">{result.amazon_rows ?? 0}</p>
                                     <p className="text-xs text-app-text-muted">変換成功</p>
                                 </div>
                                 <div>
