@@ -355,6 +355,21 @@ class Scraper extends EventEmitter {
                 try {
                     await this.gotoWithRetry(page, url);
 
+                    // [N-1] SOLD-out detection (3 selectors, priority order)
+                    // Check before any data extraction to avoid unnecessary DOM reads
+                    const soldByAria = await page.$('[aria-label="売り切れ"]').then(el => !!el).catch(() => false);
+                    const soldByClass = soldByAria ? false : await page.$('.item-sold-out-overlay').then(el => !!el).catch(() => false);
+                    const soldByText = (soldByAria || soldByClass) ? false : await page.evaluate(() =>
+                        [...document.querySelectorAll('div, span, button')].some(el => el.innerText && el.innerText.trim() === '売り切れ')
+                    ).catch(() => false);
+                    if (soldByAria || soldByClass || soldByText) {
+                        this.log(`[WARN] sold-out skip: ${url.split('/item/')[1] || itemId}`, 'warn');
+                        this.stats.excluded++;
+                        this.stats.excludedBreakdown.unknown = (this.stats.excludedBreakdown.unknown || 0) + 1;
+                        this.updateStats();
+                        continue;
+                    }
+
                     // Basic extraction
                     const title = await page.textContent('h1').catch(() => '');
                     const priceText = await page.textContent('[data-testid="price"]').catch(() => '0');
@@ -405,6 +420,11 @@ class Scraper extends EventEmitter {
                     }
 
 
+                    // [N-2] Condition extraction - fills existing condition column in raw.csv (no new columns)
+                    const conditionText = await page.locator('th:has-text("商品の状態") + td').first().textContent()
+                        .then(t => (t || '').trim())
+                        .catch(() => '');
+
                     // Success
                     this.stats.success++;
                     const newItem = {
@@ -418,8 +438,8 @@ class Scraper extends EventEmitter {
                         seller_type: 'normal',
                         image_count: 1,
                         first_image_url: '',
-                        condition: '', // [NEW] P1.6 Schema Fix
-                        description: description.slice(0, 100).replace(/\n/g, ' ')
+                        condition: conditionText,  // [N-2] real condition text (素材。TSV変換はしない)
+                        description: description.slice(0, 1000).replace(/\n/g, ' ')  // [N-3] 100→1000 (raw.csvのみ。TSVには流さない)
                     };
                     this.items.push(newItem);
 
