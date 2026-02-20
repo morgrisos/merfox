@@ -35,7 +35,19 @@ export default function Settings() {
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                             <span className="text-app-text-muted">Version</span>
-                            <span className="text-white font-mono">{versionInfo}</span>
+                            <span className="flex items-center gap-2">
+                                <span className="text-white font-mono">v{versionInfo}</span>
+                                {versionInfo !== 'Loading...' && versionInfo !== 'Unknown' && (
+                                    <a
+                                        href={`https://github.com/morgrisos/merfox/releases/tag/v${versionInfo}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-xs text-blue-400 hover:text-blue-300 underline transition-colors"
+                                    >
+                                        Release
+                                    </a>
+                                )}
+                            </span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-app-text-muted">Build SHA</span>
