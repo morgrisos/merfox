@@ -78,7 +78,27 @@ export default function Step5_Convert() {
                     </div>
                 </div>
 
+                {/* ⚠️ TSV Fixed-Value Warning Banner — display only, no logic change */}
+                <div className="w-full border border-orange-500/60 bg-orange-950/40 rounded-lg p-4 space-y-2 text-sm">
+                    <div className="flex items-start gap-2 text-orange-300 font-semibold">
+                        <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                        <span>TSV固定値の警告 — 出品前に必ず確認してください</span>
+                    </div>
+                    <ul className="ml-6 space-y-1 text-orange-200/80 text-xs list-disc">
+                        <li>現状、Amazon TSVは <code className="bg-orange-900/50 px-1 rounded">item-condition</code> が全件<strong>「中古-良(11)」</strong>で固定です</li>
+                        <li><code className="bg-orange-900/50 px-1 rounded">leadtime-to-ship</code> が全件<strong>「2日」</strong>で固定です</li>
+                        <li><code className="bg-orange-900/50 px-1 rounded">item-note</code> は<strong>「中古品です。」</strong>固定です</li>
+                    </ul>
+                    <p className="ml-6 text-orange-300 text-xs font-medium">
+                        このまま出品するとクレーム/停止リスクがあります。出品前に内容を確認してください。
+                    </p>
+                    <p className="ml-6 text-orange-200/50 text-xs">
+                        今後：出品用の設定（状態/発送日数/説明）をWizardで指定できるようにする予定
+                    </p>
+                </div>
+
                 {/* 3B-6 Main CTA (State Based) */}
+
                 <div className="w-full space-y-4">
                     {status === 'idle' && (
                         <Button
