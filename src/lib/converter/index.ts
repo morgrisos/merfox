@@ -30,10 +30,26 @@ const AMAZON_HEADER = [
 export class AmazonConverter {
     static async convert(executionDir: string, config: { minPrice?: number, maxPrice?: number }): Promise<{ converted: number, failed: number, failedNoId: number, error?: string }> {
         try {
-            // ... (Mapping Load logic remains same, skipping for brevity in thought, but must implement full) ...
-            // I'll reuse the existing mapping load logic by reading file or just assume it is there.
-            // Wait, I need to replace the WHOLE file content. 
-            // I will copy the mapping logic from previous `view_file` output.
+            // [L2-3] Load listing_config.json — fallback to hardcoded defaults if missing
+            const listingConfigPath = path.join(executionDir, 'listing_config.json');
+            let listingConfig = {
+                amazon: {
+                    item_condition: '11',       // 中古-良 (backward compat default)
+                    leadtime_to_ship: '2',
+                    item_note: '中古品です。',
+                },
+            };
+            try {
+                const raw = await fs.readFile(listingConfigPath, 'utf8');
+                const parsed = JSON.parse(raw);
+                if (parsed?.amazon) {
+                    listingConfig.amazon.item_condition = parsed.amazon.item_condition ?? listingConfig.amazon.item_condition;
+                    listingConfig.amazon.leadtime_to_ship = parsed.amazon.leadtime_to_ship ?? listingConfig.amazon.leadtime_to_ship;
+                    listingConfig.amazon.item_note = parsed.amazon.item_note ?? listingConfig.amazon.item_note;
+                }
+            } catch {
+                // File absent or malformed — use defaults above (backward compatible)
+            }
 
             // [MAPPING LOAD]
             const mappingPath = path.join(executionDir, 'mapping.csv');
@@ -126,7 +142,7 @@ export class AmazonConverter {
                     continue;
                 }
 
-                // Construct Row (Fixed Template)
+                // Construct Row — values from listing_config.json (fallback: old hardcoded defaults)
                 tsvRows.push([
                     `MF-${item.item_id}`,              // sku
                     item.amazon_product_id,            // product-id
@@ -134,16 +150,16 @@ export class AmazonConverter {
                     item.price_yen,                    // price
                     '',                                // min-price
                     '',                                // max-price
-                    '11',                              // item-condition (11=Used Good)
+                    listingConfig.amazon.item_condition,   // item-condition [L2-3]
                     1,                                 // quantity
                     'a',                               // add-delete (a=add)
                     '',                                // will-ship
                     '',                                // expedited
                     '',                                // standard-plus
-                    '中古品です。',                       // item-note
+                    listingConfig.amazon.item_note,        // item-note [L2-3]
                     '',                                // fulfillment-id
                     '',                                // tax-code
-                    '2',                               // leadtime (days)
+                    listingConfig.amazon.leadtime_to_ship, // leadtime [L2-3]
                     ''                                 // merchant_shipping_group
                 ]);
                 reportRows.push(report);
