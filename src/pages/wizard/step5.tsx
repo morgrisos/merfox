@@ -1,24 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
 import { useOutcome } from '@/contexts/OutcomeContext';
-import { Loader2, ArrowRight, AlertCircle, CheckCircle, FileJson, Settings2 } from 'lucide-react';
+import {
+    Loader2, ArrowRight, AlertCircle, CheckCircle,
+    FileJson, Settings2, Save, ShieldCheck,
+} from 'lucide-react';
 import axios from 'axios';
 import { AppShell } from '@/components/layout/AppShell';
 
-// [L2-2] Amazon listing condition options
+// Amazon listing condition options
 const CONDITION_OPTIONS = [
     { value: '11', label: '中古-良 (11)' },
     { value: '10', label: '中古-非常に良い (10)' },
     { value: '9', label: '中古-可 (9)' },
 ];
 
-const DEFAULT_CONFIG = {
+const HARDCODED_DEFAULTS = {
     item_condition: '11',
     leadtime_to_ship: '2',
     item_note: '中古品です。',
 };
+
+const ITEM_NOTE_MAX = 256;
+const el = (typeof window !== 'undefined') ? (window as any).electron : null;
 
 export default function Step5_Convert() {
     const router = useRouter();
@@ -29,11 +35,26 @@ export default function Step5_Convert() {
     const [result, setResult] = useState<any>(null);
     const [errorMsg, setErrorMsg] = useState('');
 
-    // [L2-2] Listing config state
-    const [itemCondition, setItemCondition] = useState(DEFAULT_CONFIG.item_condition);
-    const [leadtime, setLeadtime] = useState(DEFAULT_CONFIG.leadtime_to_ship);
-    const [itemNote, setItemNote] = useState(DEFAULT_CONFIG.item_note);
+    // [P0-1] Listing config state
+    const [itemCondition, setItemCondition] = useState(HARDCODED_DEFAULTS.item_condition);
+    const [leadtime, setLeadtime] = useState(HARDCODED_DEFAULTS.leadtime_to_ship);
+    const [itemNote, setItemNote] = useState(HARDCODED_DEFAULTS.item_note);
     const [leadtimeError, setLeadtimeError] = useState('');
+    const [defaultsSaved, setDefaultsSaved] = useState(false);
+
+    // [P0-1] Load listing_defaults.json from Electron userData on mount
+    useEffect(() => {
+        (async () => {
+            try {
+                const defaults = await el?.getListingDefaults?.();
+                if (defaults?.amazon) {
+                    setItemCondition(defaults.amazon.item_condition ?? HARDCODED_DEFAULTS.item_condition);
+                    setLeadtime(defaults.amazon.leadtime_to_ship ?? HARDCODED_DEFAULTS.leadtime_to_ship);
+                    setItemNote(defaults.amazon.item_note ?? HARDCODED_DEFAULTS.item_note);
+                }
+            } catch { /* running in browser / no Electron — silently ignore */ }
+        })();
+    }, []);
 
     const validateLeadtime = (val: string) => {
         const n = parseInt(val, 10);
@@ -45,26 +66,47 @@ export default function Step5_Convert() {
         return true;
     };
 
+    // [P0-2] item_note — enforce 256 char limit via onChange
+    const handleNoteChange = (val: string) => {
+        // Strip newlines/tabs immediately (TSV safety)
+        const cleaned = val.replace(/[\r\n\t]+/g, ' ');
+        setItemNote(cleaned.slice(0, ITEM_NOTE_MAX));
+    };
+
+    // [P0-1] Save current values as persistent defaults (userData)
+    const saveAsDefaults = async () => {
+        try {
+            const res = await el?.saveListingDefaults?.({
+                amazon: {
+                    item_condition: itemCondition,
+                    leadtime_to_ship: leadtime,
+                    item_note: itemNote,
+                },
+            });
+            if (res?.ok) {
+                setDefaultsSaved(true);
+                setTimeout(() => setDefaultsSaved(false), 2500);
+            }
+        } catch { /* not Electron — ignore */ }
+    };
+
     const startConversion = async () => {
         if (status === 'running') return;
-
-        // Validate
         if (!validateLeadtime(leadtime)) return;
 
         setStatus('running');
         setErrorMsg('');
 
         try {
-            // [L2-2] Save listing_config.json BEFORE conversion
+            // [P0-1] Save listing_config.json for this run
             await axios.post(`/api/runs/${runId}/listing-config`, {
                 amazon: {
-                    item_condition: itemCondition || DEFAULT_CONFIG.item_condition,
+                    item_condition: itemCondition || HARDCODED_DEFAULTS.item_condition,
                     leadtime_to_ship: String(parseInt(leadtime, 10) || 2),
-                    item_note: itemNote.trim() || DEFAULT_CONFIG.item_note,
+                    item_note: itemNote.trim() || HARDCODED_DEFAULTS.item_note,
                 },
             });
 
-            // Then convert
             const res = await axios.post(`/api/runs/${runId}/convert`);
 
             if (res.data.success) {
@@ -81,9 +123,14 @@ export default function Step5_Convert() {
         }
     };
 
+    // Derived display helpers
+    const condLabel = CONDITION_OPTIONS.find(o => o.value === itemCondition)?.label ?? itemCondition;
+    const noteOver = itemNote.length > ITEM_NOTE_MAX - 20; // warn when approaching limit
+
     return (
         <div className="flex flex-col items-center justify-center py-6">
             <Card className="max-w-xl w-full border border-app-border bg-app-surface shadow-none flex flex-col items-center justify-center space-y-8 p-8 text-white rounded-xl">
+
                 {/* Header */}
                 <div className="text-center space-y-2">
                     <h1 className="text-2xl font-bold text-white">Amazon用TSVに変換します</h1>
@@ -93,7 +140,7 @@ export default function Step5_Convert() {
                     </p>
                 </div>
 
-                {/* Input Visualization (Read-only) */}
+                {/* Input Visualization */}
                 <div className="flex items-center gap-4 text-xs text-app-text-muted bg-app-element p-3 rounded-lg border border-app-border">
                     <div className="flex items-center gap-2">
                         <FileJson className="w-4 h-4" /> raw.json (自動)
@@ -104,28 +151,41 @@ export default function Step5_Convert() {
                     </div>
                 </div>
 
-                {/* Status Visualization */}
+                {/* Status Orb */}
                 <div className="relative inline-flex items-center justify-center py-4">
                     <div className={`absolute w-40 h-40 rounded-full ${status === 'running' ? 'bg-purple-500/20 animate-ping' : 'bg-transparent'}`} />
                     <div className={`relative w-32 h-32 rounded-full flex items-center justify-center border-4 shadow-xl transition-all ${status === 'running' ? 'border-purple-500 bg-app-base' :
-                        status === 'success' ? 'border-primary bg-app-base' :
-                            status === 'error' ? 'border-red-500 bg-app-base' :
-                                'border-app-border bg-app-base'
+                            status === 'success' ? 'border-primary bg-app-base' :
+                                status === 'error' ? 'border-red-500 bg-app-base' :
+                                    'border-app-border bg-app-base'
                         }`}>
                         {status === 'running' ? <Loader2 className="w-12 h-12 text-purple-500 animate-spin" /> :
                             status === 'success' ? <CheckCircle className="w-12 h-12 text-primary" /> :
                                 status === 'error' ? <AlertCircle className="w-12 h-12 text-red-500" /> :
-                                    <ArrowRight className="w-12 h-12 text-blue-500" />
-                        }
+                                    <ArrowRight className="w-12 h-12 text-blue-500" />}
                     </div>
                 </div>
 
-                {/* [L2-2] Amazon Listing Settings Form — only shown when idle */}
+                {/* [P0-1] Amazon Listing Settings Form — only when idle */}
                 {status === 'idle' && (
                     <div className="w-full border border-blue-500/40 bg-blue-950/30 rounded-lg p-4 space-y-4 text-sm">
-                        <div className="flex items-center gap-2 text-blue-300 font-semibold">
-                            <Settings2 className="w-4 h-4 shrink-0" />
-                            <span>Amazon 出品設定（このRunのTSVに反映）</span>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-blue-300 font-semibold">
+                                <Settings2 className="w-4 h-4 shrink-0" />
+                                <span>Amazon 出品設定</span>
+                            </div>
+                            {/* [P0-1] Save as default button */}
+                            <button
+                                onClick={saveAsDefaults}
+                                title="この設定を次回以降のデフォルトとして保存"
+                                className={`flex items-center gap-1 text-xs px-2 py-1 rounded border transition-colors ${defaultsSaved
+                                        ? 'border-green-500 text-green-400'
+                                        : 'border-app-border text-app-text-muted hover:border-blue-400 hover:text-blue-300'
+                                    }`}
+                            >
+                                <Save className="w-3 h-3" />
+                                {defaultsSaved ? '保存済み ✓' : 'デフォルトに保存'}
+                            </button>
                         </div>
 
                         {/* item-condition */}
@@ -157,26 +217,35 @@ export default function Step5_Convert() {
                                 onChange={e => { setLeadtime(e.target.value); validateLeadtime(e.target.value); }}
                                 className="w-full bg-app-base border border-app-border text-white text-sm rounded-md px-3 py-2 focus:outline-none focus:border-blue-500"
                             />
-                            {leadtimeError && (
-                                <p className="text-red-400 text-xs">{leadtimeError}</p>
-                            )}
+                            {leadtimeError && <p className="text-red-400 text-xs">{leadtimeError}</p>}
                         </div>
 
-                        {/* item-note */}
+                        {/* [P0-2] item-note with char counter */}
                         <div className="space-y-1">
-                            <label className="block text-xs text-app-text-muted font-medium">
-                                item-note（商品説明文）
-                            </label>
+                            <div className="flex justify-between items-center">
+                                <label className="block text-xs text-app-text-muted font-medium">
+                                    item-note（商品説明文）
+                                </label>
+                                <span className={`text-xs ${noteOver ? 'text-orange-400 font-bold' : 'text-app-text-muted'}`}>
+                                    {itemNote.length}/{ITEM_NOTE_MAX}文字
+                                </span>
+                            </div>
                             <textarea
                                 rows={3}
                                 value={itemNote}
-                                onChange={e => setItemNote(e.target.value)}
-                                className="w-full bg-app-base border border-app-border text-white text-sm rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 resize-none"
+                                onChange={e => handleNoteChange(e.target.value)}
+                                className={`w-full bg-app-base border text-white text-sm rounded-md px-3 py-2 focus:outline-none resize-none ${noteOver ? 'border-orange-500 focus:border-orange-400' : 'border-app-border focus:border-blue-500'
+                                    }`}
                                 placeholder="中古品です。"
                             />
+                            {noteOver && (
+                                <p className="text-orange-400 text-xs">
+                                    ⚠️ 256文字が上限です。Amazon TSVの制限により超過分は自動的にトリムされます。
+                                </p>
+                            )}
                         </div>
 
-                        {/* Warning */}
+                        {/* Safety warning */}
                         <div className="flex items-start gap-2 text-orange-300/80 text-xs border-t border-orange-500/20 pt-3">
                             <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                             <p>
@@ -187,7 +256,7 @@ export default function Step5_Convert() {
                     </div>
                 )}
 
-                {/* Main CTA (State Based) */}
+                {/* CTA Area */}
                 <div className="w-full space-y-4">
                     {status === 'idle' && (
                         <Button
@@ -200,15 +269,13 @@ export default function Step5_Convert() {
                     )}
 
                     {status === 'running' && (
-                        <p className="text-center text-app-text-muted animate-pulse">
-                            変換処理を実行中...
-                        </p>
+                        <p className="text-center text-app-text-muted animate-pulse">変換処理を実行中...</p>
                     )}
 
                     {status === 'error' && (
                         <div className="space-y-4">
                             <div className="text-center text-red-400 text-sm">
-                                {errorMsg || "変換に失敗しました。"}
+                                {errorMsg || '変換に失敗しました。'}
                             </div>
                             <Button
                                 variant="danger"
@@ -235,6 +302,24 @@ export default function Step5_Convert() {
                                 </div>
                             </div>
 
+                            {/* [P0-4] Conversion settings summary */}
+                            <div className="w-full bg-green-950/30 border border-green-500/30 rounded-lg p-3 space-y-1.5">
+                                <div className="flex items-center gap-2 text-green-400 text-xs font-semibold mb-2">
+                                    <ShieldCheck className="w-3.5 h-3.5" />
+                                    今回の変換設定
+                                </div>
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-app-text-muted">
+                                    <span>item-condition</span>
+                                    <span className="text-white font-medium">{condLabel}</span>
+                                    <span>leadtime-to-ship</span>
+                                    <span className="text-white font-medium">{leadtime} 日</span>
+                                    <span>item-note（先頭）</span>
+                                    <span className="text-white font-medium truncate">
+                                        {itemNote.slice(0, 30)}{itemNote.length > 30 ? '…' : ''}
+                                    </span>
+                                </div>
+                            </div>
+
                             {/* Success CTA */}
                             <Button
                                 size="lg"
@@ -245,7 +330,10 @@ export default function Step5_Convert() {
                             </Button>
 
                             {result.failed_rows > 0 && (
-                                <button className="w-full text-center text-xs text-red-400 hover:text-red-300 underline" onClick={() => window.open(`/api/runs/${runId}/files/failed`, '_blank')}>
+                                <button
+                                    className="w-full text-center text-xs text-red-400 hover:text-red-300 underline"
+                                    onClick={() => window.open(`/api/runs/${runId}/files/failed`, '_blank')}
+                                >
                                     失敗リストを確認する ({result.failed_rows}件)
                                 </button>
                             )}

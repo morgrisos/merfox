@@ -103,8 +103,28 @@ export class AmazonConverter {
                 const report = { item_id: item.item_id, status: 'SUCCESS', message: '' };
                 if (!item.item_id) continue;
 
-                // Price Filter
-                if (item.price_yen > (config.maxPrice || 100000)) {
+                // [P0-3] SOLD / 売り切れ guard
+                const condLower = String(item.condition ?? '').toLowerCase();
+                if (condLower === 'sold' || condLower === '売り切れ' || condLower === 'sold_out') {
+                    report.status = 'SKIPPED_SOLD';
+                    report.message = `SOLD item excluded (condition=${item.condition})`;
+                    reportRows.push(report);
+                    await appendLog(`[CONVERT] SKIP item_id=${item.item_id} reason=SOLD condition=${item.condition}`);
+                    continue;
+                }
+
+                // [P0-3] price_yen <= 0 guard
+                const priceNum = Number(item.price_yen);
+                if (!item.price_yen || isNaN(priceNum) || priceNum <= 0) {
+                    report.status = 'SKIPPED_PRICE_INVALID';
+                    report.message = `Invalid/zero price (price_yen=${item.price_yen})`;
+                    reportRows.push(report);
+                    await appendLog(`[CONVERT] SKIP item_id=${item.item_id} reason=PRICE_INVALID price=${item.price_yen}`);
+                    continue;
+                }
+
+                // maxPrice filter (existing)
+                if (priceNum > (config.maxPrice || 100000)) {
                     report.status = 'SKIPPED_PRICE';
                     report.message = 'Price too high';
                     reportRows.push(report);
@@ -120,8 +140,7 @@ export class AmazonConverter {
                     }
                 }
 
-                // [REQ 1] Mandatory Check
-                // 1. Product ID
+                // [REQ 1] No Product ID
                 if (!item.amazon_product_id) {
                     noProductIdCount++;
                     failedRows.push({
@@ -136,11 +155,20 @@ export class AmazonConverter {
                     continue;
                 }
 
-                // 2. Price Safety
-                if (!item.price_yen || isNaN(Number(item.price_yen))) {
-                    console.warn('Invalid price', item);
-                    continue;
+                // [P0-3] leadtime clamp 1–30 (final guard)
+                const rawLeadtime = parseInt(listingConfig.amazon.leadtime_to_ship, 10);
+                const safeLeadtime = isNaN(rawLeadtime)
+                    ? '2'
+                    : String(Math.max(1, Math.min(30, rawLeadtime)));
+                if (safeLeadtime !== listingConfig.amazon.leadtime_to_ship) {
+                    await appendLog(`[CONVERT] leadtime clamped ${listingConfig.amazon.leadtime_to_ship} → ${safeLeadtime}`);
                 }
+
+                // [P0-3] item_note final 256-char trim + strip newlines/tabs (TSV safety)
+                const safeNote = listingConfig.amazon.item_note
+                    .replace(/[\r\n\t]+/g, ' ')
+                    .trim()
+                    .slice(0, 256);
 
                 // Construct Row — values from listing_config.json (fallback: old hardcoded defaults)
                 tsvRows.push([
@@ -156,10 +184,10 @@ export class AmazonConverter {
                     '',                                // will-ship
                     '',                                // expedited
                     '',                                // standard-plus
-                    listingConfig.amazon.item_note,        // item-note [L2-3]
+                    safeNote,                          // item-note [P0-2 trimmed]
                     '',                                // fulfillment-id
                     '',                                // tax-code
-                    listingConfig.amazon.leadtime_to_ship, // leadtime [L2-3]
+                    safeLeadtime,                      // leadtime [P0-3 clamped]
                     ''                                 // merchant_shipping_group
                 ]);
                 reportRows.push(report);
