@@ -103,9 +103,13 @@ export class AmazonConverter {
                 const report = { item_id: item.item_id, status: 'SUCCESS', message: '' };
                 if (!item.item_id) continue;
 
-                // [P0-3] SOLD / 売り切れ guard
-                const condLower = String(item.condition ?? '').toLowerCase();
-                if (condLower === 'sold' || condLower === '売り切れ' || condLower === 'sold_out') {
+                // [P1-①] SOLD guard — pattern array covers Mercari 表記ゆれ
+                const condNorm = String(item.condition ?? '').toLowerCase().trim();
+                const SOLD_PATTERNS = [
+                    'sold', 'sold out', 'sold_out', 'soldout',
+                    '売り切れ', '売切れ', '売り切れ！',
+                ];
+                if (SOLD_PATTERNS.some(p => condNorm.includes(p))) {
                     report.status = 'SKIPPED_SOLD';
                     report.message = `SOLD item excluded (condition=${item.condition})`;
                     reportRows.push(report);
@@ -212,7 +216,28 @@ export class AmazonConverter {
             const tsvOutput = stringify(tsvRows, { header: true, columns: AMAZON_HEADER, delimiter: '\t' });
             await fs.writeFile(tsvPath, '\ufeff' + tsvOutput);
 
-            // Write Failed
+            // [P1-②] TSV spot-check: read back first data row and log 3 key values
+            try {
+                const tsvCheck = await fs.readFile(tsvPath, 'utf8');
+                const tsvLines = tsvCheck.replace(/^\uFEFF/, '').split('\n');
+                if (tsvLines.length < 2 || !tsvLines[1].trim()) {
+                    await appendLog('[CONVERT] TSV_CHECK skipped (0 rows)');
+                } else {
+                    const headers = tsvLines[0].split('\t');
+                    const vals = tsvLines[1].split('\t');
+                    const get = (h: string) => vals[headers.indexOf(h)] ?? '';
+                    const noteVal = get('item-note');
+                    await appendLog(
+                        `[CONVERT] TSV_CHECK item-condition=${get('item-condition')}` +
+                        ` leadtime-to-ship=${get('leadtime-to-ship')}` +
+                        ` item-note-len=${noteVal.length}` +
+                        (noteVal.length > 0 ? ` item-note-prefix="${noteVal.slice(0, 20)}"` : '')
+                    );
+                }
+            } catch (e) {
+                await appendLog(`[CONVERT] TSV_CHECK error: ${e}`);
+            }
+
             if (failedRows.length > 0) {
                 const failedOutput = stringify(failedRows, { header: true });
                 await fs.writeFile(path.join(executionDir, 'amazon_convert_failed.csv'), '\ufeff' + failedOutput);
