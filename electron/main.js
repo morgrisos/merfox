@@ -169,7 +169,30 @@ app.whenReady().then(() => {
         return result; // Empty string if success, error message if failed
     });
 
-    startServer();
+    // [P0-1] IPC: Read listing_defaults.json from userData
+    ipcMain.handle('getListingDefaults', async () => {
+        const defaultsPath = path.join(app.getPath('userData'), 'listing_defaults.json');
+        try {
+            const raw = require('fs').readFileSync(defaultsPath, 'utf8');
+            return JSON.parse(raw);
+        } catch {
+            return {}; // No defaults yet — caller uses built-in defaults
+        }
+    });
+
+    // [P0-1] IPC: Write listing_defaults.json to userData
+    ipcMain.handle('saveListingDefaults', async (_event, data) => {
+        const defaultsPath = path.join(app.getPath('userData'), 'listing_defaults.json');
+        try {
+            require('fs').writeFileSync(defaultsPath, JSON.stringify(data, null, 2), 'utf8');
+            console.log(`[IPC] Saved listing_defaults.json: ${defaultsPath}`);
+            return { ok: true, path: defaultsPath };
+        } catch (e) {
+            console.error('[IPC] saveListingDefaults error:', e);
+            return { ok: false, error: String(e) };
+        }
+    });
+
     createWindow();
 
     app.on('activate', () => {
