@@ -168,6 +168,34 @@ export class AmazonConverter {
                     await appendLog(`[CONVERT] leadtime clamped ${listingConfig.amazon.leadtime_to_ship} → ${safeLeadtime}`);
                 }
 
+                // [P1-③] Shipping method guard
+                const methodStr = String(item.shipping_method_text ?? '');
+                const NG_SHIPPING_METHODS = ['たのメル', '着払い', '直接引き取り', '手渡し'];
+                if (NG_SHIPPING_METHODS.some(ng => methodStr.includes(ng))) {
+                    report.status = 'SKIPPED_SHIPPING_METHOD';
+                    report.message = `NG Shipping Method (${methodStr})`;
+                    reportRows.push(report);
+                    await appendLog(`[CONVERT] SKIP item_id=${item.item_id} reason=SHIPPING_METHOD method="${methodStr}"`);
+                    continue;
+                }
+
+                // [P1-③] Shipping days delay guard
+                let maxMercariDays = 0;
+                const daysStr = String(item.shipping_days_text ?? '');
+                const daysMatch = daysStr.match(/\d+/g);
+                if (daysMatch) {
+                    maxMercariDays = Math.max(...daysMatch.map(Number));
+                }
+                const configuredDays = parseInt(safeLeadtime, 10);
+                // If the item takes more days to ship than what we've committed to Amazon, it's a guaranteed late shipment.
+                if (maxMercariDays > configuredDays) {
+                    report.status = 'SKIPPED_SHIPPING_DELAY';
+                    report.message = `Mercari days (${maxMercariDays}) > Amazon setting (${configuredDays})`;
+                    reportRows.push(report);
+                    await appendLog(`[CONVERT] SKIP item_id=${item.item_id} reason=SHIPPING_DELAY mercari_days=${maxMercariDays} amazon_setting=${configuredDays} text="${daysStr}"`);
+                    continue;
+                }
+
                 // [P0-3] item_note final 256-char trim + strip newlines/tabs (TSV safety)
                 const safeNote = listingConfig.amazon.item_note
                     .replace(/[\r\n\t]+/g, ' ')
