@@ -324,19 +324,35 @@ export default function Dashboard() {
                                 history.slice(0, 3).map(run => (
                                     <div key={run.id} className="p-4 hover:bg-[#202b3a] transition-colors">
                                         <div className="flex justify-between items-start mb-1">
-                                            <span className="text-xs font-bold text-white truncate max-w-[150px]">
+                                            <span className="text-xs font-bold text-white truncate max-w-[130px]">
                                                 {run.platform === 'mercari' ? 'Mercari Search' : 'Shopee Search'}
                                             </span>
-                                            <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${run.status === 'completed' ? 'bg-primary/10 text-primary' :
-                                                run.status === 'failed' ? 'bg-red-500/10 text-red-500' : 'bg-orange-500/10 text-orange-500'
-                                                }`}>
-                                                {run.status}
-                                            </span>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${run.status === 'completed' ? 'bg-primary/10 text-primary' :
+                                                    run.status === 'failed' ? 'bg-red-500/10 text-red-500' : 'bg-orange-500/10 text-orange-500'
+                                                    }`}>
+                                                    {run.status}
+                                                </span>
+                                                {/* [P1] Open Folder — calls Electron IPC openRunsDir */}
+                                                <button
+                                                    title="成果物フォルダを開く"
+                                                    onClick={() => (window as any).electron?.openRunsDir?.()}
+                                                    className="text-app-text-muted hover:text-white transition-colors"
+                                                >
+                                                    <FolderOpen className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className="flex justify-between items-center text-xs text-app-text-muted">
                                             <span>{new Date(run.date).toLocaleDateString()}</span>
                                             <span>{run.stats.success} 件取得</span>
                                         </div>
+                                        {/* [P3] 0件Run explanation */}
+                                        {run.stats.success === 0 && (
+                                            <p className="mt-1 text-[10px] text-app-text-muted/70 leading-relaxed">
+                                                ※ 0件は正常終了の場合があります。検索URLの on_sale フィルタや条件を確認してください。
+                                            </p>
+                                        )}
                                     </div>
                                 ))
                             )}

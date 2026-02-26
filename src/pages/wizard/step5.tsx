@@ -92,7 +92,12 @@ export default function Step5_Convert() {
                     <p className="ml-6 text-orange-300 text-xs font-medium">
                         このまま出品するとクレーム/停止リスクがあります。出品前に内容を確認してください。
                     </p>
-                    <p className="ml-6 text-orange-200/50 text-xs">
+                    {/* [P2] Concrete Amazon risk one-liner */}
+                    <p className="ml-6 text-orange-200/80 text-xs">
+                        Amazon は状態申告の不一致・発送遅延が続くと出品停止／アカウント制限の可能性があります。
+                    </p>
+                    {/* [P4] Bumped visibility from text-orange-200/50 to text-orange-400/70 */}
+                    <p className="ml-6 text-orange-400/70 text-xs">
                         今後：出品用の設定（状態/発送日数/説明）をWizardで指定できるようにする予定
                     </p>
                 </div>
