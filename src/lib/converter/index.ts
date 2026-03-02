@@ -185,6 +185,12 @@ export class AmazonConverter {
                 const daysMatch = daysStr.match(/\d+/g);
                 if (daysMatch) {
                     maxMercariDays = Math.max(...daysMatch.map(Number));
+                } else {
+                    report.status = 'SKIPPED_SHIPPING_DAYS_UNKNOWN';
+                    report.message = `Cannot parse shipping days (${daysStr})`;
+                    reportRows.push(report);
+                    await appendLog(`[CONVERT] SKIP item_id=${item.item_id} reason=SHIPPING_DAYS_UNKNOWN text="${daysStr}"`);
+                    continue;
                 }
                 const configuredDays = parseInt(safeLeadtime, 10);
                 // If the item takes more days to ship than what we've committed to Amazon, it's a guaranteed late shipment.
@@ -299,6 +305,21 @@ export class AmazonConverter {
 
             validCount = tsvRows.length;
             await appendLog(`[CONVERT] candidates=${candidateCount} mapped=${mappedCount} valid=${validCount}`);
+
+            const s = reportRows.reduce((acc, r) => {
+                const k = r.status.toLowerCase();
+                acc[k] = (acc[k] || 0) + 1;
+                return acc;
+            }, {} as Record<string, number>);
+
+            const failedRow = s['failed'] || 0;
+            const skip_sold = s['skipped_sold'] || 0;
+            const skip_price = s['skipped_price'] || 0;
+            const skip_method = s['skipped_shipping_method'] || 0;
+            const skip_delay = s['skipped_shipping_delay'] || 0;
+            const skip_days_unknown = s['skipped_shipping_days_unknown'] || 0;
+
+            await appendLog(`[CONVERT] SUMMARY total=${candidateCount} mapped=${mappedCount} valid=${validCount} skip_sold=${skip_sold} skip_price=${skip_price} skip_method=${skip_method} skip_delay=${skip_delay} skip_days_unknown=${skip_days_unknown} failed=${failedRow}`);
 
             if (validCount === 0) {
                 await appendLog(`[CONVERT] Skip TSV creation. (mapped=${mappedCount}/${candidateCount})`);
