@@ -208,6 +208,38 @@ export class AmazonConverter {
                     .trim()
                     .slice(0, 256);
 
+                // [P1-③] Condition Auto Mapping
+                const cond = String(item.condition ?? '').trim();
+                let amazonCondition = listingConfig.amazon.item_condition;
+                const mode = listingConfig.amazon.condition_mapping_mode === 'conservative' ? 'conservative' : 'normal';
+
+                if (!cond) {
+                    await appendLog(`[CONVERT] WARN condition_missing_or_unknown item_id=${item.item_id} condition="${cond}" fallback=item-condition=${amazonCondition}`);
+                } else if (cond === '新品、未使用') {
+                    amazonCondition = '11';
+                    await appendLog(`[CONVERT] MAP item_id=${item.item_id} condition="${cond}" -> item-condition=${amazonCondition} mode=${mode}`);
+                } else if (cond === '未使用に近い') {
+                    amazonCondition = mode === 'conservative' ? '10' : '11';
+                    await appendLog(`[CONVERT] MAP item_id=${item.item_id} condition="${cond}" -> item-condition=${amazonCondition} mode=${mode}`);
+                } else if (cond === '目立った傷や汚れなし') {
+                    amazonCondition = '10';
+                    await appendLog(`[CONVERT] MAP item_id=${item.item_id} condition="${cond}" -> item-condition=${amazonCondition} mode=${mode}`);
+                } else if (cond === 'やや傷や汚れあり') {
+                    amazonCondition = '9';
+                    await appendLog(`[CONVERT] MAP item_id=${item.item_id} condition="${cond}" -> item-condition=${amazonCondition} mode=${mode}`);
+                } else if (cond === '傷や汚れあり') {
+                    amazonCondition = '9';
+                    await appendLog(`[CONVERT] MAP item_id=${item.item_id} condition="${cond}" -> item-condition=${amazonCondition} mode=${mode}`);
+                } else if (cond === '全体的に状態が悪い') {
+                    report.status = 'SKIPPED_CONDITION_TOO_BAD';
+                    report.message = `Condition extremely bad (${cond})`;
+                    reportRows.push(report);
+                    await appendLog(`[CONVERT] SKIP item_id=${item.item_id} reason=CONDITION_TOO_BAD condition="${cond}"`);
+                    continue;
+                } else {
+                    await appendLog(`[CONVERT] WARN condition_missing_or_unknown item_id=${item.item_id} condition="${cond}" fallback=item-condition=${amazonCondition}`);
+                }
+
                 // Construct Row — values from listing_config.json (fallback: old hardcoded defaults)
                 tsvRows.push([
                     `MF-${item.item_id}`,              // sku
@@ -216,7 +248,7 @@ export class AmazonConverter {
                     item.price_yen,                    // price
                     '',                                // min-price
                     '',                                // max-price
-                    listingConfig.amazon.item_condition,   // item-condition [L2-3]
+                    amazonCondition,                   // item-condition [P1-3 mapped]
                     1,                                 // quantity
                     'a',                               // add-delete (a=add)
                     '',                                // will-ship
@@ -318,8 +350,9 @@ export class AmazonConverter {
             const skip_method = s['skipped_shipping_method'] || 0;
             const skip_delay = s['skipped_shipping_delay'] || 0;
             const skip_days_unknown = s['skipped_shipping_days_unknown'] || 0;
+            const skip_condition_bad = s['skipped_condition_too_bad'] || 0;
 
-            await appendLog(`[CONVERT] SUMMARY total=${candidateCount} mapped=${mappedCount} valid=${validCount} skip_sold=${skip_sold} skip_price=${skip_price} skip_method=${skip_method} skip_delay=${skip_delay} skip_days_unknown=${skip_days_unknown} failed=${failedRow}`);
+            await appendLog(`[CONVERT] SUMMARY total=${candidateCount} mapped=${mappedCount} valid=${validCount} skip_sold=${skip_sold} skip_price=${skip_price} skip_method=${skip_method} skip_delay=${skip_delay} skip_days_unknown=${skip_days_unknown} skip_condition_bad=${skip_condition_bad} failed=${failedRow}`);
 
             if (validCount === 0) {
                 await appendLog(`[CONVERT] Skip TSV creation. (mapped=${mappedCount}/${candidateCount})`);
