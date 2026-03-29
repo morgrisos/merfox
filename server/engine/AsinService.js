@@ -300,10 +300,31 @@ class AsinService {
             return true;
         });
 
+        // 5) GOAL26: Extend short keywords (< 3 tokens) for game category
+        let extended = false;
+        const beforeExtension = uniqueTokens.join(' ');
+        if (uniqueTokens.length < 3 && isGame && variant !== 'jan' && variant !== 'isbn') {
+            const keywordStr = uniqueTokens.join(' ');
+            // Don't add platform hint if one is already present (as prefix of any token)
+            const PLATFORMS = ['ps4','ps5','ps3','xbox','wii','3ds','switch'];
+            const hasPlatform = uniqueTokens.some(t => PLATFORMS.some(p => t.startsWith(p)));
+            if (!hasPlatform) {
+                const platformHint = item.platform_text
+                    ? this.normalizeForSearch(item.platform_text).split(/\s+/)[0]
+                    : 'switch';
+                if (platformHint && !uniqueTokens.includes(platformHint)) {
+                    uniqueTokens.push(platformHint);
+                    extended = true;
+                }
+            }
+        }
+
         return {
             keyword: uniqueTokens.join(' '),
             variant,
-            categoryHint: isGame ? 'game' : isDvdBd ? 'dvd_bd' : isCD ? 'cd' : 'other'
+            categoryHint: isGame ? 'game' : isDvdBd ? 'dvd_bd' : isCD ? 'cd' : 'other',
+            extended,
+            beforeExtension: extended ? beforeExtension : null
         };
     }
 
@@ -622,7 +643,8 @@ class AsinService {
                 }
             } else {
                 // ====== NON-BOOK PATH: Multi-candidate scoring engine (GOAL10/11) ======
-                const { keyword: searchKeyword, variant: searchVariant, categoryHint } = this.buildSearchKeywordCore(item);
+                const buildResult = this.buildSearchKeywordCore(item);
+                const { keyword: searchKeyword, variant: searchVariant, categoryHint } = buildResult;
                 const keywordSource = searchVariant;
 
                 // GOAL25: [SEARCH] structured log
@@ -630,6 +652,11 @@ class AsinService {
                 appendLog(`[SEARCH] item_id=${item.item_id} normalized_keyword="${searchKeyword}"`);
                 appendLog(`[SEARCH] item_id=${item.item_id} search_variant=${searchVariant}`);
                 appendLog(`[SEARCH] item_id=${item.item_id} category_hint=${categoryHint}`);
+                // GOAL26: log keyword extension if applied
+                const kwExtended = buildResult.extended;
+                if (kwExtended) {
+                    appendLog(`[SEARCH] keyword_extended item_id=${item.item_id} before="${buildResult.beforeExtension}" after="${searchKeyword}"`);
+                }
                 // Legacy compat log
                 appendLog(`[ASIN] SEARCH item_id=${item.item_id} keyword="${searchKeyword}" source=${keywordSource}`);
 
