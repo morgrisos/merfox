@@ -144,10 +144,13 @@ class InventoryService {
                         failure_count = 0;
                         console.log(`[WATCH] DELETED watch_id=${item.watch_id} (HTTP 404)`);
                     } else {
-                        // 1. Check if the page actually contains an item (detect silent 404 / redirect)
-                        const hasTitle = await page.$('[data-testid="item-name"]').then(el => !!el).catch(() => false);
+                        // 1. Check if the page explicitly states it was deleted (detect silent 404)
+                        const isDeletedText = await page.evaluate(() => {
+                            const txt = document.body.innerText;
+                            return txt.includes('ページが見つかりません') || txt.includes('削除') || txt.includes('エラーが発生');
+                        }).catch(() => false);
                         
-                        if (!hasTitle) {
+                        if (isDeletedText) {
                             alert_level = 'danger';
                             alert_reason = 'deleted_detected';
                             last_known_status = 'deleted';
