@@ -173,7 +173,10 @@ export default function InventoryMonitoring() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {items.map(item => {
+                                {[...items].sort((a, b) => {
+                                    const w = (l: string) => l === 'danger' ? 3 : l === 'warning' ? 2 : 1;
+                                    return w(b.alert_level) - w(a.alert_level);
+                                }).map(item => {
                                     const isDanger = item.alert_level === 'danger';
                                     const isWarn = item.alert_level === 'warning';
                                     return (
