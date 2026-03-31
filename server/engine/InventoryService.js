@@ -94,21 +94,23 @@ class InventoryService {
     }
 
     static async checkItems(watchIds = []) {
-        const items = this.getWatchItems();
+        let items = this.getWatchItems();
         let targetItems = watchIds.length > 0 
             ? items.filter(i => watchIds.includes(i.watch_id))
             : items;
-            
-        // 差分チェック導入: check_failed でない && 15分以内ならスキップ
+
+        if (targetItems.length === 0) return [];
+
         const nowMs = Date.now();
         const MIN_INTERVAL = 15 * 60 * 1000; 
+        
         targetItems = targetItems.filter(i => {
-            if (i.alert_reason === 'check_failed') return true; // Retry heavily
+            if (i.alert_reason === 'check_failed') return true; 
             if (!i.last_checked_at) return true;
             const diff = nowMs - new Date(i.last_checked_at).getTime();
             if (diff < MIN_INTERVAL && watchIds.length === 0) {
-                console.log(`[WATCH] SKIP watch_id=${i.watch_id} (checked ${Math.round(diff/60000)}m ago)`);
-                return false; 
+                console.log(`[WATCH] SKIP watch_id=${i.watch_id} (checked ${Math.floor(diff/60000)}m ago)`);
+                return false;
             }
             return true;
         });
@@ -116,81 +118,128 @@ class InventoryService {
         if (targetItems.length === 0) return [];
 
         const { chromium } = require('playwright');
-        const browser = await chromium.launch({ headless: true });
-        const context = await browser.newContext({
-            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            locale: 'ja-JP'
-        });
+        const os = require('os');
+        const path = require('path');
+        const userDataDir = path.join(os.homedir(), '.merfox_watch_profile');
         
+        let browserContext;
         const results = [];
         
         try {
+            browserContext = await chromium.launchPersistentContext(userDataDir, {
+                headless: false,
+                userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                viewport: { width: 1280, height: 800 },
+                args: [
+                    '--disable-blink-features=AutomationControlled',
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-infobars'
+                ]
+            });
+            
+            const page = await browserContext.newPage();
+            
+            // Stealth injections
+            await page.addInitScript(() => {
+                Object.defineProperty(navigator, 'webdriver', { get: () => false });
+                Object.defineProperty(navigator, 'languages', { get: () => ['ja', 'en-US', 'en'] });
+                Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3] });
+            });
+
             for (const item of targetItems) {
-                const page = await context.newPage();
-                let alert_level = 'normal';
-                let alert_reason = 'none';
-                let last_known_status = item.last_known_status || 'unknown';
-                let last_known_price = item.last_known_price;
-                let failure_count = item.failure_count || 0;
+                console.log(`[WATCH] CHECK watch_id=${item.watch_id} url=${item.mercari_url}`);
                 
-                try {
-                    console.log(`[WATCH] CHECK watch_id=${item.watch_id} url=${item.mercari_url}`);
-                    const response = await page.goto(item.mercari_url, { waitUntil: 'domcontentloaded', timeout: 15000 });
-                    
-                    if (!response || response.status() === 404) {
-                        alert_level = 'danger';
-                        alert_reason = 'deleted_detected';
-                        last_known_status = 'deleted';
-                        failure_count = 0;
-                        console.log(`[WATCH] DELETED watch_id=${item.watch_id} (HTTP 404)`);
-                    } else {
-                        // 1. Check if the page explicitly states it was deleted (detect silent 404)
+                let last_known_status = item.last_known_status || 'unknown';
+                let alert_level = item.alert_level || 'normal';
+                let alert_reason = item.alert_reason || 'none';
+                let failure_count = item.failure_count || 0;
+                let last_known_price = item.last_known_price;
+                
+                // Retry loop: max 3 attempts
+                for (let attempt = 1; attempt <= 3; attempt++) {
+                    try {
+                        const response = await page.goto(item.mercari_url, { waitUntil: 'domcontentloaded', timeout: 8000 });
+                        
+                        await page.waitForTimeout(1000); // 描画待ち
+                        
                         const isDeletedText = await page.evaluate(() => {
                             const txt = document.body.innerText;
                             return txt.includes('ページが見つかりません') || txt.includes('削除') || txt.includes('エラーが発生');
                         }).catch(() => false);
                         
-                        if (isDeletedText) {
+                        const titleEl = await page.waitForSelector('h1[data-testid="item-name"], h1', { timeout: 3000 }).catch(() => null);
+                        const hasTitle = !!titleEl;
+                        
+                        const hasSkeleton = await page.evaluate(() => {
+                            return !!document.querySelector('mer-skeleton') || !!document.querySelector('[class*="skeleton"]');
+                        }).catch(() => false);
+
+                        if (!response || response.status() === 404 || isDeletedText) {
+                            alert_level = 'danger';
+                            alert_reason = 'deleted_detected';
+                            last_known_status = 'deleted';
+                            failure_count = 0;
+                            console.log(`[WATCH] DELETED watch_id=${item.watch_id} (HTTP 404 / Text Match)`);
+                            break; // 成功したので抜ける
+                        } else if (!hasTitle && hasSkeleton) {
+                            // Skeleton detected (Bot blocked)
+                            console.log(`[WATCH] SKELETON DETECTED (Attempt ${attempt}/3) watch_id=${item.watch_id}`);
+                            if (attempt < 3) {
+                                const waitMs = Math.floor(Math.random() * 2000) + 1000; // 1-3s random wait
+                                await page.waitForTimeout(waitMs);
+                                continue; // リトライ
+                            } else {
+                                throw new Error('Blocked by skeleton UI'); // catchへ
+                            }
+                        } else if (!hasTitle) {
                             alert_level = 'danger';
                             alert_reason = 'deleted_detected';
                             last_known_status = 'deleted';
                             failure_count = 0;
                             console.log(`[WATCH] DELETED watch_id=${item.watch_id} (No item title found in DOM)`);
+                            break;
                         } else {
-                            // 2. Check if sold (3つのうち2つ以上で確定)
+                            // Active or Sold
                             const soldConditions = await page.evaluate(() => {
-                                let cond1 = false; // バッジ
-                                let cond2 = false; // 購入ボタン無し (存在すればfalse, なければtrue... ではなく、明示的な売り切れか)
-                                let cond3 = false; // 売り切れ文言
+                                let cond1 = false; 
+                                let cond2 = false; 
+                                let cond3 = false; 
                                 
                                 if (document.querySelector('[aria-label="売り切れ"]') || document.querySelector('.item-sold-out-overlay') || document.querySelector('[data-testid="chest-sold-out"]')) cond1 = true;
                                 
-                                // 購入ボタンが無く、かつ売り切れボタン等がある場合
                                 const textContent = document.body.innerText;
                                 if (!textContent.includes('購入手続きへ') && textContent.includes('売り切れ')) cond2 = true;
                                 
-                                // ボタン自体に売り切れと書いてあるか
                                 const buttons = Array.from(document.querySelectorAll('mer-button, button'));
                                 if (buttons.some(b => b.textContent && b.textContent.includes('売り切れ'))) cond3 = true;
                                 
                                 return (cond1 ? 1 : 0) + (cond2 ? 1 : 0) + (cond3 ? 1 : 0);
                             }).catch(() => 0);
                             
-                            // 2条件以上で確定
                             if (soldConditions >= 2) {
                                 alert_level = 'danger';
                                 alert_reason = 'sold_detected';
                                 last_known_status = 'sold';
                                 failure_count = 0;
                                 console.log(`[WATCH] SOLD watch_id=${item.watch_id} (Score: ${soldConditions}/3)`);
+                                break;
                             } else {
                                 last_known_status = 'active';
                                 failure_count = 0;
                                 
-                                // 3. Check price
                                 const priceText = await page.evaluate(() => {
-                                    const el = document.querySelector('[data-testid="price"]');
-                                    return el ? el.innerText : null;
+                                    let el = document.querySelector('[data-testid="price"]');
+                                    if (el) return el.innerText;
+                                    el = document.querySelector('mer-price');
+                                    if (el) return el.innerText;
+                                    // Fallback: search for something starting with ¥ near h1
+                                    const h1 = document.querySelector('h1');
+                                    if (h1 && h1.nextElementSibling) {
+                                        const match = h1.parentElement.innerText.match(/¥\s*([0-9,]+)/);
+                                        if (match) return match[1];
+                                    }
+                                    return null;
                                 }).catch(() => null);
                                 
                                 if (priceText) {
@@ -204,20 +253,26 @@ class InventoryService {
                                         last_known_price = currentPrice;
                                     }
                                 }
+                                break;
                             }
                         }
+                    } catch (error) {
+                        console.log(`[WATCH] Error on attempt ${attempt}: ${error.message}`);
+                        if (attempt < 3) {
+                            const waitMs = Math.floor(Math.random() * 2000) + 1000;
+                            await page.waitForTimeout(waitMs);
+                        } else {
+                            // 最終的なタイムアウトやエラー
+                            failure_count++;
+                            alert_level = failure_count >= 2 ? 'danger' : 'warning';
+                            alert_reason = 'check_failed';
+                            last_known_status = 'unknown';
+                            console.error(`[WATCH] CHECK_FAILED watch_id=${item.watch_id} failures=${failure_count}`);
+                        }
                     }
-                } catch (e) {
-                    // Timeout / Navigation Error -> check_failed
-                    failure_count++;
-                    alert_level = failure_count >= 2 ? 'danger' : 'warning';
-                    alert_reason = 'check_failed';
-                    console.error(`[WATCH] CHECK_FAILED watch_id=${item.watch_id} failures=${failure_count}`, e.message);
-                } finally {
-                    await page.close();
-                }
-                
-                // Update item
+                } // end retry loop
+
+                // Update item states
                 const u = this.updateWatchItem(item.watch_id, {
                     last_known_status,
                     last_known_price,
@@ -229,7 +284,9 @@ class InventoryService {
                 if (u) results.push(u);
             }
         } finally {
-            await browser.close().catch(() => {});
+            if (browserContext) {
+                await browserContext.close().catch(() => {});
+            }
         }
         
         return results;
