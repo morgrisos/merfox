@@ -1,7 +1,7 @@
 {
   "name": "merfox",
   "productName": "MerFox",
-  "version": "0.1.94",
+  "version": "0.2.1",
   "description": "Mercari Automation Tool",
   "main": "dist-electron/main-process/main.js",
   "scripts": {
@@ -10,6 +10,8 @@
     "dev:electron": "wait-on tcp:13337 && tsc -p src/main-process/tsconfig.json && electron .",
     "typecheck": "tsc --noEmit",
     "build": "next build && tsc -p src/main-process/tsconfig.json && electron-builder",
+    "build:win": "next build && tsc -p src/main-process/tsconfig.json && electron-builder --win nsis",
+    "build:win:portable": "next build && tsc -p src/main-process/tsconfig.json && electron-builder --win portable",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "postinstall": "electron-builder install-app-deps",
@@ -65,6 +67,10 @@
       "package.json",
       "src/lib/**/*"
     ],
+    "asarUnpack": [
+      "node_modules/playwright-core/**/*",
+      "node_modules/playwright/**/*"
+    ],
     "extraResources": [
       {
         "from": ".next/standalone",
@@ -91,20 +97,31 @@
     ],
     "win": {
       "target": [
-        "nsis",
-        "zip"
-      ]
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
     },
     "mac": {
       "target": [
         "dmg",
         "zip"
-      ]
+      ],
+      "icon": "build/icon.icns"
     },
     "nsis": {
       "oneClick": false,
       "perMachine": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "MerFox",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
     },
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "afterPack": "./scripts/afterPack.js"

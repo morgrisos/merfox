@@ -2,9 +2,12 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { AppShell } from '@/components/layout/AppShell';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { useRunHistory } from '@/hooks/useRunHistory';
+import { useLicense } from '@/contexts/LicenseContext';
+import { apiFetch } from '@/lib/apiFetch';
 
-import { PlayCircle, FileText, FolderOpen, AlertTriangle, CheckCircle, ArrowRight, Activity, TrendingUp, Search } from 'lucide-react';
+import { PlayCircle, FileText, FolderOpen, AlertTriangle, CheckCircle, CheckCircle2, ArrowRight, Activity, TrendingUp, Search } from 'lucide-react';
 
 // --- Types ---
 type CardProps = {
@@ -36,7 +39,7 @@ const SummaryCard = ({ title, count, sub, icon, colorClass, onClick }: CardProps
     </div>
 );
 
-const PriorityRow = ({ priority, status, profit, risk, title }: any) => (
+const PriorityRow = ({ priority, status, profit, risk, title, onAction }: any) => (
     <tr className="hover:bg-[#202b3a] transition-colors text-sm border-b border-[#282f39] last:border-0">
         <td className="px-4 py-3">
             <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${priority === 'High' ? 'bg-red-500/20 text-red-400' :
@@ -59,7 +62,10 @@ const PriorityRow = ({ priority, status, profit, risk, title }: any) => (
         <td className="px-4 py-3 text-[#9da8b9]">{risk}</td>
         <td className="px-4 py-3 text-white max-w-[200px] truncate">{title}</td>
         <td className="px-4 py-3 text-right">
-            <button className="text-primary hover:text-blue-400 text-xs font-bold px-3 py-1.5 rounded bg-primary/10 hover:bg-primary/20 transition-colors">
+            <button
+                onClick={onAction}
+                className="text-primary hover:text-blue-400 text-xs font-bold px-3 py-1.5 rounded bg-primary/10 hover:bg-primary/20 transition-colors"
+            >
                 {status === 'OK' ? '詳細' : status === 'Mapping' ? 'マッピング' : '確認'}
             </button>
         </td>
@@ -68,6 +74,8 @@ const PriorityRow = ({ priority, status, profit, risk, title }: any) => (
 
 export default function Dashboard() {
     const router = useRouter();
+    const { status } = useLicense();
+    const isActive = status === 'ACTIVE' || status === 'OFFLINE_GRACE';
     const { history } = useRunHistory();
     const latestRun = history.length > 0 ? history[0] : null;
 
@@ -79,35 +87,58 @@ export default function Dashboard() {
         warnings: 0,
         top10: [] as any[],
         dangers: [] as any[],
-        cta: { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' } as any
+        cta: { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' } as any,
+        watchAlertsCount: 0,
+        watchAlerts: [] as any[]
     });
 
-    // Additional state for resolving Main CTA source
-    // const [latestRunId, setLatestRunId] = React.useState<string | null>(null);
-
     React.useEffect(() => {
+        // Do not fetch when license is not active — avoids 403 and unnecessary requests
+        if (!isActive) return;
+
         const fetchStats = async () => {
             try {
-                const res = await fetch('/api/dashboard/summary');
-                if (res.ok) {
-                    const data = await res.json();
-                    setSummaryData({
-                        newCandidates: data.newCandidates,
-                        uploadReady: data.uploadReady,
-                        needMapping: data.mappingPending,
-                        warnings: data.warnings,
-                        top10: data.top10 || [],
-                        dangers: data.dangers || [],
-                        cta: data.cta || { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' }
-                    });
-                    // setLatestRunId(data.latestRunId);
+                const res = await apiFetch('/api/dashboard/summary');
+                if (res.status === 403) {
+                    // License cookie not yet synced — silently skip; UI shows empty state
+                    console.warn('[Dashboard] 403 from summary API — license cookie may not be set yet');
+                    return;
                 }
+                if (!res.ok) {
+                    console.error('[Dashboard] Summary API error:', res.status);
+                    return;
+                }
+                const data = await res.json();
+                // Guard: only update state when numeric values or arrays actually changed
+                setSummaryData(prev => {
+                    const next = {
+                        newCandidates: data.newCandidates ?? 0,
+                        uploadReady: data.uploadReady ?? 0,
+                        needMapping: data.mappingPending ?? 0,
+                        warnings: data.warnings ?? 0,
+                        top10: Array.isArray(data.top10) ? data.top10 : [],
+                        dangers: Array.isArray(data.dangers) ? data.dangers : [],
+                        cta: data.cta || { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' },
+                        watchAlertsCount: data.watchAlertsCount ?? 0,
+                        watchAlerts: Array.isArray(data.watchAlerts) ? data.watchAlerts : []
+                    };
+                    if (prev.newCandidates === next.newCandidates &&
+                        prev.uploadReady === next.uploadReady &&
+                        prev.needMapping === next.needMapping &&
+                        prev.warnings === next.warnings &&
+                        prev.top10.length === next.top10.length &&
+                        prev.dangers.length === next.dangers.length &&
+                        prev.watchAlertsCount === next.watchAlertsCount) {
+                        return prev;
+                    }
+                    return next;
+                });
             } catch (e) {
                 console.error('Failed to fetch dashboard stats', e);
             }
         };
         fetchStats();
-    }, []);
+    }, [isActive]);
 
     // --- Logic: Main CTA ---
     const getMainCTA = () => {
@@ -163,18 +194,32 @@ export default function Dashboard() {
     const mainCTA = getMainCTA();
 
     const priorityCandidates = summaryData.top10.length > 0 ? summaryData.top10 : [];
-    const dangerList = summaryData.dangers.length > 0 ? summaryData.dangers : [];
+    const watchAlertList = summaryData.watchAlerts;
+    const watchAlertsCount = summaryData.watchAlertsCount;
+
+    const handleDismissAlert = async (watch_id: string) => {
+        try {
+            const res = await apiFetch(`/api/inventory/${watch_id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ alert_level: 'normal', alert_reason: 'resolved', is_resolved: true })
+            });
+            if (res.ok) {
+                setSummaryData(prev => ({
+                    ...prev,
+                    watchAlerts: prev.watchAlerts.filter(i => i.watch_id !== watch_id),
+                    watchAlertsCount: Math.max(0, prev.watchAlertsCount - 1)
+                }));
+            }
+        } catch (e) {
+            console.error('[DASH_DISMISS_ERROR]', e);
+        }
+    };
 
     return (
         <div className="flex-1 overflow-y-auto p-6 bg-app-base text-app-text-main font-sans">
             {/* 1. Header */}
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight">今日の成果</h1>
-                    <p className="text-app-text-muted text-sm mt-1">今日の実行結果をまとめました。次にやることを確認しましょう。</p>
-                </div>
-                {/* Header Actions - Removed to prevent duplication with Sidebar & Nav */}
-            </header>
+            <PageHeader icon={<TrendingUp className="w-6 h-6" />} title="今日の成果" description="今日の実行結果をまとめました。次にやることを確認しましょう。" />
 
             {/* 2. Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -196,11 +241,11 @@ export default function Dashboard() {
                 />
                 <SummaryCard
                     title="危険 / 注意"
-                    count={summaryData.warnings}
-                    sub="欠品・公開終了の可能性"
+                    count={watchAlertsCount}
+                    sub="在庫監視の未対応アラート"
                     icon={<AlertTriangle className="w-5 h-5 text-red-500" />}
                     colorClass="bg-red-500"
-                    onClick={() => router.push('/history?filter=warning')}
+                    onClick={() => router.push('/inventory?filter=alerts')}
                 />
             </div>
 
@@ -268,11 +313,15 @@ export default function Dashboard() {
                                         priorityCandidates.slice(0, 5).map((item: any, idx: number) => (
                                             <PriorityRow
                                                 key={idx}
-                                                priority="High" // TODO: Real priority logic
-                                                status="OK"     // TODO: Real status logic
+                                                priority="High"
+                                                status={item.asin ? 'OK' : 'Mapping'}
                                                 profit={item.price}
                                                 risk="低"
                                                 title={item.title}
+                                                onAction={() => item.runId
+                                                    ? router.push(`/wizard/step4?runId=${item.runId}`)
+                                                    : router.push('/history')
+                                                }
                                             />
                                         ))
                                     )}
@@ -288,26 +337,53 @@ export default function Dashboard() {
                 {/* Right Column (Side Info) */}
                 <div className="flex flex-col gap-6">
 
-                    {/* 5. Danger/Warning */}
+                    {/* 5. Inventory Watch Alerts */}
                     <div className="bg-app-surface border border-app-border rounded-xl p-5">
                         <h3 className="font-bold text-white mb-4 flex items-center gap-2">
                             <AlertTriangle className="w-5 h-5 text-red-500" />
-                            危険 / 注意一覧
+                            在庫監視 — 未対応アラート
                         </h3>
-                        <div className="space-y-3">
-                            {dangerList.length === 0 ? (
-                                <div className="text-center text-app-text-muted text-xs py-4">問題なし</div>
+                        <div className="space-y-2">
+                            {watchAlertList.length === 0 ? (
+                                <div className="text-center text-app-text-muted text-xs py-4">
+                                    {watchAlertsCount === 0 ? '問題なし — すべて正常' : '読み込み中...'}
+                                </div>
                             ) : (
-                                dangerList.slice(0, 3).map((item: any, idx: number) => (
-                                    <div key={idx} className="flex items-center justify-between text-sm p-3 bg-red-500/5 border border-red-500/10 rounded-lg">
-                                        <span className="text-red-400 truncate max-w-[200px]" title={item.message}>{item.message}</span>
-                                        <span className="font-bold text-white">WARN</span>
+                                watchAlertList.slice(0, 3).map((item: any) => (
+                                    <div key={item.watch_id} className={`p-3 rounded-lg border text-sm ${item.level === 'danger' ? 'bg-red-500/5 border-red-500/20' : 'bg-yellow-500/5 border-yellow-500/20'}`}>
+                                        <div className="flex items-start justify-between gap-2 mb-1">
+                                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${item.level === 'danger' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                                                {item.level === 'danger' ? '危険' : '注意'}
+                                            </span>
+                                            <button
+                                                onClick={() => handleDismissAlert(item.watch_id)}
+                                                title="対応済みにする"
+                                                className="text-[10px] text-green-400 hover:text-green-300 shrink-0 flex items-center gap-0.5"
+                                            >
+                                                <CheckCircle2 className="w-3 h-3" />対応済み
+                                            </button>
+                                        </div>
+                                        <p className="text-white font-medium truncate text-xs" title={item.title}>{item.title}</p>
+                                        <p className="text-app-text-muted text-[11px] mt-0.5">
+                                            {item.reason === 'sold_detected' ? '売り切れ' :
+                                             item.reason === 'deleted_404' ? '削除済み' :
+                                             item.reason === 'price_changed' ? '価格変動' :
+                                             item.last_known_status === 'sold' ? '売り切れ' :
+                                             item.last_known_status === 'deleted' ? '削除済み' :
+                                             item.reason || item.last_known_status || '確認推奨'}
+                                        </p>
                                     </div>
                                 ))
                             )}
+                            {watchAlertList.length > 3 && (
+                                <p className="text-xs text-app-text-muted text-center pt-1">他 {watchAlertsCount - 3} 件</p>
+                            )}
                         </div>
-                        <button onClick={() => router.push('/scraper')} className="w-full mt-4 py-2 text-xs font-bold text-app-text-muted border border-app-border rounded-lg hover:bg-app-border hover:text-white transition-colors">
-                            詳細リストを確認
+                        <button
+                            onClick={() => router.push('/inventory?filter=alerts')}
+                            className="w-full mt-4 py-2 text-xs font-bold text-app-text-muted border border-app-border rounded-lg hover:bg-app-border hover:text-white transition-colors"
+                        >
+                            在庫監視で詳しく確認 →
                         </button>
                     </div>
 
@@ -333,10 +409,19 @@ export default function Dashboard() {
                                                     }`}>
                                                     {run.status}
                                                 </span>
-                                                {/* [P1] Open Folder — calls Electron IPC openRunsDir */}
+                                                {/* Open run folder via IPC */}
                                                 <button
                                                     title="成果物フォルダを開く"
-                                                    onClick={() => (window as any).electron?.openRunsDir?.()}
+                                                    onClick={async (e) => {
+                                                        e.stopPropagation();
+                                                        try {
+                                                            const res = await apiFetch(`/api/runs/${run.id}/path`);
+                                                            if (res.ok) {
+                                                                const { path: runPath } = await res.json();
+                                                                (window as any).merfox?.openExternal?.(`file://${runPath}`);
+                                                            }
+                                                        } catch { /* ignore */ }
+                                                    }}
                                                     className="text-app-text-muted hover:text-white transition-colors"
                                                 >
                                                     <FolderOpen className="w-3.5 h-3.5" />
@@ -359,19 +444,6 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {/* 7. Automation Promo */}
-                    <div className="bg-gradient-to-br from-blue-900/20 to-app-surface border border-blue-500/20 rounded-xl p-5 text-center">
-                        <div className="size-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-blue-400">
-                            <Activity className="w-8 h-8" />
-                        </div>
-                        <h3 className="font-bold text-white mb-1">在庫監視</h3>
-                        <p className="text-xs text-app-text-muted mb-4">
-                            売り切れ・再出品・価格変動を自動で検知します
-                        </p>
-                        <Link href="/scraper" className="block w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-colors">
-                            在庫監視を設定する
-                        </Link>
-                    </div>
 
                 </div>
             </div>

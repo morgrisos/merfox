@@ -1,7 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs/promises';
 import path from 'path';
+import os from 'os';
 import { getRunsDir } from '../../../lib/runUtils';
+import { withLicense } from '@/lib/license/serverLicenseCheck';
+
+function getWatchItemsPath(): string {
+    const base = process.env.MERFOX_USER_DATA
+        || (process.platform === 'win32'
+            ? path.join(process.env.APPDATA || os.homedir(), 'MerFox')
+            : path.join(os.homedir(), 'Library', 'Application Support', 'merfox'));
+    return path.join(base, 'watch_items.json');
+}
 
 // Helper: Normalize string for header comparison
 function normalizeHeader(h: string): string {
@@ -24,7 +34,7 @@ function splitLine(line: string): string[] {
     return line.split(',');
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -263,6 +273,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         }
 
+        // --- Inventory Watch Alerts (unresolved danger/warning items) ---
+        let watchAlertsCount = 0;
+        let watchAlerts: any[] = [];
+        try {
+            const raw = await fs.readFile(getWatchItemsPath(), 'utf8');
+            const watchItems: any[] = JSON.parse(raw);
+            const alertItems = watchItems.filter(i =>
+                !i.is_resolved &&
+                (i.alert_level === 'danger' || i.alert_level === 'warning')
+            );
+            watchAlertsCount = alertItems.length;
+            watchAlerts = alertItems.slice(0, 10).map(i => ({
+                watch_id: i.watch_id,
+                level: i.alert_level,
+                asin: i.amazon_asin,
+                title: i.amazon_title,
+                mercari_url: i.mercari_url,
+                reason: i.alert_reason,
+                last_known_status: i.last_known_status,
+                last_checked_at: i.last_checked_at,
+                last_known_price: i.last_known_price,
+                previous_known_price: i.previous_known_price
+            }));
+            console.log('[DASH_ALERTS_FILTERED]',
+                `total=${watchItems.length} unresolved_alerts=${watchAlertsCount} resolved=${watchItems.filter((i: any) => i.is_resolved).length}`);
+        } catch {
+            // watch_items.json not found — no alerts
+        }
+
         // Final Safety
         newCandidates = Math.max(0, Math.round(newCandidates));
         uploadReady = Math.max(0, Math.round(uploadReady));
@@ -303,7 +342,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             latestRun,
             top10,
             dangers,
-            cta
+            cta,
+            // Inventory Watch Alerts
+            watchAlertsCount,
+            watchAlerts
         });
 
     } catch (e: any) {
@@ -321,3 +363,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
     }
 }
+
+export default withLicense(handler);
