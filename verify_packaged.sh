@@ -1,6 +1,6 @@
 #!/bin/bash
 # verify_packaged.sh - Robust verification for MerFox Packaged App
-cd /Users/yuga/VSCode/V4/merfox
+cd /path/to/merfox
 
 LOG_FILE="verify_packaged.log"
 rm -f "$LOG_FILE"

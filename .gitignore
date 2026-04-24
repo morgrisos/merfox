@@ -53,3 +53,10 @@ runs_dev/
 *.pid
 tsconfig.tsbuildinfo
 evidence.log
+
+# Privacy: runtime/personal data
+runs.json
+runs_latest.json
+verify_*.txt
+verify_*.sh
+*.local

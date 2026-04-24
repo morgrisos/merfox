@@ -30,7 +30,7 @@ git push origin main --tags
 ローカルで `dist` をクリーンにしてからビルド・パッケージングを走らせる。
 
 ```bash
-cd /Users/yuga/VSCode/V4/merfox
+cd /path/to/merfox
 
 # 古い生成物を削除し、依存関係をクリーンインストール
 rm -rf dist && mkdir -p dist

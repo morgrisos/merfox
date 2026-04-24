@@ -1,6 +1,6 @@
 set -eu
 
-REPO="${REPO:-yuga/merfox}"
+REPO="${REPO:-morgrisos/merfox}"
 
 if ! command -v gh >/dev/null 2>&1; then
   echo "ERROR: gh not found"
