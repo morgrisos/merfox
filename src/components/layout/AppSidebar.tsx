@@ -14,8 +14,8 @@ export const AppSidebar = () => {
     return (
         <aside className="w-72 bg-app-surface border-r border-app-border flex flex-col justify-between flex-shrink-0 h-full overflow-hidden font-sans">
             <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
-                {/* Brand / Header */}
-                <div className="flex gap-3 items-center h-16 px-6 border-b border-app-border flex-shrink-0">
+                {/* Brand / Header — drag region for macOS window */}
+                <div className="flex gap-3 items-center h-16 px-6 border-b border-app-border flex-shrink-0 app-drag select-none">
                     <div className="bg-center bg-no-repeat bg-cover rounded-full size-8 bg-primary/20 flex items-center justify-center text-primary">
                         <Zap className="w-5 h-5" />
                     </div>
@@ -29,7 +29,7 @@ export const AppSidebar = () => {
                 <div className="p-4">
                     <button
                         onClick={() => router.push(PRIMARY_ACTION.path)}
-                        className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-blue-900/20 transition-all transform hover:scale-[1.02]"
+                        className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-blue-900/20 transition-all transform hover:scale-[1.02] app-no-drag"
                     >
                         {React.createElement(PRIMARY_ACTION.icon, { className: "w-5 h-5" })}
                         <span>{PRIMARY_ACTION.label}</span>
