@@ -66,9 +66,16 @@ ipcMain.handle('app:get-version', () => {
 });
 
 ipcMain.handle('app:open-external', async (_, url: string) => {
-    // Strict Whitelist for GitHub Releases
-    const ALLOWED_URL = 'https://github.com/morgrisos/merfox/releases';
-    if (url === ALLOWED_URL) {
+    const ALLOWED_PREFIXES = [
+        'https://github.com/morgrisos/merfox/releases',
+        'https://www.amazon.co.jp/',
+        'https://amazon.co.jp/',
+        'https://sellercentral.amazon.co.jp/',
+        'https://jp.mercari.com/',
+        'file://',
+    ];
+    const isAllowed = ALLOWED_PREFIXES.some(prefix => url.startsWith(prefix));
+    if (isAllowed) {
         await shell.openExternal(url);
     } else {
         console.warn(`[SECURITY] Blocked unauthorized openExternal request: ${url}`);

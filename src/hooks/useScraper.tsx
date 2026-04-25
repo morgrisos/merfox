@@ -142,7 +142,7 @@ export const ScraperProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
         try {
             let targetUrl = 'https://jp.mercari.com/search?keyword=test';
-            let limit = test ? 20 : 100;
+            let limit = test ? 10 : 100;
             let excludeKeywords: string[] = [];
             let runType = test ? 'test' : 'production';
 

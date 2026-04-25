@@ -245,7 +245,8 @@ class Scraper extends EventEmitter {
         this.updateProgress('INIT', 5);
 
         console.log('DEBUG: Launching chromium...');
-        this.browser = await chromium.launch({ headless: true });
+        const launchArgs = process.platform === 'win32' ? ['--no-sandbox', '--disable-setuid-sandbox'] : [];
+        this.browser = await chromium.launch({ headless: true, args: launchArgs });
         console.log('DEBUG: Browser launched');
 
         const context = await this.browser.newContext({
