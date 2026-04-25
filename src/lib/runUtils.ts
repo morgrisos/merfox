@@ -20,6 +20,11 @@ export function getGlobalMappingPath() {
     return path.join(path.dirname(runsDir), 'mapping.csv'); // .../MerFox/mapping.csv
 }
 
+export function getJobsPath() {
+    const runsDir = getRunsDir();
+    return path.join(path.dirname(runsDir), 'watch_jobs.json');
+}
+
 export async function getRunDir(runId: string): Promise<string | null> {
     const runsDir = getRunsDir();
     const directPath = path.join(runsDir, runId);

@@ -137,6 +137,10 @@ class InventoryService {
     }
 
     static async checkItems(watchIds = [], force = false) {
+        const CONCURRENCY = 1;
+        const DELAY_MS = 5000;
+        const SKIP_STATUSES = ['sold', 'deleted'];
+
         let items = this.getWatchItems();
         console.log('[INV_ITEMS_LOADED]', items.length);
         console.log('[INV_FORCE_FLAG]', force, typeof force, 'watchIds_count=', watchIds.length);
@@ -147,14 +151,24 @@ class InventoryService {
 
         if (targetItems.length === 0) {
             console.log('[INV_ITEMS_ELIGIBLE] 0 (no items in store)');
-            return [];
+            return { results: [], skipped_count: 0, failed_count: 0 };
+        }
+
+        // Skip already sold/deleted items
+        const alreadySoldItems = targetItems.filter(i => SKIP_STATUSES.includes(i.last_known_status));
+        targetItems = targetItems.filter(i => !SKIP_STATUSES.includes(i.last_known_status));
+        for (const i of alreadySoldItems) {
+            const reason = i.last_known_status === 'deleted' ? 'deleted_or_stopped' : 'already_sold';
+            console.log(`[INV_ITEMS_SKIPPED] watch_id=${i.watch_id} asin=${i.amazon_asin} reason=${reason}`);
+        }
+        if (alreadySoldItems.length > 0) {
+            console.log(`[INV_ITEMS_SKIPPED_TOTAL] count=${alreadySoldItems.length} (sold/deleted — skipping check)`);
         }
 
         const nowMs = Date.now();
         const MIN_INTERVAL = 15 * 60 * 1000;
 
         if (force) {
-            // force=true (manual button): bypass ALL interval checks unconditionally
             console.log('[INV_FORCE_BYPASS] force=true — skipping interval check for all', targetItems.length, 'items');
             for (const i of targetItems) {
                 const elapsed = i.last_checked_at
@@ -163,7 +177,6 @@ class InventoryService {
                 console.log(`[INV_ITEMS_ELIGIBLE] watch_id=${i.watch_id} asin=${i.amazon_asin} reason=force last_checked=${elapsed !== null ? elapsed + 'm_ago' : 'never'}`);
             }
         } else {
-            // auto-check: apply MIN_INTERVAL filter
             console.log('[INV_MIN_INTERVAL_APPLIED] checking interval for', targetItems.length, 'items');
             const before = targetItems.length;
             targetItems = targetItems.filter(i => {
@@ -189,17 +202,18 @@ class InventoryService {
 
         console.log('[INV_ITEMS_ELIGIBLE]', targetItems.length, force ? '(force)' : '(auto)');
 
-        if (targetItems.length === 0) return [];
+        if (targetItems.length === 0) {
+            return { results: [], skipped_count: alreadySoldItems.length, failed_count: 0 };
+        }
 
         const { chromium } = require('playwright');
         const os = require('os');
         const path = require('path');
         const userDataDir = path.join(os.homedir(), '.merfox_watch_profile');
-        
+
         let browserContext;
-        // NOTE: this is the single results array — do NOT redeclare inside try
         const results = [];
-        console.log('[INV_CHECK_COUNT]', targetItems.length);
+        console.log(`[INV_CHECK_QUEUE_START] total=${targetItems.length} concurrency=${CONCURRENCY} delay_ms=${DELAY_MS}`);
 
         try {
             browserContext = await chromium.launchPersistentContext(userDataDir, {
@@ -220,9 +234,6 @@ class InventoryService {
                 fs.mkdirSync(watchEvidenceDir, { recursive: true });
             }
 
-            const CONCURRENCY = 4;
-            // results は外側で宣言済み — ここで再宣言すると外側の return results が常に空になる
-            
             const processItem = async (item) => {
                 let page;
                 try {
@@ -447,27 +458,29 @@ class InventoryService {
                 }
             };
 
-            // execute concurrently using simple sliding window
-            let executing = [];
-            for (const item of targetItems) {
-                // Must bind 'this' explicitly if calling instance methods inside, but this function is inside an arrow or method so it captures 'this' automatically, wait, 'this' is InventoryService class context, so `this.updateWatchItem` is valid if it's inside `async checkItems()`. Wait, checkItems is a static method? `checkItems` does `const u = this.updateWatchItem...`. Yes, it's a static method!
-                const p = processItem(item).then(() => {
-                    executing.splice(executing.indexOf(p), 1);
-                });
-                executing.push(p);
-                if (executing.length >= CONCURRENCY) {
-                    await Promise.race(executing);
+            // Sequential processing: 1 item at a time with delay between items
+            for (let idx = 0; idx < targetItems.length; idx++) {
+                const item = targetItems[idx];
+                console.log(`[INV_CHECK_QUEUE_ITEM] index=${idx + 1}/${targetItems.length} watch_id=${item.watch_id} asin=${item.amazon_asin}`);
+                try {
+                    await processItem(item);
+                } catch (e) {
+                    console.error(`[INV_CHECK_QUEUE_ITEM_FAILED] watch_id=${item.watch_id}`, e.message);
+                }
+                if (idx < targetItems.length - 1) {
+                    console.log(`[INV_CHECK_QUEUE_DELAY] ms=${DELAY_MS}`);
+                    await new Promise(r => setTimeout(r, DELAY_MS));
                 }
             }
-            // wait for remaining
-            await Promise.all(executing);
         } finally {
             if (browserContext) {
                 await browserContext.close().catch(() => {});
             }
         }
-        
-        return results;
+
+        const failedCount = results.filter(r => r.last_known_status === 'failed').length;
+        console.log(`[INV_CHECK_QUEUE_DONE] checked=${results.length} skipped=${alreadySoldItems.length} failed=${failedCount}`);
+        return { results, skipped_count: alreadySoldItems.length, failed_count: failedCount };
     }
 }
 

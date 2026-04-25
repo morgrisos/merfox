@@ -60,3 +60,19 @@ runs_latest.json
 verify_*.txt
 verify_*.sh
 *.local
+
+# Development scripts (eval / probe / test one-offs)
+scripts/
+run_asin.js
+test_svc.js
+temp_eval.txt
+ddg_model_test.html
+yahoo_test.html
+_ui_diff.patch
+_ui_fixes.patch
+.next_pid
+artifacts/
+
+# User runtime data
+server/data/watch_items.json
+server/data/watch_evidence/

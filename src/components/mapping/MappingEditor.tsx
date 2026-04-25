@@ -2,7 +2,25 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { useToast } from '@/components/ui/SimpleToast';
 
-export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
+const AMAZON_HEADERS = [
+    'sku', 'product-id', 'product-id-type', 'price',
+    'minimum-seller-allowed-price', 'maximum-seller-allowed-price',
+    'item-condition', 'quantity', 'add-delete', 'will-ship-internationally',
+    'expedited-shipping', 'standard-plus', 'item-note',
+    'fulfillment-center-id', 'product-tax-code', 'leadtime-to-ship',
+    'merchant_shipping_group_name'
+];
+
+function triggerDownload(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+export function MappingEditor({ runId, mode, returnUrl }: { runId?: string; mode?: 'global' | 'wizard'; returnUrl?: string }) {
     const router = useRouter();
     const { showToast, ToastComponent } = useToast();
     const [data, setData] = React.useState<any>(null);
@@ -10,15 +28,29 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
     const [filterPending, setFilterPending] = React.useState(true);
     const [localChanges, setLocalChanges] = React.useState<Record<string, string>>({});
     const [saving, setSaving] = React.useState(false);
+    const [apiRunId, setApiRunId] = React.useState<string | null>(null);
+
+    const runIdFromQuery = typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('runId')
+        : null;
+    const effectiveRunId = runId || runIdFromQuery || null;
+    const effectiveMode = mode ?? (effectiveRunId ? 'wizard' : 'global');
+    const ctaVisible = effectiveMode === 'wizard';
+
+    console.log('[MAPPING_MODE]', effectiveMode);
+    console.log('[MAPPING_EFFECTIVE_RUN_ID]', effectiveRunId);
+    console.log('[MAPPING_CTA_VISIBLE]', ctaVisible);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/mapping');
+            const url = effectiveRunId ? `/api/mapping?runId=${effectiveRunId}` : '/api/mapping';
+            const res = await fetch(url);
             if (res.ok) {
                 const json = await res.json();
                 setData(json);
-                setLocalChanges({}); // Reset changes on fresh load
+                if (json.runId) setApiRunId(json.runId);
+                setLocalChanges({});
             }
         } catch (e) {
             console.error(e);
@@ -29,13 +61,10 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
 
     React.useEffect(() => {
         fetchData();
-    }, []);
+    }, [effectiveRunId]);
 
     const handleAsinChange = (rowKey: string, newVal: string) => {
-        setLocalChanges(prev => ({
-            ...prev,
-            [rowKey]: newVal
-        }));
+        setLocalChanges(prev => ({ ...prev, [rowKey]: newVal }));
     };
 
     const handleSave = async () => {
@@ -48,22 +77,16 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
                 body: JSON.stringify({ updates: localChanges })
             });
             if (res.ok) {
-                const runIdFromQuery = new URLSearchParams(window.location.search).get('runId');
-
-                if (runIdFromQuery) {
-                    // Show toast with action button
+                const rid = effectiveRunId || runIdFromQuery;
+                if (rid) {
                     showToast('カテゴリ変換を保存しました', {
                         label: 'このリサーチで再変換',
-                        onClick: () => {
-                            router.push(`/wizard/step5?runId=${runIdFromQuery}&action=reconvert`);
-                        }
+                        onClick: () => router.push(`/wizard/step5?runId=${rid}&action=reconvert`)
                     });
                 } else {
-                    // No runId, show simple toast
                     showToast('カテゴリ変換を保存しました');
                 }
-
-                fetchData(); // Refetch
+                fetchData();
             } else {
                 alert('保存に失敗しました');
             }
@@ -74,12 +97,105 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
         }
     };
 
+    const handleNextWithSave = async () => {
+        console.log('[MAPPING_NAV_NEXT]', effectiveRunId);
+        if (Object.keys(localChanges).length > 0) {
+            setSaving(true);
+            try {
+                const res = await fetch('/api/mapping', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ updates: localChanges })
+                });
+                if (!res.ok) {
+                    alert('保存に失敗しました');
+                    return;
+                }
+            } catch {
+                alert('エラーが発生しました');
+                return;
+            } finally {
+                setSaving(false);
+            }
+        }
+        if (effectiveRunId) {
+            router.push(`/wizard/step5?runId=${effectiveRunId}`);
+        } else {
+            router.push('/wizard/step5');
+        }
+    };
+
+    const handleGlobalTsvExport = async () => {
+        const targetRunId = effectiveRunId || apiRunId;
+        console.log('[GLOBAL_TSV_EXPORT_START]', { targetRunId });
+
+        if (targetRunId) {
+            console.log('[GLOBAL_TSV_EXPORT_MODE]', 'run', targetRunId);
+            try {
+                const convertRes = await fetch('/api/convert', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ runId: targetRunId })
+                });
+                if (!convertRes.ok) {
+                    alert('変換に失敗しました');
+                    return;
+                }
+                const fileRes = await fetch(`/api/files/amazon?runId=${targetRunId}`);
+                if (!fileRes.ok) {
+                    alert('ファイルの取得に失敗しました');
+                    return;
+                }
+                const blob = await fileRes.blob();
+                console.log('[GLOBAL_TSV_EXPORT_DONE]', 'run');
+                triggerDownload(blob, `amazon_upload_${targetRunId}.tsv`);
+            } catch (e) {
+                alert('エラーが発生しました');
+            }
+        } else {
+            console.log('[GLOBAL_TSV_EXPORT_MODE]', 'standalone');
+            const rows = data?.rows ?? [];
+            const exportRows = rows.filter((r: any) => {
+                const asin = localChanges[r.rowKey] !== undefined ? localChanges[r.rowKey] : r.asin;
+                return asin && asin.length >= 10;
+            });
+            console.log('[GLOBAL_TSV_EXPORT_ROWS]', exportRows.length);
+
+            if (exportRows.length === 0) {
+                console.log('[GLOBAL_TSV_EXPORT_EMPTY]');
+                alert('出力できる行がありません。ASIN（10文字以上）を入力してください。');
+                return;
+            }
+
+            const tsvLines = [AMAZON_HEADERS.join('\t')];
+            for (const r of exportRows) {
+                const asin = localChanges[r.rowKey] !== undefined ? localChanges[r.rowKey] : r.asin;
+                const priceNum = parseInt(String(r.price || '0').replace(/[^0-9]/g, ''), 10) || 0;
+                const salePrice = Math.max(priceNum + 3000, 4980);
+                tsvLines.push([
+                    `MF-${r.id}`,
+                    asin,
+                    'ASIN',
+                    salePrice,
+                    '', '', '11', '1', 'a', '', '', '',
+                    '中古品です。',
+                    '', '', '2', ''
+                ].join('\t'));
+            }
+
+            const bom = '\uFEFF';
+            const blob = new Blob([bom + tsvLines.join('\n')], { type: 'text/tab-separated-values;charset=utf-8' });
+            console.log('[GLOBAL_TSV_EXPORT_DONE]', 'standalone');
+            triggerDownload(blob, `amazon_upload_standalone.tsv`);
+        }
+    };
+
     const hasChanges = Object.keys(localChanges).length > 0;
 
     const displayRows = data?.rows?.filter((r: any) => {
         if (!filterPending) return true;
         const currentVal = localChanges[r.rowKey] !== undefined ? localChanges[r.rowKey] : r.asin;
-        return !currentVal || r.isPending; // Show if empty or originally pending
+        return !currentVal || r.isPending;
     }) || [];
 
     return (
@@ -139,16 +255,26 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
                                     戻る
                                 </button>
                             )}
-                            <button
-                                disabled={!hasChanges || saving || data.meta.asinCol === 'MISSING'}
-                                onClick={handleSave}
-                                className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${hasChanges
-                                    ? 'bg-primary text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20'
-                                    : 'bg-app-border text-app-text-muted cursor-not-allowed'
-                                    }`}
-                            >
-                                {saving ? '...' : '保存'}
-                            </button>
+                            {effectiveMode === 'global' && (
+                                <>
+                                    <button
+                                        disabled={!hasChanges || saving || data.meta.asinCol === 'MISSING'}
+                                        onClick={handleSave}
+                                        className={`px-6 py-1.5 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${hasChanges
+                                            ? 'bg-primary text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20'
+                                            : 'bg-app-border text-app-text-muted cursor-not-allowed'
+                                            }`}
+                                    >
+                                        {saving ? '...' : '保存'}
+                                    </button>
+                                    <button
+                                        onClick={handleGlobalTsvExport}
+                                        className="px-6 py-1.5 rounded-lg text-sm font-bold bg-green-700 text-white hover:bg-green-600 transition-all"
+                                    >
+                                        TSV出力
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
 
@@ -203,6 +329,19 @@ export function MappingEditor({ returnUrl }: { returnUrl?: string }) {
                             </table>
                         </div>
                     </div>
+
+                    {/* Wizard CTA */}
+                    {ctaVisible && (
+                        <div className="flex justify-end pt-2">
+                            <button
+                                onClick={handleNextWithSave}
+                                disabled={saving}
+                                className="px-8 py-2.5 rounded-lg text-sm font-bold bg-primary text-white hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2"
+                            >
+                                {saving ? '保存中...' : 'Amazon TSV変換へ →'}
+                            </button>
+                        </div>
+                    )}
                 </div>
             )}
             {ToastComponent}

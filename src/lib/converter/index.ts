@@ -37,6 +37,7 @@ export class AmazonConverter {
                     item_condition: '11',       // 中古-良 (backward compat default)
                     leadtime_to_ship: '2',
                     item_note: '中古品です。',
+                    condition_mapping_mode: 'normal' as 'normal' | 'conservative',
                 },
             };
             try {
@@ -46,6 +47,9 @@ export class AmazonConverter {
                     listingConfig.amazon.item_condition = parsed.amazon.item_condition ?? listingConfig.amazon.item_condition;
                     listingConfig.amazon.leadtime_to_ship = parsed.amazon.leadtime_to_ship ?? listingConfig.amazon.leadtime_to_ship;
                     listingConfig.amazon.item_note = parsed.amazon.item_note ?? listingConfig.amazon.item_note;
+                    if (parsed.amazon.condition_mapping_mode === 'conservative') {
+                        listingConfig.amazon.condition_mapping_mode = 'conservative';
+                    }
                 }
             } catch {
                 // File absent or malformed — use defaults above (backward compatible)
@@ -186,15 +190,10 @@ export class AmazonConverter {
                 if (daysMatch) {
                     maxMercariDays = Math.max(...daysMatch.map(Number));
                 } else {
-                    report.status = 'SKIPPED_SHIPPING_DAYS_UNKNOWN';
-                    report.message = `Cannot parse shipping days (${daysStr})`;
-                    reportRows.push(report);
-                    await appendLog(`[CONVERT] SKIP item_id=${item.item_id} reason=SHIPPING_DAYS_UNKNOWN text="${daysStr}"`);
-                    continue;
+                    await appendLog(`[CONVERT] WARN item_id=${item.item_id} reason=SHIPPING_DAYS_UNKNOWN text="${daysStr}" — passing through`);
                 }
                 const configuredDays = parseInt(safeLeadtime, 10);
-                // If the item takes more days to ship than what we've committed to Amazon, it's a guaranteed late shipment.
-                if (maxMercariDays > configuredDays) {
+                if (maxMercariDays > configuredDays + 1) {
                     report.status = 'SKIPPED_SHIPPING_DELAY';
                     report.message = `Mercari days (${maxMercariDays}) > Amazon setting (${configuredDays})`;
                     reportRows.push(report);

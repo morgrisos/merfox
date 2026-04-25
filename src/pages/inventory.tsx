@@ -10,6 +10,7 @@ export default function InventoryMonitoring() {
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [checking, setChecking] = useState(false);
+    const [checkResult, setCheckResult] = useState<{ checked: number; skipped: number; failed: number } | null>(null);
     
     // Add Modal state
     const [showAddModal, setShowAddModal] = useState(false);
@@ -100,14 +101,17 @@ export default function InventoryMonitoring() {
             const data = await res.json();
             console.log('[INV_RESPONSE_JSON]', JSON.stringify(data));
             if (res.ok) {
+                setCheckResult({
+                    checked: data.checked_count ?? 0,
+                    skipped: data.skipped_count ?? 0,
+                    failed: data.failed_count ?? 0
+                });
                 if (Array.isArray(data.results) && data.results.length > 0) {
-                    // Merge updated items into state
                     setItems(prev => {
                         const updatedMap = new Map(data.results.map((r: any) => [r.watch_id, r]));
                         return prev.map(i => updatedMap.has(i.watch_id) ? updatedMap.get(i.watch_id) : i);
                     });
                 } else {
-                    // Fallback: re-fetch all (e.g. all items skipped due to interval)
                     await fetchItems();
                 }
             } else {
@@ -316,13 +320,23 @@ export default function InventoryMonitoring() {
         const labels: Record<string, string> = {
             'none': '',
             'sold_out': '売り切れ',
+            'sold_detected': '売り切れ検出',
             'deleted': '削除済み',
+            'deleted_404': '削除済み',
             'blocked_browser_old': 'アクセス制限',
+            'blocked_access_denied': 'アクセス拒否',
+            'blocked_skeleton': 'ページ読み込み失敗',
+            'blocked_generic': '表示エラー',
             'unknown_no_title': '情報取得失敗',
+            'unknown_skeleton': '読み込み不完全',
+            'unknown_incomplete_dom': '表示不完全',
             'price_changed': '価格変動',
             'fetch_failed': '取得失敗',
+            'failed_timeout': 'タイムアウト',
+            'check_failed': 'チェック失敗',
+            'resolved': '対応済み',
         };
-        return labels[reason] ?? reason;
+        return labels[reason] ?? '';
     };
 
     const getSortWeight = (item: any): number => {
@@ -379,10 +393,28 @@ export default function InventoryMonitoring() {
                             className="px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold flex items-center gap-2 transition-colors disabled:opacity-50 text-sm shadow-lg shadow-blue-500/20"
                         >
                             <RefreshCw className={`w-4 h-4 ${checking ? 'animate-spin' : ''}`} />
-                            {checking ? '実行中...' : '状態をチェック'}
+                            {checking ? `チェック中 (${items.length}件)...` : '状態をチェック'}
                         </button>
                     }
                 />
+
+                {/* Check Result Banner */}
+                {checkResult && (
+                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 flex items-center justify-between">
+                        <div className="flex items-center gap-3 text-sm">
+                            <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                            <span className="text-blue-300 font-bold">チェック完了:</span>
+                            <span className="text-white">{checkResult.checked}件確認</span>
+                            {checkResult.skipped > 0 && (
+                                <span className="text-app-text-muted">/ 売り切れ済み {checkResult.skipped}件をスキップ</span>
+                            )}
+                            {checkResult.failed > 0 && (
+                                <span className="text-yellow-400">/ {checkResult.failed}件失敗</span>
+                            )}
+                        </div>
+                        <button onClick={() => setCheckResult(null)} className="text-app-text-muted hover:text-white text-xs">✕</button>
+                    </div>
+                )}
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

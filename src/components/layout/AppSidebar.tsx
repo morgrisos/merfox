@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { NAV_SECTIONS, PRIMARY_ACTION } from '@/config/nav';
-import { Zap, ArrowLeft } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 export const AppSidebar = () => {
     const router = useRouter();
@@ -68,13 +68,6 @@ export const AppSidebar = () => {
                 </div>
             </div>
 
-            {/* Footer */}
-            <div className="p-4 bg-app-surface border-t border-app-border">
-                <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-app-text-muted cursor-not-allowed opacity-50 hover:bg-app-element transition-colors">
-                    <ArrowLeft className="w-5 h-5" />
-                    <span className="text-sm font-medium">ログアウト</span>
-                </div>
-            </div>
         </aside>
     );
 };

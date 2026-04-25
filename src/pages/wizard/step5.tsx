@@ -320,14 +320,40 @@ export default function Step5_Convert() {
                                 </div>
                             </div>
 
-                            {/* Success CTA */}
-                            <Button
-                                size="lg"
-                                className="w-full h-14 text-lg font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-lg"
-                                onClick={() => router.push('/wizard/step6')}
-                            >
-                                次へ（最終TSV） <ArrowRight className="ml-2 w-5 h-5" />
-                            </Button>
+                            {/* 0件ブロック: Step6に進ませない */}
+                            {result.amazon_rows === 0 && (
+                                <div className="w-full bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-center space-y-3">
+                                    <p className="text-red-400 text-sm font-bold">変換成功0件のため次のステップに進めません</p>
+                                    <p className="text-app-text-muted text-xs">ASINの未設定、またはフィルター条件を確認してください</p>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            size="sm"
+                                            className="flex-1 font-bold bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg"
+                                            onClick={() => router.push(runId ? `/wizard/step4?runId=${runId}` : '/wizard/step4')}
+                                        >
+                                            マッピングに戻る
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            className="flex-1 font-bold bg-slate-700 hover:bg-slate-600 text-white rounded-lg"
+                                            onClick={() => router.push('/settings')}
+                                        >
+                                            設定を見直す
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 正常CTA: 1件以上の時だけ表示 */}
+                            {result.amazon_rows > 0 && (
+                                <Button
+                                    size="lg"
+                                    className="w-full h-14 text-lg font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-lg"
+                                    onClick={() => router.push('/wizard/step6')}
+                                >
+                                    次へ（最終TSV） <ArrowRight className="ml-2 w-5 h-5" />
+                                </Button>
+                            )}
 
                             {result.failed_rows > 0 && (
                                 <button

@@ -13,9 +13,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const { watchIds, force } = body;
         console.log('[INV_CHECK_START]', watchIds?.length ? `watchIds=${watchIds.length}` : 'all', `force_raw=${JSON.stringify(force)}`, `body=${JSON.stringify(body)}`);
         console.log('[INV_FORCE_FLAG]', force, typeof force, '!!force=', !!force);
-        const results = await InventoryService.checkItems(watchIds || [], !!force);
-        console.log('[INV_CHECK_DONE]', `results=${results.length}`);
-        return res.status(200).json({ success: true, checked_count: results.length, results });
+        const { results, skipped_count, failed_count } = await InventoryService.checkItems(watchIds || [], !!force);
+        console.log('[INV_CHECK_DONE]', `checked=${results.length} skipped=${skipped_count} failed=${failed_count}`);
+        return res.status(200).json({ success: true, checked_count: results.length, skipped_count, failed_count, results });
     } catch (error: any) {
         console.error('[INV_CHECK_ERROR]', error.message || error);
         return res.status(500).json({ error: error.message || 'Internal Server Error' });

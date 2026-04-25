@@ -39,7 +39,7 @@ const SummaryCard = ({ title, count, sub, icon, colorClass, onClick }: CardProps
     </div>
 );
 
-const PriorityRow = ({ priority, status, profit, risk, title, onAction }: any) => (
+const PriorityRow = ({ priority, status, profit, title, onAction }: any) => (
     <tr className="hover:bg-[#202b3a] transition-colors text-sm border-b border-[#282f39] last:border-0">
         <td className="px-4 py-3">
             <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${priority === 'High' ? 'bg-red-500/20 text-red-400' :
@@ -59,7 +59,6 @@ const PriorityRow = ({ priority, status, profit, risk, title, onAction }: any) =
             </div>
         </td>
         <td className="px-4 py-3 text-[#9da8b9] font-mono">{profit}</td>
-        <td className="px-4 py-3 text-[#9da8b9]">{risk}</td>
         <td className="px-4 py-3 text-white max-w-[200px] truncate">{title}</td>
         <td className="px-4 py-3 text-right">
             <button
@@ -89,7 +88,8 @@ export default function Dashboard() {
         dangers: [] as any[],
         cta: { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' } as any,
         watchAlertsCount: 0,
-        watchAlerts: [] as any[]
+        watchAlerts: [] as any[],
+        latestRunId: null as string | null,
     });
 
     React.useEffect(() => {
@@ -120,7 +120,8 @@ export default function Dashboard() {
                         dangers: Array.isArray(data.dangers) ? data.dangers : [],
                         cta: data.cta || { kind: 'start', label: '新規抽出を開始', href: '/wizard/step1' },
                         watchAlertsCount: data.watchAlertsCount ?? 0,
-                        watchAlerts: Array.isArray(data.watchAlerts) ? data.watchAlerts : []
+                        watchAlerts: Array.isArray(data.watchAlerts) ? data.watchAlerts : [],
+                        latestRunId: data.latestRunId ?? null,
                     };
                     if (prev.newCandidates === next.newCandidates &&
                         prev.uploadReady === next.uploadReady &&
@@ -170,10 +171,13 @@ export default function Dashboard() {
 
         // 3. Mapping Needed
         if (summaryData.needMapping > 0) {
+            const mappingUrl = summaryData.latestRunId
+                ? `/wizard/step4?runId=${summaryData.latestRunId}`
+                : '/mapping';
             return {
                 title: 'マッピングを行う',
                 desc: '未設定のカテゴリーがあります。設定を完了させましょう。',
-                action: () => router.push('/wizard/step4'),
+                action: () => router.push(mappingUrl),
                 icon: <FolderOpen className="w-6 h-6" />,
                 btnText: 'マッピング画面へ',
                 color: 'bg-blue-600'
@@ -193,7 +197,17 @@ export default function Dashboard() {
 
     const mainCTA = getMainCTA();
 
-    const priorityCandidates = summaryData.top10.length > 0 ? summaryData.top10 : [];
+    const priorityCandidates = React.useMemo(() => {
+        const items = summaryData.top10.length > 0 ? [...summaryData.top10] : [];
+        console.log('[DASH_TOP5_SOURCE]', items.length);
+        items.sort((a, b) => {
+            const pa = parseInt(String(a.price || '0').replace(/[^0-9]/g, ''), 10) || 0;
+            const pb = parseInt(String(b.price || '0').replace(/[^0-9]/g, ''), 10) || 0;
+            return pb - pa;
+        });
+        console.log('[DASH_TOP5_SORTED]', items.slice(0, 5).map(i => i.price));
+        return items;
+    }, [summaryData.top10]);
     const watchAlertList = summaryData.watchAlerts;
     const watchAlertsCount = summaryData.watchAlertsCount;
 
@@ -282,7 +296,7 @@ export default function Dashboard() {
                                 <TrendingUp className="w-5 h-5 text-yellow-500" />
                                 優先して見るべき 5件
                             </h3>
-                            <span className="text-xs text-app-text-muted">利益予測に基づく</span>
+                            <span className="text-xs text-app-text-muted">メルカリ価格 降順</span>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left bg-app-surface">
@@ -290,8 +304,7 @@ export default function Dashboard() {
                                     <tr>
                                         <th className="px-4 py-3">優先度</th>
                                         <th className="px-4 py-3">状態</th>
-                                        <th className="px-4 py-3">予測利益</th>
-                                        <th className="px-4 py-3">リスク</th>
+                                        <th className="px-4 py-3">メルカリ価格</th>
                                         <th className="px-4 py-3">タイトル</th>
                                         <th className="px-4 py-3 text-right">Action</th>
                                     </tr>
@@ -299,7 +312,7 @@ export default function Dashboard() {
                                 <tbody>
                                     {priorityCandidates.length === 0 ? (
                                         <tr>
-                                            <td colSpan={6} className="px-4 py-12 text-center">
+                                            <td colSpan={5} className="px-4 py-12 text-center">
                                                 <p className="text-app-text-muted mb-4">まだリサーチがありません</p>
                                                 <button
                                                     onClick={() => router.push('/wizard/step1')}
@@ -315,13 +328,12 @@ export default function Dashboard() {
                                                 key={idx}
                                                 priority="High"
                                                 status={item.asin ? 'OK' : 'Mapping'}
-                                                profit={item.price}
-                                                risk="低"
+                                                profit={item.price ? `¥${String(item.price).replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : '---'}
                                                 title={item.title}
-                                                onAction={() => item.runId
-                                                    ? router.push(`/wizard/step4?runId=${item.runId}`)
-                                                    : router.push('/history')
-                                                }
+                                                onAction={() => {
+                                                    const rid = item.runId || summaryData.latestRunId;
+                                                    router.push(rid ? `/wizard/step4?runId=${rid}` : '/mapping');
+                                                }}
                                             />
                                         ))
                                     )}
